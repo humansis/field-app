@@ -1,0 +1,13 @@
+android.useAndroidX=true
+android.enableJetifier=true
+kotlin.code.style=official
+android.enableUnitTestBinaryResources=true
+org.gradle.jvmargs=-Xmx1536m
+
+API_URL=${API_URL}
+
+FRONT_API_URL=${FRONT_API_URL}
+DEMO_API_URL=${DEMO_API_URL}
+STAGE_API_URL=${STAGE_API_URL}
+TEST_API_URL=${TEST_API_URL}
+DEV_API_URL=${DEV_API_URL}
