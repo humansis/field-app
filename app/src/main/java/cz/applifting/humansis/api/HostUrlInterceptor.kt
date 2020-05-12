@@ -16,16 +16,16 @@ class HostUrlInterceptor : Interceptor {
 
     fun getHostUrl(): String {
         host?.let {
-            return it.getUrl()
+            return it.url
         }
-        return ApiEnvironments.BASE.getUrl()
+        return ApiEnvironments.BASE.url
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
             var request: Request = chain.request()
             host?.let { host ->
                     val newUrl = request.url().newBuilder()
-                            .host(host.getUrl())
+                            .host(host.url)
                             .build()
                     request = request.newBuilder()
                             .url(newUrl)
