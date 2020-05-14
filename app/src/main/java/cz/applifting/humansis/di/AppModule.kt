@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.BuildConfig
+import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -32,8 +33,14 @@ import javax.inject.Singleton
 class AppModule {
 
     @Provides
-    @Reusable
-    fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
+    @Singleton
+    fun provideHostUrlInterceptor(): HostUrlInterceptor {
+        return HostUrlInterceptor()
+    }
+
+    @Provides
+    @Singleton
+    fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             @Suppress("ConstantConditionIf")
             level = if (BuildConfig.DEBUG) {
@@ -47,6 +54,7 @@ class AppModule {
             .connectTimeout(5, TimeUnit.MINUTES)
             .callTimeout(5, TimeUnit.MINUTES)
             .readTimeout(5, TimeUnit.MINUTES)
+            .addInterceptor(hostUrlInterceptor)
             .addInterceptor { chain ->
 
                 val oldRequest = chain.request()

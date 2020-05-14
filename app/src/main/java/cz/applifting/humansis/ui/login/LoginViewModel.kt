@@ -1,11 +1,14 @@
 package cz.applifting.humansis.ui.login
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.View
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.hashAndSaltPassword
 import cz.applifting.humansis.model.api.LoginReqRes
@@ -15,14 +18,17 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
+const val API_URL = "pin_offline_app_api_url"
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
  */
 class LoginViewModel @Inject constructor(
-    private val service: HumansisService,
-    private val loginManager: LoginManager,
-    private val context: Context
+        private val hostUrlInterceptor: HostUrlInterceptor,
+        private val service: HumansisService,
+        private val loginManager: LoginManager,
+        private val context: Context,
+        private val sp: SharedPreferences
 ) : BaseViewModel() {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
@@ -34,6 +40,17 @@ class LoginViewModel @Inject constructor(
         launch {
             loginLD.value = loginManager.retrieveUser()
         }
+    }
+
+    fun changeHostUrl(host: ApiEnvironments?) {
+        hostUrlInterceptor.setHost(host)
+        sp.edit()?.putString(API_URL, host?.name)?.apply()
+    }
+
+    fun loadHostFromSaved(): ApiEnvironments {
+        val host = ApiEnvironments.valueOf(sp.getString(API_URL, ApiEnvironments.BASE.name))
+        hostUrlInterceptor.setHost(host)
+        return host
     }
 
     fun login(username: String, password: String) {
