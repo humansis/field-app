@@ -14,7 +14,7 @@ class ParamsModule {
     @Provides
     @Named(BASE_URL)
     fun baseUrl(): String {
-        return "https://" + ApiEnvironments.BASE.getUrl() + "/api/wsse/"
+        return "https://" + ApiEnvironments.BASE.url + "/api/wsse/"
     }
 
     @Provides
