@@ -99,6 +99,7 @@
 
     <string name="KHM">KHM</string>
     <string name="SYR">SYR</string>
+    <string name="UKR">UKR</string>
     <string name="warning_country_change">Warning: Changing country will erase your current data!</string>
     <string name="unknwon_error">Unknown error has occurred.</string>
     <string name="download_error">Couldn\'t download %s.</string>
