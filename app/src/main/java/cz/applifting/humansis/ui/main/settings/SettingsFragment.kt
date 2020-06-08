@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -14,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
+import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
@@ -32,6 +32,8 @@ class SettingsFragment : BaseFragment() {
 
     @Inject
     lateinit var logger: Logger
+    @Inject
+    lateinit var loginManager: LoginManager
 
     private val viewModel: SettingsViewModel by viewModels {
         viewModelFactory
@@ -54,11 +56,11 @@ class SettingsFragment : BaseFragment() {
 
         val navController = findNavController()
 
-        val countries = resources.getStringArray(R.array.countries)
-        val countryCodes = resources.getStringArray(R.array.country_codes)
-
-        val adapter = ArrayAdapter.createFromResource(context!!, R.array.countries, R.layout.item_country)
-        adapter.setDropDownViewResource(R.layout.item_country_dropdown)
+        val adapter = CountryAdapter(requireContext())
+        launch {
+            val countries = loginManager.getCountries().map{it.iso3}
+            adapter.setData(countries)
+        }
         spinner_country.adapter = adapter
 
         spinner_country.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -69,7 +71,7 @@ class SettingsFragment : BaseFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val country = parent?.getItemAtPosition(position) as String
                 if ((activity as HumansisActivity).isNetworkConnected()) {
-                    viewModel.updateCountrySettings(countryCodes[countries.indexOf(country)])
+                    viewModel.updateCountrySettings(country)
                 }
             }
         }
@@ -104,7 +106,7 @@ class SettingsFragment : BaseFragment() {
         }
 
         viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
-            spinner_country.setSelection(countryCodes.indexOf(it))
+            spinner_country.setSelection(adapter.getPosition(it))
         })
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {

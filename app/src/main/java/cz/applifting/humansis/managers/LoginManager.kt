@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.commonsware.cwac.saferoom.SafeHelperFactory
-import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.di.SPQualifier
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.model.db.User
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
@@ -66,8 +66,13 @@ class LoginManager @Inject constructor(
 
         val db = dbProvider.get()
 
-        val id = userResponse.id?.toInt() ?: throw HumansisError(context.getString(R.string.error_missing_user_id))
-        val user = User(id, userResponse.username, userResponse.email, userResponse.password)
+        val user = User(
+            id = userResponse.id,
+            username = userResponse.username,
+            email = userResponse.email,
+            saltedPassword = userResponse.password,
+            countries = userResponse.countries
+        )
         db.userDao().insert(user)
 
         return user
@@ -117,6 +122,10 @@ class LoginManager @Inject constructor(
         return user?.let {
             generateXWSSEHeader(user.username, user.saltedPassword ?: "", sp.getBoolean("test", false))
         }
+    }
+
+    suspend fun getCountries(): List<Country> {
+        return db.userDao().getUser()?.countries ?: listOf()
     }
 
     private fun encryptDefault() {

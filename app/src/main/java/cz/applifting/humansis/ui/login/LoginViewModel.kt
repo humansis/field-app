@@ -67,15 +67,10 @@ class LoginViewModel @Inject constructor(
                 val hashedPassword = hashAndSaltPassword(saltResponse.salt, password)
                 val userResponse = service.postLogin(
                     LoginReqRes(
-                        true,
-                        username,
-                        null,
-                        null,
-                        hashedPassword,
-                        null,
-                        username,
-                        null,
-                        null
+                        changePassword = true,
+                        email = username,
+                        password = hashedPassword,
+                        username = username
                     )
                 )
 
