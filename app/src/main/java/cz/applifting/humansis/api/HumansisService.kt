@@ -20,7 +20,7 @@ interface HumansisService {
     @GET("projects")
     suspend fun getProjects(): List<Project>
 
-    @GET("distributions/projects/{projectId}")
+    @GET("projects/{projectId}/distributions")
     suspend fun getDistributions(@Path("projectId") projectId: Int): List<Distribution>
 
     @GET("distributions/{distributionId}/beneficiaries")
