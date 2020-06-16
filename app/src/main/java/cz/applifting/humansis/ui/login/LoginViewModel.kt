@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
-const val API_URL = "pin_offline_app_api_url"
+const val SP_ENVIRONMENT = "pin_offline_app_api_url"
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
@@ -44,11 +44,11 @@ class LoginViewModel @Inject constructor(
 
     fun changeHostUrl(host: ApiEnvironments?) {
         hostUrlInterceptor.setHost(host)
-        sp.edit()?.putString(API_URL, host?.name)?.apply()
+        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.apply()
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
-        val host = ApiEnvironments.valueOf(sp.getString(API_URL, ApiEnvironments.BASE.name))
+        val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.BASE.name))
         hostUrlInterceptor.setHost(host)
         return host
     }
@@ -57,8 +57,6 @@ class LoginViewModel @Inject constructor(
         launch {
             viewStateLD.value = LoginViewState(
                 btnLoginVisibility = View.GONE,
-                etPasswordIsEnabled = false,
-                etUsernameIsEnabled = false,
                 pbLoadingVisible = View.VISIBLE
             )
 
@@ -93,6 +91,6 @@ class LoginViewModel @Inject constructor(
     private fun createViewStateErrorOnLogin(errorMessage: String?) =
         // keep username disabled when login screen was reached after receiving 403 on sync
         LoginViewState(errorMessage = errorMessage).let { state ->
-            loginLD.value?.let { state.copy(etUsernameIsEnabled = !it.invalidPassword) } ?: state
+            loginLD.value?.let { state.copy(etUsernameIsEnabled = true) } ?: state
         }
 }

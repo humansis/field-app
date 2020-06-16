@@ -110,10 +110,7 @@ class LoginFragment : Fragment(), CoroutineScope {
                 popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
                 popup.setOnMenuItemClickListener { item ->
                     val env = ApiEnvironments.values().find { it.id == item?.itemId }
-                    env?.let {
-                        envTextView.text = it.name
-                        viewModel.changeHostUrl(it)
-                    }
+                    changeEnvironment(env)
                     true
                 }
                 popup.show()
@@ -127,5 +124,11 @@ class LoginFragment : Fragment(), CoroutineScope {
     override fun onResume() {
         super.onResume()
         viewModel.viewStateLD.value = LoginViewState()
+    }
+
+    private fun changeEnvironment(env: ApiEnvironments?) {
+        var newEnv = env ?: ApiEnvironments.BASE
+        envTextView.text = newEnv.name
+        viewModel.changeHostUrl(newEnv)
     }
 }
