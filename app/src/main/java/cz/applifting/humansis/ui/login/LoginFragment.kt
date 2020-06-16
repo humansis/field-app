@@ -76,8 +76,8 @@ class LoginFragment : Fragment(), CoroutineScope {
             } else {
                 tv_error.text = getString(R.string.auth_expiration_explanation)
                 tv_error.visibility = View.VISIBLE
-                et_username.isEnabled = false
                 et_username.setText(it.email)
+                et_password.setText("")
             }
         })
 
@@ -85,8 +85,8 @@ class LoginFragment : Fragment(), CoroutineScope {
         @Suppress("ConstantConditionIf")
         @SuppressLint("SetTextI18n")
         if (BuildConfig.FLAVOR == "demo") {
-            et_username.setText("demo@humansis.org")
-            et_password.setText("Update987")
+//            et_username.setText("demo@humansis.org")
+//            et_password.setText("Update987")
         }
     }
 
@@ -110,10 +110,7 @@ class LoginFragment : Fragment(), CoroutineScope {
                 popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
                 popup.setOnMenuItemClickListener { item ->
                     val env = ApiEnvironments.values().find { it.id == item?.itemId }
-                    env?.let {
-                        envTextView.text = it.name
-                        viewModel.changeHostUrl(it)
-                    }
+                    changeEnvironment(env)
                     true
                 }
                 popup.show()
@@ -127,5 +124,11 @@ class LoginFragment : Fragment(), CoroutineScope {
     override fun onResume() {
         super.onResume()
         viewModel.viewStateLD.value = LoginViewState()
+    }
+
+    private fun changeEnvironment(env: ApiEnvironments?) {
+        var newEnv = env ?: ApiEnvironments.BASE
+        envTextView.text = newEnv.name
+        viewModel.changeHostUrl(newEnv)
     }
 }
