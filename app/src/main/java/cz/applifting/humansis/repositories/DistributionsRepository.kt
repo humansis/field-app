@@ -23,7 +23,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
             .getDistributions(projectId)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
                 it.commodities.fold(true, { acc, commodity ->
-                    commodity.modalityType.name != CommodityType.MOBILE_MONEY && acc
+                    commodity?.modalityType?.name != CommodityType.MOBILE_MONEY && acc
                 })
             }
             .filter { it.validated && !it.archived && !it.completed }
@@ -69,8 +69,8 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     }
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
-        return commodities.map {
-            CommodityLocal(CommodityType.valueOf(it.modalityType.name?.name ?: context.getString(R.string.unknown)), it.value, it.unit)
+        return commodities?.map {
+            CommodityLocal(CommodityType.valueOf(it.modalityType?.name?.name ?: context.getString(R.string.unknown)), it.value, it.unit)
         }
     }
 }

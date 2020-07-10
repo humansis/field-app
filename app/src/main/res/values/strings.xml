@@ -132,5 +132,31 @@
     <string name="acra_notif_text">Sorry, the app crashed. Please send a report to the developers.</string>
     <string name="acra_notif_send_button">Send</string>
     <string name="acra_email_subject">Android Crash Report</string>
+    <string name="scan_card">Scan card</string>
+    <string name="smartcard_id">Scanned Smartcard ID</string>
+    <string name="you_need_to_enable_nfc">You need to enable NFC in order to scan cards</string>
+    <string name="no_nfc_available">No NFC available</string>
+    <string name="pin">Card PIN</string>
+    <string name="please_enter_pin">Please enter PIN</string>
+    <string name="error">"Error: "</string>
+    <string name="error_card_mismatch">Error: Card mismatch</string>
+    <string name="card_mismatch_message">This beneficiary already have an active card assigned and it does not match the card scanned. By continuing, the old card will be blocked. Are you sure you want to proceed?</string>
+    <string name="remove_card">Remove</string>
+    <string name="card_mismatch">Error. Please scan the same old card.</string>
+    <string name="smartcard_id_old">Owned smartcard</string>
+    <string name="none">none</string>
+    <string name="old_card">old card</string>
+    <string name="new_card">new card</string>
+    <string name="ok">ok</string>
+    <string name="card_locked">This card is locked and cannot be used anymore.</string>
+    <string name="incorrect_pin">Invalid PIN</string>
+    <string name="invalid_data">Data on the card are not valid for this request.</string>
+    <string name="invalid_version">Invalid version.</string>
+    <string name="currency_mismatch">You are trying to add money to a card with different currency. Use \"new card\" option instead to delete old funds and create new one with new currency.</string>
+    <string name="card_error">Error during the card scanning. Please try again.</string>
+    <string name="Error">error</string>
+    <string name="delete_card_first">Cannot undo assigment. Please remove the assigned card first.</string>
+    <string name="scan_the_card">Scan the card</string>
+    <string name="smartcard">smartcard</string>
 
 </resources>

@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName
 //todo finish model
 data class Beneficiary(
     @SerializedName("id") val id: Int,
+    @SerializedName("smartcard") val smartcard: String?,
     @SerializedName("local_given_name") val givenName: String?,
     @SerializedName("local_family_name") val familyName: String?,
     @SerializedName("status") val distributed: Boolean,

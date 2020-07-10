@@ -53,7 +53,7 @@ class LoginManagerTest {
         val loginReqRes = LoginReqRes(
             changePassword = false,
             email = "email",
-            id = "42",
+            id = 42,
             language = null,
             password = "hashedPassword",
             roles = emptyList(),

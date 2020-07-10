@@ -51,6 +51,9 @@
         <argument
                 android:name="isQRVoucherDistribution"
                 app:argType="boolean" />
+        <argument
+            android:name="isSmartcardDistribution"
+            app:argType="boolean" />
         <action
                 android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"
                 app:destination="@id/beneficiaryDialog"
@@ -74,6 +77,9 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
+        <argument
+            android:name="isSmartcard"
+            app:argType="boolean" />
 
         <argument
                 android:name="isQRVoucher"

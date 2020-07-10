@@ -1,14 +1,18 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary
 
+import android.nfc.Tag
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
+import cz.quanti.android.nfc.OfflineFacade
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import io.reactivex.Single
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -20,13 +24,19 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
+    val scannedCardIdLD = MutableLiveData<String>()
     val goBackEventLD = MutableLiveData<Unit>()
+    @Inject
+    lateinit var nfcTagPublisher: NfcTagPublisher
+    @Inject
+    lateinit var nfcFacade: OfflineFacade
 
     var previousEditState: Boolean? = null
     var isAssignedInOtherDistribution: Boolean = false
     private set
 
-    private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex()
+    private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
+    private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_batch[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
 
     fun initBeneficiary(id: Int) {
         launch {
@@ -53,6 +63,45 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         }
     }
 
+    fun depositMoneyToCard(value: Double, currency: String, otherCard: String?, isNew: Boolean, pin: String, ownerId: Int): Single<Pair<Tag?, Throwable?>> {
+        return if(isNew)
+        {
+             Single.fromObservable(
+                     nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
+                         nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(Pair(tag, null))
+                     })
+        } else {
+            Single.fromObservable(
+                    nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
+                        val id = tag.id.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+                        if (otherCard == null) {
+                            throw CardMismatchException(otherCard)
+                        }
+
+                        if(value <= 0) {
+                            if(id != otherCard) {
+                                throw CardMismatchException(otherCard)
+                            }
+                        }
+                        nfcFacade.increaseBalanceForUser(tag, value, ownerId.toString(), currency).flatMap {
+                            Single.just(Pair(tag, null))
+                        }
+                    })
+        }
+    }
+
+    fun scanCard(cardId: String?) {
+        launch {
+            val beneficiary = beneficiaryLD.value!!.copy(
+                newSmartcard = cardId
+            )
+
+            beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
+            beneficiaryLD.value = beneficiary
+            scannedCardIdLD.value = cardId
+        }
+    }
+
     internal fun revertBeneficiary() {
         launch {
             val beneficiary = beneficiaryLD.value!!
@@ -75,10 +124,15 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
 
             val bookletId = when {
                 assigned -> ALREADY_ASSIGNED
-                BOOKLET_REGEX.matches(scannedId) -> scannedId
+                isValidBookletCode(scannedId) -> scannedId
                 else -> INVALID_CODE
             }
             scannedIdLD.value = bookletId
         }
     }
+
+    private fun isValidBookletCode(code: String): Boolean {
+        return (BOOKLET_REGEX.matches(code) || NEW_BOOKLET_REGEX.matches(code))
+    }
+
 }

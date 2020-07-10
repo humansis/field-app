@@ -49,8 +49,10 @@ class LoginFragment : Fragment(), CoroutineScope {
 
         settingsButtonInit()
 
+        btn_login.isEnabled = true
         btn_login.setOnClickListener {
-            viewModel.login(et_username.text.toString(), et_password.text.toString())
+            btn_login.isEnabled = false
+            viewModel.login(et_username.text.toString(), et_password.text.toString(), btn_login)
         }
 
         viewModel.viewStateLD.observe(viewLifecycleOwner, Observer { viewState ->

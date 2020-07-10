@@ -31,4 +31,6 @@ data class DistributionLocal(
 ) {
     val isQRVoucherDistribution: Boolean
         get() = commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER }
+    val isSmartcardDistribution: Boolean
+        get() = commodities.any { commodity -> commodity.type == CommodityType.SMARTCARD }
 }

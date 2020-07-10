@@ -3,6 +3,7 @@ package cz.applifting.humansis.ui.login
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
+import android.widget.Button
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
@@ -44,7 +45,7 @@ class LoginViewModel @Inject constructor(
 
     fun changeHostUrl(host: ApiEnvironments?) {
         hostUrlInterceptor.setHost(host)
-        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.apply()
+        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.commit()
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
@@ -53,7 +54,7 @@ class LoginViewModel @Inject constructor(
         return host
     }
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, loginButton: Button?) {
         launch {
             viewStateLD.value = LoginViewState(
                 btnLoginVisibility = View.GONE,
@@ -76,10 +77,13 @@ class LoginViewModel @Inject constructor(
                 loginLD.value = user
             } catch (e: HumansisError) {
                 viewStateLD.value = createViewStateErrorOnLogin(e.message)
+                loginButton?.isEnabled = true
             } catch (e: HttpException) {
                 val message = parseError(e, context)
                 viewStateLD.value = createViewStateErrorOnLogin(message)
+                loginButton?.isEnabled = true
             }
+            loginButton?.isEnabled = true
         }
     }
 

@@ -245,7 +245,9 @@ class SyncWorkerTest {
         originalReferralType = null,
         originalReferralNote = null,
         referralType = null,
-        referralNote = null
+        referralNote = null,
+        smartcard = null,
+        newSmartcard = null
     )
 
     private fun anyHttpException() =

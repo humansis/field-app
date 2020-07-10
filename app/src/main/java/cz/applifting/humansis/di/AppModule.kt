@@ -10,9 +10,12 @@ import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.quanti.android.nfc.OfflineFacade
+import cz.quanti.android.nfc.PINFacade
+import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,6 +34,12 @@ import javax.inject.Singleton
 
 @Module
 class AppModule {
+
+    @Provides
+    @Singleton
+    fun dbProviderProvider(context: Context): DbProvider {
+        return DbProvider(context)
+    }
 
     @Provides
     @Singleton
@@ -103,8 +112,18 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun dbProviderProvider(context: Context): DbProvider {
-        return DbProvider(context)
+    fun nfcTagPublisherProvider(): NfcTagPublisher {
+        return NfcTagPublisher()
+    }
+
+    @Provides
+    @Singleton
+    fun nfcFacadeProvider(): OfflineFacade {
+        return PINFacade(
+            BuildConfig.APP_VESION,
+            NfcUtil.hexStringToByteArray(BuildConfig.MASTER_KEY),
+            NfcUtil.hexStringToByteArray(BuildConfig.APP_ID)
+        )
     }
 
     @Provides

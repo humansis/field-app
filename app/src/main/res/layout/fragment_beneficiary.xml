@@ -59,6 +59,7 @@
             <Button
                     android:id="@+id/btn_action"
                     style="@style/Button.Confirm"
+                    android:backgroundTint="@color/colorAccent"
                     android:text="@string/confirm_distribution"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -77,6 +78,23 @@
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true">
 
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_scan_smartcard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/scan_card"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/colorPrimaryDark"
+
+                        android:textStyle="bold"
+                        android:textSize="30sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:visibility="gone"
+                        />
+
                 <FrameLayout
                         android:id="@+id/qr_scanner_holder"
                         android:layout_width="match_parent"
@@ -85,7 +103,7 @@
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toBottomOf="@+id/btn_scan_smartcard">
 
                     <me.dm7.barcodescanner.zxing.ZXingScannerView
                             android:id="@+id/qr_scanner"
@@ -122,6 +140,46 @@
                 </FrameLayout>
 
                 <cz.applifting.humansis.ui.components.TitledTextView
+                        android:id="@+id/tv_smartcard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginBottom="24dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/qr_scanner_holder"
+                        app:titled_text_view_title="@string/smartcard_id" />
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_remove_card"
+                        android:backgroundTint="@color/red"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/remove_card"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_smartcard"
+                        />
+
+                <cz.applifting.humansis.ui.components.TitledTextView
+                    android:id="@+id/tv_old_smartcard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_remove_card"
+                    app:titled_text_view_title="@string/smartcard_id_old" />
+
+                <cz.applifting.humansis.ui.components.TitledTextView
                         android:id="@+id/tv_booklet"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -131,7 +189,7 @@
                         android:layout_marginBottom="24dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/qr_scanner_holder"
+                        app:layout_constraintTop_toBottomOf="@id/tv_old_smartcard"
                         app:titled_text_view_title="@string/booklet_id" />
 
                 <cz.applifting.humansis.ui.components.TitledTextView

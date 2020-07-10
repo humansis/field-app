@@ -70,7 +70,8 @@ class UploadDialogErrorListFragment : BaseFragment() {
                     beneficiaryId = beneficiary.id,
                     distributionName = distribution.name,
                     projectName = projectName,
-                    isQRVoucher = distribution.isQRVoucherDistribution
+                    isQRVoucher = distribution.isQRVoucherDistribution,
+                    isSmartcard = distribution.isSmartcardDistribution
                 )
             )
         }.invokeOnCompletion {

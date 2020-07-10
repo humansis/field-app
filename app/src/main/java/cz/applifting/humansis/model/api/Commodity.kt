@@ -10,5 +10,5 @@ data class Commodity(
     val unit: String,
     val value: Int,
     val description: String?,
-    @SerializedName("modality_type") val modalityType: ModalityType
+    @SerializedName("modality_type") val modalityType: ModalityType?
 )
