@@ -22,7 +22,7 @@
     <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="sort_alphabetically">Sort alphabetically</string>
-    <string name="search_beneficiary_hint">Search names</string>
+    <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>
     <string name="assign_booklet">Assign booklet</string>
@@ -72,8 +72,8 @@
     <string name="last_update_failed">Last update failed</string>
     <string name="assign">Assign</string>
     <string name="sort_default">Grouped</string>
-    <string name="sort_az">︎AZ</string>
-    <string name="sort_za">ZA</string>
+    <string name="sort_az">︎A &#10132; Z</string>
+    <string name="sort_za">Z &#10132; A</string>
     <string name="error_service_unavailable">Service is unavailable</string>
     <string name="logout_alert_title">Log out</string>
     <string name="logout_alert_pending_changes_title">Pending changes!</string>
