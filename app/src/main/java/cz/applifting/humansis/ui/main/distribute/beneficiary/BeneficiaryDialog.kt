@@ -1,13 +1,12 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -15,7 +14,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -174,10 +172,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     .setView(cardMismatchDialogView)
                                     .setPositiveButton(android.R.string.ok) { _, _ ->
                                         showConfirmBeneficiaryDialog(beneficiary)
-                                        hideKeyboard(requireContext())
                                     }
                                     .setNegativeButton(android.R.string.cancel) { _, _ ->
-                                        hideKeyboard(requireContext())
                                     }
                                     .show()
                         }
@@ -252,6 +248,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             btn_scan_smartcard.isEnabled = false
             if(startSmartcardScanner()) {
                 AlertDialog.Builder(requireContext())
+                    .setCancelable(false)
                     .setTitle(getString(R.string.scan_card))
                     .setPositiveButton(getString(R.string.old_card)) { _, _ ->
                         writeBalanceOnCard(value, currency, beneficiary, false, false, "")
@@ -259,6 +256,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     .setNegativeButton(getString(R.string.new_card)) { _, _ ->
                         val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
                         AlertDialog.Builder(requireContext())
+                                .setCancelable(false)
                                 .setTitle(getString(R.string.pin))
                                 .setView(cardPinDialogView)
                                 .setPositiveButton(getString(R.string.ok)){ _, _ ->
@@ -371,83 +369,85 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             amountDouble = -amountDouble
         }
 
-        hideKeyboard(requireContext())
-
         val otherCard = if (remove) {
             beneficiary.newSmartcard
         } else {
             beneficiary.smartcard
         }
 
-        LiveDataReactiveStreams.fromPublisher(viewModel.depositMoneyToCard(amountDouble, currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
+        val ldrs = LiveDataReactiveStreams.fromPublisher(viewModel.depositMoneyToCard(amountDouble, currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
                 .onErrorReturn { ex ->  Pair(null, ex)}
                 .toFlowable())
-                .observe(viewLifecycleOwner, Observer {
-                    val tag = it.first
-                    val ex = it.second
 
-                    if(ex != null) {
-                        when(ex) {
-                            is PINException -> {
-                                Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                                Toast.makeText(
-                                        requireContext(),
-                                        getNfcCardErrorMessage(ex.pinExceptionEnum),
-                                        Toast.LENGTH_LONG
-                                ).show()
-                            }
-                            is CardMismatchException -> {
-                                Toast.makeText(
-                                        requireContext(),
-                                        getString(R.string.card_mismatch),
-                                        Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
+        val observer = Observer<Pair<Tag?, Throwable?>> {
+            val tag = it.first
+            val ex = it.second
 
-                        if(remove) {
-                            btn_remove_card.isEnabled = true
-                        } else
-                        {
-                            btn_scan_smartcard.isEnabled = true
-                        }
-                        dialog?.dismiss()
-                    } else {
-                        if(remove) {
-                            btn_remove_card.visibility = View.GONE
-                            viewModel.scanCard(null)
-                            btn_scan_smartcard.visibility = View.VISIBLE
-                            btn_scan_smartcard.isEnabled = true
-                        } else {
-                            val cardId = tag?.id?.asUByteArray()?.joinToString("") { it.toString(16).padStart(2, '0') }
-                            viewModel.scanCard(cardId)
-                            btn_scan_smartcard.visibility = View.GONE
-                            btn_remove_card.visibility = View.VISIBLE
-                            btn_remove_card.isEnabled = true
-                        }
+            if(ex != null) {
+                when(ex) {
+                    is PINException -> {
+                        Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                        Toast.makeText(
+                                requireContext(),
+                                getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                Toast.LENGTH_LONG
+                        ).show()
                     }
+                    is CardMismatchException -> {
+                        Toast.makeText(
+                                requireContext(),
+                                getString(R.string.card_mismatch),
+                                Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                if(remove) {
+                    btn_remove_card.isEnabled = true
+                } else
+                {
+                    btn_scan_smartcard.isEnabled = true
+                }
+                dialog?.dismiss()
+            } else {
+                if(remove) {
+                    btn_remove_card.visibility = View.GONE
+                    viewModel.scanCard(null)
+                    btn_scan_smartcard.visibility = View.VISIBLE
+                    btn_scan_smartcard.isEnabled = true
+                } else {
+                    val cardId = tag?.id?.asUByteArray()?.joinToString("") { it.toString(16).padStart(2, '0') }
+                    viewModel.scanCard(cardId)
+                    btn_scan_smartcard.visibility = View.GONE
+                    btn_remove_card.visibility = View.VISIBLE
+                    btn_remove_card.isEnabled = true
+                }
+            }
+            dialog?.dismiss()
+        }
+
+        ldrs.observe(viewLifecycleOwner, observer)
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(getString(R.string.scan_the_card))
+                .setCancelable(false)
+                .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
                     dialog?.dismiss()
-                })
-
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setMessage(getString(R.string.scan_the_card))
-                    .setCancelable(false)
-                    .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
-                        dialog.dismiss()
-                        if(remove) {
-                            btn_scan_smartcard.visibility = View.GONE
-                            btn_scan_smartcard.isEnabled = false
-                            btn_remove_card.visibility = View.VISIBLE
-                            btn_remove_card.isEnabled = true
-                        } else {
-                            btn_scan_smartcard.visibility = View.VISIBLE
-                            btn_scan_smartcard.isEnabled = true
-                            btn_remove_card.visibility = View.GONE
-                            btn_remove_card.isEnabled = false
-                        }
+                    if(remove) {
+                        btn_scan_smartcard?.visibility = View.GONE
+                        btn_scan_smartcard?.isEnabled = false
+                        btn_remove_card?.visibility = View.VISIBLE
+                        btn_remove_card?.isEnabled = true
+                    } else {
+                        btn_scan_smartcard?.visibility = View.VISIBLE
+                        btn_scan_smartcard?.isEnabled = true
+                        btn_remove_card?.visibility = View.GONE
+                        btn_remove_card?.isEnabled = false
                     }
-                dialog = builder.create()
-                dialog?.show()
+                    ldrs.removeObserver(observer)
+                }
+        dialog = builder.create()
+        dialog?.show()
     }
 
     private fun getNfcCardErrorMessage(pinExceptionEnum: PINExceptionEnum): String {
@@ -457,14 +457,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             PINExceptionEnum.INVALID_DATA -> getString(R.string.invalid_data)
             PINExceptionEnum.UNSUPPORTED_VERSION -> getString(R.string.invalid_version)
             PINExceptionEnum.DIFFERENT_CURRENCY -> getString(R.string.currency_mismatch)
+            PINExceptionEnum.TAG_LOST -> getString(R.string.tag_lost_card_error)
             else -> getString(R.string.card_error)
         }
-    }
-
-    private fun hideKeyboard(context: Context) {
-        val imm: InputMethodManager =
-            context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
     private fun startSmartcardScanner(): Boolean {

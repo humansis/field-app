@@ -158,5 +158,6 @@
     <string name="delete_card_first">Cannot undo assigment. Please remove the assigned card first.</string>
     <string name="scan_the_card">Scan the card</string>
     <string name="smartcard">smartcard</string>
+    <string name="tag_lost_card_error">Scanning interrupted. Please scan the card again.</string>
 
 </resources>
