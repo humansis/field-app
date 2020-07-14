@@ -247,31 +247,21 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         btn_scan_smartcard.setOnClickListener {
             btn_scan_smartcard.isEnabled = false
             if(startSmartcardScanner()) {
-                AlertDialog.Builder(requireContext())
-                    .setCancelable(false)
-                    .setTitle(getString(R.string.scan_card))
-                    .setPositiveButton(getString(R.string.old_card)) { _, _ ->
-                        writeBalanceOnCard(value, currency, beneficiary, false, false, "")
-                    }
-                    .setNegativeButton(getString(R.string.new_card)) { _, _ ->
-                        val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
-                        AlertDialog.Builder(requireContext())
-                                .setCancelable(false)
-                                .setTitle(getString(R.string.pin))
-                                .setView(cardPinDialogView)
-                                .setPositiveButton(getString(R.string.ok)){ _, _ ->
-                                    val pinEditTextView =
-                                            cardPinDialogView.findViewById<TextInputEditText>(R.id.pinEditText)
-                                    val pin = pinEditTextView.text.toString()
-                                    writeBalanceOnCard(value, currency, beneficiary, false, true, pin)
-                                }
-                                .setNegativeButton(getString(R.string.cancel)){ _, _ ->
-                                    btn_scan_smartcard.visibility = View.VISIBLE
-                                    btn_scan_smartcard.isEnabled = true
-                                }
-                                .show()
-                    }
-                    .show()
+                if(beneficiary.smartcard != null) {
+                    AlertDialog.Builder(requireContext())
+                            .setCancelable(false)
+                            .setTitle(getString(R.string.scan_card))
+                            .setPositiveButton(getString(R.string.old_card)) { _, _ ->
+                                writeBalanceOnCard(value, currency, beneficiary, false, false, "")
+                            }
+                            .setNegativeButton(getString(R.string.new_card)) { _, _ ->
+                                handleNewSmartcard(value, currency, beneficiary)
+                            }
+                            .show()
+                } else {
+                    handleNewSmartcard(value, currency, beneficiary)
+                }
+
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
                 btn_scan_smartcard.isEnabled = false
@@ -303,6 +293,25 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         }
     }
+
+     private fun handleNewSmartcard(value: Int, currency: String, beneficiary: BeneficiaryLocal) {
+         val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
+         AlertDialog.Builder(requireContext())
+                 .setCancelable(false)
+                 .setTitle(getString(R.string.pin))
+                 .setView(cardPinDialogView)
+                 .setPositiveButton(getString(R.string.ok)){ _, _ ->
+                     val pinEditTextView =
+                             cardPinDialogView.findViewById<TextInputEditText>(R.id.pinEditText)
+                     val pin = pinEditTextView.text.toString()
+                     writeBalanceOnCard(value, currency, beneficiary, false, true, pin)
+                 }
+                 .setNegativeButton(getString(R.string.cancel)){ _, _ ->
+                     btn_scan_smartcard.visibility = View.VISIBLE
+                     btn_scan_smartcard.isEnabled = true
+                 }
+                 .show()
+     }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
         val booklet = beneficiary.qrBooklets?.firstOrNull()
