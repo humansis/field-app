@@ -138,7 +138,6 @@
     <string name="no_nfc_available">No NFC available</string>
     <string name="pin">Card PIN</string>
     <string name="please_enter_pin">Please enter PIN</string>
-    <string name="error">"Error: "</string>
     <string name="error_card_mismatch">Error: Card mismatch</string>
     <string name="card_mismatch_message">This beneficiary already have an active card assigned and it does not match the card scanned. By continuing, the old card will be blocked. Are you sure you want to proceed?</string>
     <string name="remove_card">Remove</string>

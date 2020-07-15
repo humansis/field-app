@@ -57,7 +57,7 @@
     <string name="settings_edit">تحرير</string>
     <string name="settings_country_update_success">تم تحديث البلد</string>
     <string name="settings_country_update_error">كود غير صالح</string>
-    <string name="commodity_value">قيمة السلعة </string>
+    <string name="commodity_value">%1$d %2$s</string>
     <string name="error_invalid_username">خطأ في اسم المستخدم</string>
     <string name="error_invalid_password">خطأ في كلمة السر</string>
     <string name="error_no_internet_connection">فقدان الاتصال بالشبكة</string>
