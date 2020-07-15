@@ -499,13 +499,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun onPause() {
-        super.onPause()
         if (args.isQRVoucher) {
             qr_scanner.stopCamera()
         }
         if (args.isSmartcard) {
             nfcAdapter?.disableForegroundDispatch(requireActivity())
         }
+
+        super.onPause()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
