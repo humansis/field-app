@@ -51,7 +51,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/pin"
                 android:imeOptions="flagNoExtractUi"
-                android:inputType="textPassword"
+                android:inputType="numberPassword"
+                android:maxLength="4"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
