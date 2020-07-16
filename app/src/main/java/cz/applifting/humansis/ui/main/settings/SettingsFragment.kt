@@ -15,6 +15,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
+import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -58,7 +59,7 @@ class SettingsFragment : BaseFragment() {
 
         val adapter = CountryAdapter(requireContext())
         launch {
-            val countries = loginManager.getCountries().map{it.iso3}
+            val countries = loginManager.getCountries().map{ Country(it.iso3, requireContext())}
             adapter.setData(countries)
         }
         spinner_country.adapter = adapter
@@ -69,9 +70,9 @@ class SettingsFragment : BaseFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val country = parent?.getItemAtPosition(position) as String
+                val country = parent?.getItemAtPosition(position) as Country
                 if ((activity as HumansisActivity).isNetworkConnected()) {
-                    viewModel.updateCountrySettings(country)
+                    viewModel.updateCountrySettings(country.iso3)
                 }
             }
         }
@@ -106,7 +107,8 @@ class SettingsFragment : BaseFragment() {
         }
 
         viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
-            spinner_country.setSelection(adapter.getPosition(it))
+            val country = Country(iso3 = it)
+            spinner_country.setSelection(adapter.getPosition(country))
         })
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {

@@ -73,15 +73,13 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         } else {
             Single.fromObservable(
                     nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
-                        val id = tag.id.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+                        val id = tag.id.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }.toUpperCase()
                         if (otherCard == null) {
                             throw CardMismatchException(otherCard)
                         }
 
-                        if(value <= 0) {
-                            if(id != otherCard) {
-                                throw CardMismatchException(otherCard)
-                            }
+                        if(id != otherCard) {
+                            throw CardMismatchException(otherCard)
                         }
                         nfcFacade.increaseBalanceForUser(tag, value, ownerId.toString(), currency).flatMap {
                             Single.just(Pair(tag, null))
@@ -93,7 +91,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
     fun scanCard(cardId: String?) {
         launch {
             val beneficiary = beneficiaryLD.value!!.copy(
-                newSmartcard = cardId
+                newSmartcard = cardId?.toUpperCase()
             )
 
             beneficiariesRepository.updateBeneficiaryOffline(beneficiary)

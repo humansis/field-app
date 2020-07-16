@@ -425,7 +425,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_scan_smartcard.visibility = View.VISIBLE
                     btn_scan_smartcard.isEnabled = true
                 } else {
-                    val cardId = tag?.id?.asUByteArray()?.joinToString("") { it.toString(16).padStart(2, '0') }
+                    val cardId = tag?.id?.asUByteArray()?.joinToString("") { it.toString(16).padStart(2, '0') }?.toUpperCase()
                     viewModel.scanCard(cardId)
                     btn_scan_smartcard.visibility = View.GONE
                     btn_remove_card.visibility = View.VISIBLE
@@ -467,6 +467,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             PINExceptionEnum.UNSUPPORTED_VERSION -> getString(R.string.invalid_version)
             PINExceptionEnum.DIFFERENT_CURRENCY -> getString(R.string.currency_mismatch)
             PINExceptionEnum.TAG_LOST -> getString(R.string.tag_lost_card_error)
+            PINExceptionEnum.DIFFERENT_USER -> getString(R.string.different_user_card_error)
             else -> getString(R.string.card_error)
         }
     }
