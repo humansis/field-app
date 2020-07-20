@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
-import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -18,7 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -38,10 +36,15 @@ import cz.applifting.humansis.ui.components.TitledTextView
 import cz.applifting.humansis.ui.main.SharedViewModel
 import cz.quanti.android.nfc.exception.PINException
 import cz.quanti.android.nfc.exception.PINExceptionEnum
+import cz.quanti.android.nfc_io_libray.types.NfcUtil
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import java.util.*
 import javax.inject.Inject
 
 
@@ -64,6 +67,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
     private var dialog: AlertDialog? = null
+    private var disposable: Disposable? = null
 
     val args: BeneficiaryDialogArgs by navArgs()
 
@@ -384,58 +388,57 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             beneficiary.smartcard
         }
 
-        val ldrs = LiveDataReactiveStreams.fromPublisher(viewModel.depositMoneyToCard(amountDouble, currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
-                .onErrorReturn { ex ->  Pair(null, ex)}
-                .toFlowable())
+        disposable?.dispose()
+        disposable = viewModel.depositMoneyToCard(amountDouble, currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                        { tag ->
+                            if(remove) {
+                                btn_remove_card.visibility = View.GONE
+                                viewModel.saveCard(null)
+                                btn_scan_smartcard.visibility = View.VISIBLE
+                                btn_scan_smartcard.isEnabled = true
+                            } else {
+                                val id = tag?.id
+                                var cardId: String? = null
+                                id?.let {
+                                    cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
+                                }
+                                viewModel.saveCard(cardId)
+                                btn_scan_smartcard.visibility = View.GONE
+                                btn_remove_card.visibility = View.VISIBLE
+                                btn_remove_card.isEnabled = true
+                            }
 
-        val observer = Observer<Pair<Tag?, Throwable?>> {
-            val tag = it.first
-            val ex = it.second
+                            dialog?.dismiss()
+                        },
+                        { ex ->
+                            when(ex) {
+                                is PINException -> {
+                                    Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                                    Toast.makeText(
+                                            requireContext(),
+                                            getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                            Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                                is CardMismatchException -> {
+                                    Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.card_mismatch),
+                                            Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
 
-            if(ex != null) {
-                when(ex) {
-                    is PINException -> {
-                        Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                        Toast.makeText(
-                                requireContext(),
-                                getNfcCardErrorMessage(ex.pinExceptionEnum),
-                                Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    is CardMismatchException -> {
-                        Toast.makeText(
-                                requireContext(),
-                                getString(R.string.card_mismatch),
-                                Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-
-                if(remove) {
-                    btn_remove_card.isEnabled = true
-                } else
-                {
-                    btn_scan_smartcard.isEnabled = true
-                }
-                dialog?.dismiss()
-            } else {
-                if(remove) {
-                    btn_remove_card.visibility = View.GONE
-                    viewModel.scanCard(null)
-                    btn_scan_smartcard.visibility = View.VISIBLE
-                    btn_scan_smartcard.isEnabled = true
-                } else {
-                    val cardId = tag?.id?.asUByteArray()?.joinToString("") { it.toString(16).padStart(2, '0') }?.toUpperCase()
-                    viewModel.scanCard(cardId)
-                    btn_scan_smartcard.visibility = View.GONE
-                    btn_remove_card.visibility = View.VISIBLE
-                    btn_remove_card.isEnabled = true
-                }
-            }
-            dialog?.dismiss()
-        }
-
-        ldrs.observe(viewLifecycleOwner, observer)
+                            if(remove) {
+                                btn_remove_card.isEnabled = true
+                            } else
+                            {
+                                btn_scan_smartcard.isEnabled = true
+                            }
+                            dialog?.dismiss()
+                        }
+                )
 
         val builder = AlertDialog.Builder(requireContext())
         builder.setMessage(getString(R.string.scan_the_card))
@@ -453,7 +456,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         btn_remove_card?.visibility = View.GONE
                         btn_remove_card?.isEnabled = false
                     }
-                    ldrs.removeObserver(observer)
+                    disposable?.dispose()
+                    disposable = null
                 }
         dialog = builder.create()
         dialog?.show()
@@ -508,6 +512,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        disposable?.dispose()
+        super.onDestroy()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

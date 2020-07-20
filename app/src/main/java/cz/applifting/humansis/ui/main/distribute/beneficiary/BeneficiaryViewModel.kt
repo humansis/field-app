@@ -9,10 +9,12 @@ import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import cz.quanti.android.nfc.OfflineFacade
+import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import io.reactivex.Single
+import java.util.*
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -63,17 +65,17 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         }
     }
 
-    fun depositMoneyToCard(value: Double, currency: String, otherCard: String?, isNew: Boolean, pin: String, ownerId: Int): Single<Pair<Tag?, Throwable?>> {
+    fun depositMoneyToCard(value: Double, currency: String, otherCard: String?, isNew: Boolean, pin: String, ownerId: Int): Single<Tag> {
         return if(isNew)
         {
              Single.fromObservable(
                      nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
-                         nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(Pair(tag, null))
+                         nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(tag)
                      })
         } else {
             Single.fromObservable(
                     nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
-                        val id = tag.id.asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }.toUpperCase()
+                        val id = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
                         if (otherCard == null) {
                             throw CardMismatchException(otherCard)
                         }
@@ -82,16 +84,16 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
                             throw CardMismatchException(otherCard)
                         }
                         nfcFacade.increaseBalanceForUser(tag, value, ownerId.toString(), currency).flatMap {
-                            Single.just(Pair(tag, null))
+                            Single.just(tag)
                         }
                     })
         }
     }
 
-    fun scanCard(cardId: String?) {
+    fun saveCard(cardId: String?) {
         launch {
             val beneficiary = beneficiaryLD.value!!.copy(
-                newSmartcard = cardId?.toUpperCase()
+                newSmartcard = cardId?.toUpperCase(Locale.US)
             )
 
             beneficiariesRepository.updateBeneficiaryOffline(beneficiary)

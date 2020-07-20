@@ -37,7 +37,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
                     reliefIDs = parseReliefs(it.reliefs),
                     qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.beneficiary.smartcard?.toUpperCase(),
+                    smartcard = it.beneficiary.smartcard?.toUpperCase(Locale.US),
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
@@ -114,7 +114,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun distribute(beneficiaryLocal: BeneficiaryLocal) {
-        if (beneficiaryLocal.reliefIDs != null && beneficiaryLocal.reliefIDs.isNotEmpty()) {
+        if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
             setDistributedRelief(beneficiaryLocal.reliefIDs)
         }
 
@@ -126,7 +126,9 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             val time = convertTimeForApiRequestBody(Date())
             if(beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
-                deactivateSmartcard(beneficiaryLocal.smartcard, time)
+                beneficiaryLocal.smartcard?.let{
+                    deactivateSmartcard(beneficiaryLocal.smartcard, time)
+                }
             }
             distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, time)
         }
@@ -158,10 +160,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.assignSmartcard(AssignSmartcardRequest(code, beneficiaryId, date))
     }
 
-    private suspend fun deactivateSmartcard(code: String?, date: String) {
-        if(code != null) {
-            service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
-        }
+    private suspend fun deactivateSmartcard(code: String, date: String) {
+        service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
     private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String) {

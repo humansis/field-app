@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 15, August, 2019
  */
-class LoginFragment : Fragment(), CoroutineScope {
+class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
 
     val job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.Main
@@ -52,7 +52,7 @@ class LoginFragment : Fragment(), CoroutineScope {
         btn_login.isEnabled = true
         btn_login.setOnClickListener {
             btn_login.isEnabled = false
-            viewModel.login(et_username.text.toString(), et_password.text.toString(), btn_login)
+            viewModel.login(et_username.text.toString(), et_password.text.toString(), this)
         }
 
         viewModel.viewStateLD.observe(viewLifecycleOwner, Observer { viewState ->
@@ -132,5 +132,9 @@ class LoginFragment : Fragment(), CoroutineScope {
         var newEnv = env ?: ApiEnvironments.BASE
         envTextView.text = newEnv.name
         viewModel.changeHostUrl(newEnv)
+    }
+
+    override fun finishLogin(enableButton: Boolean) {
+        btn_login?.isEnabled = enableButton
     }
 }

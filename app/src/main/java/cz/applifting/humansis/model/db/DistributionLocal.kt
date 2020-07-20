@@ -24,7 +24,7 @@ data class DistributionLocal(
     val name: String,
     val numberOfBeneficiaries: Int,
     val commodities: List<CommodityLocal>,
-    val dateOfDistribution: String,
+    val dateOfDistribution: String?,
     val projectId: Int,
     val target: Target,
     val completed: Boolean

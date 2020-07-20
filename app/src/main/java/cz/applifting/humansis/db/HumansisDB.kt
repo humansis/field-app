@@ -18,7 +18,7 @@ import cz.applifting.humansis.model.db.*
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 19,
+    version = 20,
     exportSchema = false
 )
 @TypeConverters(

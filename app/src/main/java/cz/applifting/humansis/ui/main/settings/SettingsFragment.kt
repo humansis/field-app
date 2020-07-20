@@ -33,8 +33,7 @@ class SettingsFragment : BaseFragment() {
 
     @Inject
     lateinit var logger: Logger
-    @Inject
-    lateinit var loginManager: LoginManager
+    lateinit var adapter: CountryAdapter
 
     private val viewModel: SettingsViewModel by viewModels {
         viewModelFactory
@@ -57,10 +56,11 @@ class SettingsFragment : BaseFragment() {
 
         val navController = findNavController()
 
-        val adapter = CountryAdapter(requireContext())
+        adapter = CountryAdapter(requireContext())
         launch {
-            val countries = loginManager.getCountries().map{ Country(it.iso3, requireContext())}
+            val countries = viewModel.getCountries(context)
             adapter.setData(countries)
+            spinner_country.setSelection(adapter.getCountryPositionByIso3(viewModel.getCountrySettings()))
         }
         spinner_country.adapter = adapter
 
@@ -106,11 +106,6 @@ class SettingsFragment : BaseFragment() {
             btn_test.visibility = View.GONE
         }
 
-        viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
-            val country = Country(iso3 = it)
-            spinner_country.setSelection(adapter.getPosition(country))
-        })
-
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
             val message = if (it) {
                 sharedViewModel.forceSynchronize()
@@ -118,8 +113,6 @@ class SettingsFragment : BaseFragment() {
             } else {
                 getString(R.string.settings_country_update_error)
             }
-
-            viewModel.loadCountrySettings()
 
             view?.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()

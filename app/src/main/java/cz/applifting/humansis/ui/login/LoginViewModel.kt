@@ -54,7 +54,7 @@ class LoginViewModel @Inject constructor(
         return host
     }
 
-    fun login(username: String, password: String, loginButton: Button?) {
+    fun login(username: String, password: String, loginFinishCallback: LoginFinishCallback) {
         launch {
             viewStateLD.value = LoginViewState(
                 btnLoginVisibility = View.GONE,
@@ -77,13 +77,13 @@ class LoginViewModel @Inject constructor(
                 loginLD.value = user
             } catch (e: HumansisError) {
                 viewStateLD.value = createViewStateErrorOnLogin(e.message)
-                loginButton?.isEnabled = true
+                loginFinishCallback.finishLogin(true)
             } catch (e: HttpException) {
                 val message = parseError(e, context)
                 viewStateLD.value = createViewStateErrorOnLogin(message)
-                loginButton?.isEnabled = true
+                loginFinishCallback.finishLogin(true)
             }
-            loginButton?.isEnabled = true
+            loginFinishCallback.finishLogin(true)
         }
     }
 
