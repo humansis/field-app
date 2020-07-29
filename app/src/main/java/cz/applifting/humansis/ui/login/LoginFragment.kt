@@ -82,14 +82,6 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 et_password.setText("")
             }
         })
-
-
-        @Suppress("ConstantConditionIf")
-        @SuppressLint("SetTextI18n")
-        if (BuildConfig.FLAVOR == "demo") {
-//            et_username.setText("demo@humansis.org")
-//            et_password.setText("Update987")
-        }
     }
 
     private fun settingsButtonInit() {
