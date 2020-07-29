@@ -6,10 +6,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import cz.applifting.humansis.R
+import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
@@ -20,6 +22,7 @@ import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
@@ -54,6 +57,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     lateinit var logger: Logger
     @Inject
     lateinit var errorsRepository: ErrorsRepository
+    @Inject
+    lateinit var hostUrlInterceptor: HostUrlInterceptor
 
     private val reason = Data.Builder()
     private val syncErrors = arrayListOf<SyncError>()
@@ -69,6 +74,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
+            val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.BASE.name))
+            hostUrlInterceptor.setHost(host)
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 
             if (!loginManager.tryInitDB()) {
