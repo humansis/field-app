@@ -1,18 +1,13 @@
 <resources>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-
     <string name="menu_home">Projects</string>
-    <string name="menu_test">Test</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="log_out">Log out</string>
     <string name="projects">Projects</string>
-    <string name="unnamed_project">Unnamed Project</string>
     <string name="date_of_distribution">Start: %1$s</string>
     <string name="beneficiaries">Beneficiaries: %1$d</string>
     <string name="commodities">Commodities: </string>
@@ -21,11 +16,9 @@
     <string name="national_id">National ID: %1$s</string>
     <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
-    <string name="sort_alphabetically">Sort alphabetically</string>
-    <string name="search_beneficiary_hint">Search names</string>
+    <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>
-    <string name="assign_booklet">Assign booklet</string>
     <string name="status">Status</string>
     <string name="distributed">Distributed</string>
     <string name="not_distributed">Not Distributed</string>
@@ -33,7 +26,6 @@
     <string name="distribution">Distribution</string>
     <string name="project">Project</string>
     <string name="confirm_distribution">Confirm</string>
-    <string name="distribution_confirmation_message">%1$s successfully confirmed</string>
     <string name="rescan_qr">Rescan QR</string>
     <string name="booklet_id">Booklet ID</string>
     <string name="camera_permission_dialog_title">Camera permission</string>
@@ -50,12 +42,8 @@
     <string name="sync">Sync Data</string>
     <string name="revert">Undo Assignment</string>
     <string name="logout_alert_text">Are you sure you want to log out? All application data will be erased.</string>
-    <string name="error_message">There was an error during sync.</string>
     <string name="humansis_id">Humansis ID: %1$d</string>
-    <string name="settings_country_hint">Enter country ISO3</string>
     <string name="country">Country</string>
-    <string name="settings_save">Save</string>
-    <string name="settings_edit">Edit</string>
     <string name="settings_country_update_success">Country updated</string>
     <string name="settings_country_update_error">Invalid ISO3 code</string>
     <string name="commodity_value">%1$d %2$s</string>
@@ -63,8 +51,6 @@
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_no_internet_connection">Network connection lost</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="error_db_not_initialized">Database was not initialized</string>
-    <string name="error_missing_user_id">User id in response missing</string>
     <string name="downloading">Downloading…</string>
     <string name="no_data_message">Nothing here, try to reload.</string>
     <string name="invalid_code">Invalid code</string>
@@ -72,17 +58,15 @@
     <string name="last_update_failed">Last update failed</string>
     <string name="assign">Assign</string>
     <string name="sort_default">Grouped</string>
-    <string name="sort_az">︎AZ</string>
-    <string name="sort_za">ZA</string>
+    <string name="sort_az">︎A &#10132; Z</string>
+    <string name="sort_za">Z &#10132; A</string>
     <string name="error_service_unavailable">Service is unavailable</string>
     <string name="logout_alert_title">Log out</string>
     <string name="logout_alert_pending_changes_title">Pending changes!</string>
     <string name="logout_alert_pending_changes_text">You cannot log out right now. Pending changes need to be synchronized before log out.</string>
     <string name="show_developer_logs">Show developer logs</string>
-    <string name="show_system_logs">Show system logs</string>
     <string name="copy">Copy</string>
     <string name="close">close</string>
-    <string name="error_network_other">There was a network error</string>
     <string name="error_server">Server responded with error.</string>
     <string name="error_bad_request">Bad request.</string>
     <string name="error_user_not_allowed">User not allowed.</string>
@@ -91,8 +75,10 @@
     <string name="error_server_api_changed">Server API changed.</string>
     <string name="error_too_many_requests">Too many request.</string>
     <string name="error_server_failure">Server failure</string>
-    <string name="error_parsing_response">Response format not recognized.</string>
     <string name="error_other">An unexpected error occurred.</string>
+
+
+
     <string name="show_error_detail">Show error detail</string>
     <string name="errors_list_label">The following errors have occurred:</string>
     <string name="detail">Detail</string>
@@ -132,5 +118,30 @@
     <string name="acra_notif_text">Sorry, the app crashed. Please send a report to the developers.</string>
     <string name="acra_notif_send_button">Send</string>
     <string name="acra_email_subject">Android Crash Report</string>
+    <string name="scan_card">Scan card</string>
+    <string name="smartcard_id">Scanned Smartcard ID</string>
+    <string name="you_need_to_enable_nfc">You need to enable NFC in order to scan cards</string>
+    <string name="no_nfc_available">No NFC available</string>
+    <string name="pin">Card PIN</string>
+    <string name="please_enter_pin">Please enter PIN</string>
+    <string name="error_card_mismatch">Error: Card mismatch</string>
+    <string name="card_mismatch_message">This beneficiary already have an active card assigned and it does not match the card scanned. By continuing, the old card will be blocked. Are you sure you want to proceed?</string>
+    <string name="remove_card">Remove</string>
+    <string name="card_mismatch">Error. Please scan the same old card.</string>
+    <string name="smartcard_id_old">Owned smartcard</string>
+    <string name="none">none</string>
+    <string name="old_card">old card</string>
+    <string name="new_card">new card</string>
+    <string name="ok">ok</string>
+    <string name="card_locked">This card is locked and cannot be used anymore.</string>
+    <string name="incorrect_pin">Invalid PIN</string>
+    <string name="invalid_data">Data on the card are not valid for this request.</string>
+    <string name="invalid_version">Invalid version.</string>
+    <string name="currency_mismatch">You are trying to add money to a card with different currency. Use \"new card\" option instead to delete old funds and create new one with new currency.</string>
+    <string name="card_error">Error during the card scanning. Please try again.</string>
+    <string name="delete_card_first">Cannot undo assigment. Please remove the assigned card first.</string>
+    <string name="scan_the_card">Scan the card</string>
+    <string name="tag_lost_card_error">Scanning interrupted. Please scan the card again.</string>
+    <string name="different_user_card_error">This card was already assigned to a different user</string>
 
 </resources>

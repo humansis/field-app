@@ -98,7 +98,8 @@ class BeneficiariesFragment : BaseFragment() {
                 beneficiaryId = beneficiaryLocal.id,
                 distributionName = args.distributionName,
                 projectName = args.projectName,
-                isQRVoucher = args.isQRVoucherDistribution
+                isQRVoucher = args.isQRVoucherDistribution,
+                isSmartcard = args.isSmartcardDistribution
             )
         )
     }

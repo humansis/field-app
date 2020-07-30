@@ -3,6 +3,8 @@ package cz.applifting.humansis.ui
 import android.content.*
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -11,6 +13,7 @@ import androidx.work.*
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.isWifiConnected
+import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
@@ -25,6 +28,8 @@ class HumansisActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sp: SharedPreferences
+    @Inject
+    lateinit var nfcTagPublisher: NfcTagPublisher
 
     private val networkChangeReceiver = NetworkChangeReceiver()
 
@@ -90,6 +95,14 @@ class HumansisActivity : AppCompatActivity() {
             if (isWifiConnected()) {
                 enqueueSynchronization()
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action) {
+            val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            nfcTagPublisher.getTagSubject().onNext(tag)
         }
     }
 }

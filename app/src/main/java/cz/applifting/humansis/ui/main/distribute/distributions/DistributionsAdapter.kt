@@ -71,7 +71,7 @@ class DistributionsAdapter(
 
             // Set text fields
             tvName.text = name
-            tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution)
+            tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution ?: context.getString(R.string.unknown))
             tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llComoditiesHolder.removeAllViews()
 

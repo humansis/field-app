@@ -9,6 +9,8 @@ import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,10 +33,12 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     givenName = it.beneficiary.givenName,
                     familyName = it.beneficiary.familyName,
                     distributionId = distributionId,
-                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
+                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
                     vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
                     reliefIDs = parseReliefs(it.reliefs),
                     qrBooklets = parseQRBooklets(it.booklets),
+                    smartcard = it.beneficiary.smartcard?.toUpperCase(Locale.US),
+                    newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
                     nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
@@ -118,6 +122,17 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
 
+        if(beneficiaryLocal.newSmartcard != null) {
+            val time = convertTimeForApiRequestBody(Date())
+            if(beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
+                assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
+                beneficiaryLocal.smartcard?.let{
+                    deactivateSmartcard(beneficiaryLocal.smartcard, time)
+                }
+            }
+            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, time)
+        }
+
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
     }
 
@@ -139,6 +154,23 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
         service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+    }
+
+    private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
+        service.assignSmartcard(AssignSmartcardRequest(code, beneficiaryId, date))
+    }
+
+    private suspend fun deactivateSmartcard(code: String, date: String) {
+        service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
+    }
+
+    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String) {
+        service.distributeSmartcard(code, DistributeSmartcardRequest(distributionId = distributionId, createdAt = date))
+    }
+
+    private fun convertTimeForApiRequestBody(date: Date): String {
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+            .format(date)
     }
 
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {

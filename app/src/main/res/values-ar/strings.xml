@@ -1,17 +1,12 @@
 <resources>
-    <string name="navigation_drawer_open">افتح قائمة التنقل</string>
-    <string name="navigation_drawer_close">اغلق قائمة التنقل </string>
     <string name="nav_header_desc">عنوان التنقل الرئيسي</string>
     <string name="action_settings">الاعدادات </string>
-
     <string name="menu_home">المشاريع</string>
-    <string name="menu_test">اختبار</string>
     <string name="username">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
     <string name="login">تسجيل دخول </string>
     <string name="log_out">تسجيل خروج</string>
     <string name="projects">المشاريع</string>
-    <string name="unnamed_project">مشروع بدون اسم</string>
     <string name="date_of_distribution">%1$s يبدأ</string>
     <string name="beneficiaries">%1$d المستفيدين</string>
     <string name="commodities">السلع</string>
@@ -20,11 +15,9 @@
     <string name="national_id">%1$s رقم الهوية الشخصية</string>
     <string name="beneficiaries_reached">%1$d/%2$d المستفيدين الذين تم الوصول لهم</string>
     <string name="beneficiary_name">%1$s %2$s</string>
-    <string name="sort_alphabetically">ترتيب ابجدي </string>
     <string name="search_beneficiary_hint">ابحث في الأسماء </string>
     <string name="distributions">التوزيعات </string>
     <string name="unknown">غير معروف</string>
-    <string name="assign_booklet">تسليم القسيمة</string>
     <string name="status">الحالة</string>
     <string name="distributed">استلم </string>
     <string name="not_distributed">لم يستلم </string>
@@ -32,7 +25,6 @@
     <string name="distribution">توزيعة</string>
     <string name="project">مشروع</string>
     <string name="confirm_distribution">يأكد</string>
-    <string name="distribution_confirmation_message">تم التأكيد بنجاح</string>
     <string name="rescan_qr">امسح الرمز</string>
     <string name="booklet_id">رقم الدفتر </string>
     <string name="camera_permission_dialog_title">السماح للكاميرا</string>
@@ -49,21 +41,15 @@
     <string name="sync">مزامنة البيانات </string>
     <string name="revert">تراجع عن التسليم</string>
     <string name="logout_alert_text">هل انت متأكد انك تريد تسجيل الخروج؟  سوف يتم فقدان بيانات التطبيق</string>
-    <string name="error_message">حدث خطأ خلال المزامنة</string>
     <string name="humansis_id">%1$d رقم الهوية الخاص بالتطبيق</string>
-    <string name="settings_country_hint">ادخل البلد</string>
     <string name="country">البلد </string>
-    <string name="settings_save">احفظ </string>
-    <string name="settings_edit">تحرير</string>
     <string name="settings_country_update_success">تم تحديث البلد</string>
     <string name="settings_country_update_error">كود غير صالح</string>
-    <string name="commodity_value">قيمة السلعة </string>
+    <string name="commodity_value">%1$d %2$s</string>
     <string name="error_invalid_username">خطأ في اسم المستخدم</string>
     <string name="error_invalid_password">خطأ في كلمة السر</string>
     <string name="error_no_internet_connection">فقدان الاتصال بالشبكة</string>
     <string name="error_unknown">خطأ غير معروف</string>
-    <string name="error_db_not_initialized">مركز البيانات غير محدد</string>
-    <string name="error_missing_user_id">؟؟؟؟</string>
     <string name="downloading">تحميل </string>
     <string name="no_data_message">لا يوجد شيء , حاول  التحديث مجددا</string>
     <string name="invalid_code">كود غير معروف</string>
@@ -78,10 +64,8 @@
     <string name="logout_alert_pending_changes_title">؟؟؟</string>
     <string name="logout_alert_pending_changes_text">هل انت متأكد انك تريد تسجيل الخروج؟  سوف يتم فقدان بيانات التطبيق. التغيرات المطبقة تحتاج الى المزامنة قبل تسجيل الخروج واإلا سوف يتم فقدانها</string>
     <string name="show_developer_logs">اظهار حركة المطورين</string>
-    <string name="show_system_logs">اظهار حركة النظام</string>
     <string name="copy">نسخ</string>
     <string name="close">اغلق</string>
-    <string name="error_network_other">يوجد خطأ في الشبكة </string>
     <string name="error_server">خطأ في استجابة الخادم (السرفر)</string>
     <string name="error_bad_request">طلب خاطئ</string>
     <string name="error_user_not_allowed">ليس مسموح للمستخدم </string>
@@ -90,12 +74,10 @@
     <string name="error_server_api_changed">الخادم API تغير</string>
     <string name="error_too_many_requests">العديد من الطلبات </string>
     <string name="error_server_failure">فشل الخادم </string>
-    <string name="error_parsing_response">لم يتم التعرف على صيغة الاستجابة</string>
     <string name="error_other">خطأ غير متوقع</string>
     <string name="show_error_detail">عرض تفاصيل الخطأ</string>
     <string name="errors_list_label">حدثت الأخطاء التالية</string>
     <string name="detail">التفاصيل</string>
-
     <string name="KHM">كمبوديا</string>
     <string name="SYR">سوريا</string>
     <string name="warning_country_change">تحذير: سيؤدي تغيير البلد الى محو بياناتك الحالية </string>

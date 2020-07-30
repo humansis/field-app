@@ -1,10 +1,14 @@
 package cz.applifting.humansis.ui.main.settings
 
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.suspendCommit
+import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
@@ -19,18 +23,17 @@ import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
     private val sp: SharedPreferences,
-    private val projectsRepository: ProjectsRepository
+    private val projectsRepository: ProjectsRepository,
+    private val loginManager: LoginManager
 ) : BaseViewModel() {
-
-    val countryLD: MutableLiveData<String> = MutableLiveData()
     val savedLD: MutableLiveData<Boolean> = MutableLiveData()
 
-    init {
-        loadCountrySettings()
+    suspend fun getCountries(context: Context?): List<Country> {
+        return loginManager.getCountries().map{ Country(it.iso3, translateCountry(it.iso3, context)) }
     }
 
-    fun loadCountrySettings() {
-        countryLD.value = sp.getString(SP_COUNTRY, null)
+    fun getCountrySettings(): String {
+        return sp.getString(SP_COUNTRY, null)
     }
 
     fun test() {
@@ -45,7 +48,7 @@ class SettingsViewModel @Inject constructor(
 
         launch {
             with(sp.edit()) {
-                putString(SP_COUNTRY, country.toUpperCase(Locale.getDefault()))
+                putString(SP_COUNTRY, country)
                 putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, true)
                 suspendCommit()
             }
@@ -53,6 +56,23 @@ class SettingsViewModel @Inject constructor(
             // Delete all projects to not show old data when connection breaks during switch
             projectsRepository.deleteAll()
             savedLD.value = true
+        }
+    }
+
+    private fun translateCountry(iso3: String, context: Context?): String {
+        return when(iso3){
+            "SYR" -> {
+                context?.getString(R.string.SYR) ?: iso3
+            }
+            "KHM" -> {
+                context?.getString(R.string.KHM) ?: iso3
+            }
+            "UKR" -> {
+                context?.getString(R.string.UKR) ?: iso3
+            }
+            else -> {
+                iso3
+            }
         }
     }
 }

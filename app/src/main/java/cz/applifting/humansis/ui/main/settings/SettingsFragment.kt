@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -14,7 +13,9 @@ import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
+import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
+import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -32,6 +33,7 @@ class SettingsFragment : BaseFragment() {
 
     @Inject
     lateinit var logger: Logger
+    lateinit var adapter: CountryAdapter
 
     private val viewModel: SettingsViewModel by viewModels {
         viewModelFactory
@@ -54,11 +56,12 @@ class SettingsFragment : BaseFragment() {
 
         val navController = findNavController()
 
-        val countries = resources.getStringArray(R.array.countries)
-        val countryCodes = resources.getStringArray(R.array.country_codes)
-
-        val adapter = ArrayAdapter.createFromResource(context!!, R.array.countries, R.layout.item_country)
-        adapter.setDropDownViewResource(R.layout.item_country_dropdown)
+        adapter = CountryAdapter(requireContext())
+        launch {
+            val countries = viewModel.getCountries(context)
+            adapter.setData(countries)
+            spinner_country.setSelection(adapter.getCountryPositionByIso3(viewModel.getCountrySettings()))
+        }
         spinner_country.adapter = adapter
 
         spinner_country.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -67,9 +70,9 @@ class SettingsFragment : BaseFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val country = parent?.getItemAtPosition(position) as String
+                val country = parent?.getItemAtPosition(position) as Country
                 if ((activity as HumansisActivity).isNetworkConnected()) {
-                    viewModel.updateCountrySettings(countryCodes[countries.indexOf(country)])
+                    viewModel.updateCountrySettings(country.iso3)
                 }
             }
         }
@@ -103,10 +106,6 @@ class SettingsFragment : BaseFragment() {
             btn_test.visibility = View.GONE
         }
 
-        viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
-            spinner_country.setSelection(countryCodes.indexOf(it))
-        })
-
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
             val message = if (it) {
                 sharedViewModel.forceSynchronize()
@@ -114,8 +113,6 @@ class SettingsFragment : BaseFragment() {
             } else {
                 getString(R.string.settings_country_update_error)
             }
-
-            viewModel.loadCountrySettings()
 
             view?.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
