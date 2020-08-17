@@ -92,16 +92,7 @@
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@color/white</item>
-        <item name="buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="buttonBarPositiveButtonStyle">
-            @style/Widget.MaterialComponents.Button.TextButton
-        </item>
-        <item name="buttonBarNegativeButtonStyle">
-            @style/Widget.MaterialComponents.Button.TextButton
-        </item>
-        <item name="buttonBarNeutralButtonStyle">
-            @style/Widget.MaterialComponents.Button.TextButton
-        </item>
-        <item name="buttonTint">@color/colorAccent</item>
+        <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button</item>
     </style>
+
 </resources>

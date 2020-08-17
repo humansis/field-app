@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_location"
                 tools:text="Date: lsadjfadsf" />
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_date"
                 tools:text="Beneficiaries: 100" />
@@ -67,7 +67,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/commodities"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_beneficiaries_cnt" />
 
