@@ -56,9 +56,14 @@
                     tools:text="John Wick" />
 
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_action"
-                    style="@style/Button.Confirm"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:textSize="14sp"
+
                     android:backgroundTint="@color/colorAccent"
                     android:text="@string/confirm_distribution"
                     android:layout_marginEnd="16dp"
@@ -82,13 +87,16 @@
                         android:id="@+id/btn_scan_smartcard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/scan_card"
                         android:textColor="@color/white"
                         android:backgroundTint="@color/colorPrimaryDark"
 
                         android:textStyle="bold"
-                        android:textSize="30sp"
+                        android:textSize="16sp"
+                        android:layout_marginTop="10dp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

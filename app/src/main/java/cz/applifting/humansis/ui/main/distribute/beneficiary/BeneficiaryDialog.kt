@@ -3,6 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 import android.Manifest
 import android.app.Dialog
 import android.app.PendingIntent
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
@@ -15,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -42,7 +44,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
-import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import java.util.*
 import javax.inject.Inject
@@ -172,14 +173,21 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                 && beneficiary.smartcard != beneficiary.newSmartcard) {
                             val cardMismatchDialogView: View = layoutInflater.inflate(R.layout.dialog_card_mismatch, null)
 
-                            AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                            val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                                     .setView(cardMismatchDialogView)
                                     .setPositiveButton(android.R.string.ok) { _, _ ->
                                         showConfirmBeneficiaryDialog(beneficiary)
                                     }
                                     .setNegativeButton(android.R.string.cancel) { _, _ ->
                                     }
-                                    .show()
+                                    .create()
+                            dialog.show()
+
+                            val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                            negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+                            val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                            positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
                         }
 
 
@@ -247,7 +255,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             btn_scan_smartcard.isEnabled = false
             if(startSmartcardScanner()) {
                 if(beneficiary.smartcard != null) {
-                    AlertDialog.Builder(requireContext())
+                    val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                             .setCancelable(false)
                             .setTitle(getString(R.string.scan_card))
                             .setPositiveButton(getString(R.string.old_card)) { _, _ ->
@@ -256,7 +264,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             .setNegativeButton(getString(R.string.new_card)) { _, _ ->
                                 handleNewSmartcard(value, currency, beneficiary)
                             }
-                            .show()
+                            .create()
+                    dialog.show()
+                    val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                    negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+                    val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                    positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
                 } else {
                     handleNewSmartcard(value, currency, beneficiary)
                 }
@@ -295,9 +309,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
      private fun handleNewSmartcard(value: Int, currency: String, beneficiary: BeneficiaryLocal) {
          val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
-         AlertDialog.Builder(requireContext())
+         val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                  .setCancelable(false)
-                 .setTitle(getString(R.string.pin))
                  .setView(cardPinDialogView)
                  .setPositiveButton(getString(R.string.ok)){ _, _ ->
                      val pinEditTextView =
@@ -309,7 +322,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                      btn_scan_smartcard.visibility = View.VISIBLE
                      btn_scan_smartcard.isEnabled = true
                  }
-                 .show()
+                 .create()
+         dialog.show()
+
+         val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+         negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+         val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+         positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+
+
      }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
@@ -435,7 +457,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         }
                 )
 
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
         builder.setMessage(getString(R.string.scan_the_card))
                 .setCancelable(false)
                 .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
@@ -456,6 +478,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 }
         dialog = builder.create()
         dialog?.show()
+        val negative = dialog?.getButton(DialogInterface.BUTTON_NEGATIVE)
+        negative?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
     }
 
     private fun getNfcCardErrorMessage(pinExceptionEnum: PINExceptionEnum): String {
@@ -564,13 +588,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun showExplanationDialog() {
-        val builder = AlertDialog.Builder(activity as HumansisActivity)
+        val builder = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
         builder.setTitle(getString(cz.applifting.humansis.R.string.camera_permission_dialog_title))
         builder.setMessage(getString(cz.applifting.humansis.R.string.camera_permission_dialog_message))
         builder.setPositiveButton(getString(cz.applifting.humansis.R.string.camera_permission_dialog_positive_btn_label)) { _, _ -> requestCameraPermission() }
         builder.setNegativeButton(getString(cz.applifting.humansis.R.string.camera_permission_dialog_negative_btn_label)) { _, _ -> findNavController().navigateUp() }
         val dialog = builder.create()
         dialog.show()
+
+        val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+        val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+
     }
 
     private fun showConfirmBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
@@ -583,7 +614,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun showDismissConfirmDialog() {
-        AlertDialog.Builder(context!!)
+        val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setTitle(R.string.confirm_scan_title)
             .setMessage(R.string.confirm_scan_question)
             .setPositiveButton(R.string.confirm_distribution) { _, _ ->
@@ -591,6 +622,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
             .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
             .create()
-            .show()
+
+        dialog.show()
+
+        val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+        negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+        val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
     }
 }
