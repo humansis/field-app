@@ -201,12 +201,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     else -> {
                         // edit state changed
                         // Close dialog and notify shareViewModel after beneficiary is saved to db
-                        val text = if (beneficiary.distributed) {
-                            "Item was successfully distributed."
-                        } else {
-                            "Distribution was successfully reverted."
-                        }
-                        sharedViewModel.showToast(text)
+                        sharedViewModel.showToast(getString(R.string.success))
                         dismiss()
                     }
                 }

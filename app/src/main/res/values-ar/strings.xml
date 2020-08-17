@@ -80,7 +80,7 @@
     <string name="detail">التفاصيل</string>
     <string name="KHM">كمبوديا</string>
     <string name="SYR">سوريا</string>
-    <string name="UKR">أوكرانيا</string>
+    <string name="UKR">اوكرانيا</string>
     <string name="warning_country_change">تحذير: سيؤدي تغيير البلد الى محو بياناتك الحالية</string>
     <string name="unknwon_error">حدث خطأ غير معروف</string>
     <string name="download_error">لا يمكن تنزيل: %s</string>
@@ -100,7 +100,7 @@
     <string name="cancel">إلغاء</string>
     <string name="referral_type_label">نوع</string>
     <string name="referral_note_label">تعليق</string>
-    <string name="sync_summary">تم تحميل التغييرات</string>
+    <string name="sync_summary">تم تحميل %1$d من التغييرات %2$d.</string>
     <string name="sync_summary_nothing">لم يتم تحميل أي تغييرات محلية</string>
     <string name="expand_referral_information">توسيع معلومات الإحالة</string>
     <string name="add_referral">اضافة معلومات الإحالة</string>
@@ -136,4 +136,5 @@
     <string name="scan_the_card">امسح البطاقة ضوئيًا</string>
     <string name="tag_lost_card_error">المسح توقف. يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="different_user_card_error">تم تخصيص هذه البطاقة بالفعل لمستخدم مختلف</string>
+    <string name="success">نجاح!</string>
 </resources>
