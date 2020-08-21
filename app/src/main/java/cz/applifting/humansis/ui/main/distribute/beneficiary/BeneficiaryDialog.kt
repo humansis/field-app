@@ -299,7 +299,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         btn_remove_card.setOnClickListener{
             btn_remove_card.isEnabled = false
             if(startSmartcardScanner()) {
-                writeBalanceOnCard(value, currency, beneficiary, true, false, "")
+                writeBalanceOnCard(0, currency, beneficiary, true, true, "")
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
                 btn_scan_smartcard.isEnabled = false
@@ -394,11 +394,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun writeBalanceOnCard(balance: Int, currency: String, beneficiary: BeneficiaryLocal, remove: Boolean, isNew: Boolean, pin: String) {
 
-        var amountDouble = balance.toDouble()
-        if(remove) {
-            amountDouble = -amountDouble
-        }
-
         val otherCard = if (remove) {
             beneficiary.newSmartcard
         } else {
@@ -406,7 +401,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(amountDouble, currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
+        disposable = viewModel.depositMoneyToCard(balance.toDouble(), currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                         { tag ->
                             if(remove) {
