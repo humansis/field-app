@@ -13,11 +13,11 @@ repositories {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode readVersionCode()
         versionName readVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
