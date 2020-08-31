@@ -33,7 +33,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun getCountrySettings(): String {
-        return sp.getString(SP_COUNTRY, "")!!
+        return sp.getString(SP_COUNTRY, "") ?: ""
     }
 
     fun test() {
