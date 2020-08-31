@@ -35,7 +35,7 @@ class LogsDialog : DialogFragment() {
         view.btn_copy.setOnClickListener {
             val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
             val clip = ClipData.newPlainText("logs", args.logs)
-            clipboard!!.primaryClip = clip
+            clipboard?.setPrimaryClip(clip)
         }
 
 

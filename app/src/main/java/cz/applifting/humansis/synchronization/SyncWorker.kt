@@ -74,7 +74,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
-            val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.BASE.name))
+            val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.BASE.name) ?: ApiEnvironments.BASE.name)
             hostUrlInterceptor.setHost(host)
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 

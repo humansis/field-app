@@ -21,7 +21,7 @@ class CountryAdapter(context: Context) : SpinnerAdapter, ArrayAdapter<Country>(c
         }
 
         for(i in (count - 1) downTo 0) {
-            if(getItem(i).iso3 == iso3) {
+            if(getItem(i)?.iso3 == iso3) {
                 return i
             }
         }
