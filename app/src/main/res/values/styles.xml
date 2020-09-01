@@ -90,9 +90,34 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="DialogButton" parent="@style/Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="DialogButtonPositive" parent="@style/DialogButton">
+        <item name="backgroundTint">@color/green</item>
+        <item name="android:layout_marginStart">6dp</item>
+    </style>
+
+    <style name="DialogButtonNegative" parent="@style/DialogButton">
+        <item name="backgroundTint">@color/red</item>
+    </style>
+
+    <style name="DialogButtonNeutral" parent="@style/DialogButton">
+        <item name="backgroundTint">@color/darkBlue</item>
+    </style>
+
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@color/white</item>
-        <item name="android:buttonBarButtonStyle">@style/Widget.MaterialComponents.Button</item>
+        <item name="android:buttonBarPositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+            @style/DialogButtonPositive
+        </item>
+        <item name="android:buttonBarNegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+            @style/DialogButtonNegative
+        </item>
+        <item name="android:buttonBarNeutralButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+            @style/DialogButtonNeutral
+        </item>
     </style>
 
 </resources>

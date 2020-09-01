@@ -15,8 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import android.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -173,21 +172,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                 && beneficiary.smartcard != beneficiary.newSmartcard) {
                             val cardMismatchDialogView: View = layoutInflater.inflate(R.layout.dialog_card_mismatch, null)
 
-                            val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                                    .setView(cardMismatchDialogView)
-                                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                                        showConfirmBeneficiaryDialog(beneficiary)
-                                    }
-                                    .setNegativeButton(android.R.string.cancel) { _, _ ->
-                                    }
-                                    .create()
-                            dialog.show()
-
-                            val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-                            negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-                            val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-                            positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+                            AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                                .setView(cardMismatchDialogView)
+                                .setPositiveButton(android.R.string.ok) { _, _ ->
+                                    showConfirmBeneficiaryDialog(beneficiary)
+                                }
+                                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                                }
+                                .show()
                         }
 
 
@@ -255,22 +247,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             btn_scan_smartcard.isEnabled = false
             if(startSmartcardScanner()) {
                 if(beneficiary.smartcard != null) {
-                    val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                            .setCancelable(false)
-                            .setTitle(getString(R.string.scan_card))
-                            .setPositiveButton(getString(R.string.old_card)) { _, _ ->
-                                writeBalanceOnCard(value, currency, beneficiary, false, false, "")
-                            }
-                            .setNegativeButton(getString(R.string.new_card)) { _, _ ->
-                                handleNewSmartcard(value, currency, beneficiary)
-                            }
-                            .create()
-                    dialog.show()
-                    val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-                    negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-                    val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-                    positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.scan_card))
+                        .setPositiveButton(getString(R.string.old_card)) { _, _ ->
+                            writeBalanceOnCard(value, currency, beneficiary, false, false, "")
+                        }
+                        .setNegativeButton(getString(R.string.new_card)) { _, _ ->
+                            handleNewSmartcard(value, currency, beneficiary)
+                        }
+                        .show()
                 } else {
                     handleNewSmartcard(value, currency, beneficiary)
                 }
@@ -307,32 +293,23 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-     private fun handleNewSmartcard(value: Int, currency: String, beneficiary: BeneficiaryLocal) {
-         val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
-         val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                 .setCancelable(false)
-                 .setView(cardPinDialogView)
-                 .setPositiveButton(getString(R.string.ok)){ _, _ ->
-                     val pinEditTextView =
-                             cardPinDialogView.findViewById<TextInputEditText>(R.id.pinEditText)
-                     val pin = pinEditTextView.text.toString()
-                     writeBalanceOnCard(value, currency, beneficiary, false, true, pin)
-                 }
-                 .setNegativeButton(getString(R.string.cancel)){ _, _ ->
-                     btn_scan_smartcard.visibility = View.VISIBLE
-                     btn_scan_smartcard.isEnabled = true
-                 }
-                 .create()
-         dialog.show()
-
-         val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-         negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-         val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-         positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
-
-
-     }
+    private fun handleNewSmartcard(value: Int, currency: String, beneficiary: BeneficiaryLocal) {
+        val cardPinDialogView: View = layoutInflater.inflate(R.layout.dialog_card_pin, null)
+        AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+            .setCancelable(false)
+            .setView(cardPinDialogView)
+            .setPositiveButton(getString(R.string.ok)){ _, _ ->
+                val pinEditTextView =
+                    cardPinDialogView.findViewById<TextInputEditText>(R.id.pinEditText)
+                val pin = pinEditTextView.text.toString()
+                writeBalanceOnCard(value, currency, beneficiary, false, true, pin)
+            }
+            .setNegativeButton(getString(R.string.cancel)){ _, _ ->
+                btn_scan_smartcard.visibility = View.VISIBLE
+                btn_scan_smartcard.isEnabled = true
+            }
+            .show()
+    }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
         val booklet = beneficiary.qrBooklets?.firstOrNull()
@@ -356,16 +333,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             view?.btn_action?.isEnabled = booklet.isValidBooklet
         }
 
-            if (booklet == null) {
-                qr_scanner_holder.visibility = View.VISIBLE
-                startScanner(view!!)
-            } else {
-                qr_scanner_holder.visibility = View.GONE
-            }
+        if (booklet == null) {
+            qr_scanner_holder.visibility = View.VISIBLE
+            startScanner(view!!)
+        } else {
+            qr_scanner_holder.visibility = View.GONE
+        }
 
-            if (!isCameraPermissionGranted() && !beneficiary.distributed) {
-                requestCameraPermission()
-            }
+        if (!isCameraPermissionGranted() && !beneficiary.distributed) {
+            requestCameraPermission()
+        }
     }
 
     private fun initNfc(): Boolean {
@@ -402,79 +379,77 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(balance.toDouble(), currency, otherCard, isNew, pin, beneficiary.beneficiaryId)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
-                        { tag ->
-                            if(remove) {
-                                btn_remove_card.visibility = View.GONE
-                                viewModel.saveCard(null)
-                                btn_scan_smartcard.visibility = View.VISIBLE
-                                btn_scan_smartcard.isEnabled = true
-                            } else {
-                                val id = tag?.id
-                                var cardId: String? = null
-                                id?.let {
-                                    cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
-                                }
-                                viewModel.saveCard(cardId)
-                                btn_scan_smartcard.visibility = View.GONE
-                                btn_remove_card.visibility = View.VISIBLE
-                                btn_remove_card.isEnabled = true
-                            }
-
-                            dialog?.dismiss()
-                        },
-                        { ex ->
-                            when(ex) {
-                                is PINException -> {
-                                    Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                                    Toast.makeText(
-                                            requireContext(),
-                                            getNfcCardErrorMessage(ex.pinExceptionEnum),
-                                            Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                                is CardMismatchException -> {
-                                    Toast.makeText(
-                                            requireContext(),
-                                            getString(R.string.card_mismatch),
-                                            Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
-
-                            if(remove) {
-                                btn_remove_card.isEnabled = true
-                            } else
-                            {
-                                btn_scan_smartcard.isEnabled = true
-                            }
-                            dialog?.dismiss()
-                        }
-                )
-
-        val builder = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-        builder.setMessage(getString(R.string.scan_the_card))
-                .setCancelable(false)
-                .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
-                    dialog?.dismiss()
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                { tag ->
                     if(remove) {
-                        btn_scan_smartcard?.visibility = View.GONE
-                        btn_scan_smartcard?.isEnabled = false
-                        btn_remove_card?.visibility = View.VISIBLE
-                        btn_remove_card?.isEnabled = true
+                        btn_remove_card.visibility = View.GONE
+                        viewModel.saveCard(null)
+                        btn_scan_smartcard.visibility = View.VISIBLE
+                        btn_scan_smartcard.isEnabled = true
                     } else {
-                        btn_scan_smartcard?.visibility = View.VISIBLE
-                        btn_scan_smartcard?.isEnabled = true
-                        btn_remove_card?.visibility = View.GONE
-                        btn_remove_card?.isEnabled = false
+                        val id = tag?.id
+                        var cardId: String? = null
+                        id?.let {
+                            cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
+                        }
+                        viewModel.saveCard(cardId)
+                        btn_scan_smartcard.visibility = View.GONE
+                        btn_remove_card.visibility = View.VISIBLE
+                        btn_remove_card.isEnabled = true
                     }
-                    disposable?.dispose()
-                    disposable = null
+
+                    dialog?.dismiss()
+                },
+                { ex ->
+                    when(ex) {
+                        is PINException -> {
+                            Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                            Toast.makeText(
+                                requireContext(),
+                                getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        is CardMismatchException -> {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.card_mismatch),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    if(remove) {
+                        btn_remove_card.isEnabled = true
+                    } else
+                    {
+                        btn_scan_smartcard.isEnabled = true
+                    }
+                    dialog?.dismiss()
                 }
-        dialog = builder.create()
+            )
+
+        dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+            .setMessage(getString(R.string.scan_the_card))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
+                dialog?.dismiss()
+                if(remove) {
+                    btn_scan_smartcard?.visibility = View.GONE
+                    btn_scan_smartcard?.isEnabled = false
+                    btn_remove_card?.visibility = View.VISIBLE
+                    btn_remove_card?.isEnabled = true
+                } else {
+                    btn_scan_smartcard?.visibility = View.VISIBLE
+                    btn_scan_smartcard?.isEnabled = true
+                    btn_remove_card?.visibility = View.GONE
+                    btn_remove_card?.isEnabled = false
+                }
+                disposable?.dispose()
+                disposable = null
+            }
+            .create()
         dialog?.show()
-        val negative = dialog?.getButton(DialogInterface.BUTTON_NEGATIVE)
-        negative?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
     }
 
     private fun getNfcCardErrorMessage(pinExceptionEnum: PINExceptionEnum): String {
@@ -578,27 +553,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (activity as HumansisActivity).checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun shouldShowExplanation(): Boolean {
-        return shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
-    }
-
-    private fun showExplanationDialog() {
-        val builder = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-        builder.setTitle(getString(cz.applifting.humansis.R.string.camera_permission_dialog_title))
-        builder.setMessage(getString(cz.applifting.humansis.R.string.camera_permission_dialog_message))
-        builder.setPositiveButton(getString(cz.applifting.humansis.R.string.camera_permission_dialog_positive_btn_label)) { _, _ -> requestCameraPermission() }
-        builder.setNegativeButton(getString(cz.applifting.humansis.R.string.camera_permission_dialog_negative_btn_label)) { _, _ -> findNavController().navigateUp() }
-        val dialog = builder.create()
-        dialog.show()
-
-        val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-        val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-        positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
-
-    }
-
     private fun showConfirmBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
         tryNavigate(
             R.id.beneficiaryDialog,
@@ -609,21 +563,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun showDismissConfirmDialog() {
-        val dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setTitle(R.string.confirm_scan_title)
             .setMessage(R.string.confirm_scan_question)
             .setPositiveButton(R.string.confirm_distribution) { _, _ ->
                 viewModel.beneficiaryLD.value?.let { showConfirmBeneficiaryDialog(it) } ?: dismiss()
             }
             .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
-            .create()
-
-        dialog.show()
-
-        val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-        negative.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-        val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-        positive.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+            .show()
     }
 }
