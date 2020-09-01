@@ -3,24 +3,26 @@
     <color name="colorPrimary">@color/green</color>
     <color name="colorPrimaryDark">@color/darkBlue</color>
     <color name="colorAccent">@color/lightGrey</color>
-    <color name="colorAccentDark">#DD5060</color>
-
-    <color name="lightBlue">#a6f2f9</color>
+    <color name="colorAccentDark">@color/midGreen</color>
 
     <color name="lightGrey">#C5C5C5</color>
 
     <color name="textColor">#161616</color>
     <color name="darkGreyColor">#888888</color>
 
-    <color name="red">#ED5565</color>
-    <color name="error">#FF0F0F</color>
+    <color name="error">@color/red</color>
 
-    <color name="green">#51C89E</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="darkGrey">#2E2E2E</color>
-    <color name="darkBlue">#02617F</color>
+    <color name="darkGrey">#FF424242</color>
+    <color name="darkBlue">#02617f</color>
+    <color name="midGreen">#47aa96</color>
+    <color name="green">#51c89e</color>
+    <color name="red">#ed5565</color>
+    <color name="grey">#f3f3f4</color>
+
     <color name="black">#000000</color>
+    <color name="yellow">#cefa05</color>
     <color name="screenBackgroundColor">#F3F3F4</color>
-    <color name="toastBackgroundColor">#02617F</color>
+    <color name="toastBackgroundColor">@color/darkBlue</color>
 </resources>
