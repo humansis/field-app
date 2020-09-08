@@ -8,8 +8,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import android.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -94,9 +93,8 @@ class MainFragment : BaseFragment() {
 
             val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
-            var dialog: AlertDialog? = null
             if (!pendingChanges) {
-                dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                 AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                     .setTitle(R.string.logout_alert_title)
                     .setMessage(getString(R.string.logout_alert_text))
                     .setPositiveButton(android.R.string.yes) { _, _ ->
@@ -104,22 +102,15 @@ class MainFragment : BaseFragment() {
                     }
                     .setNegativeButton(android.R.string.no, null)
                     .setIcon(R.drawable.ic_warning)
-                    .create()
+                    .show()
             } else {
-                dialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                     .setTitle(R.string.logout_alert_pending_changes_title)
                     .setMessage(getString(R.string.logout_alert_pending_changes_text))
                     .setNegativeButton(R.string.close, null)
                     .setIcon(R.drawable.ic_warning)
-                    .create()
+                    .show()
             }
-            dialog.show()
-            val negative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
-            negative?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-
-            val positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            positive?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
-
         }
 
         sharedViewModel.tryFirstDownload()
