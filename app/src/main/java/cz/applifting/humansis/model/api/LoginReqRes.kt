@@ -11,7 +11,9 @@ data class LoginReqRes(
     var id: Long = 0,
     var username: String = "",
     var password: String = "",
-    var countries: List<Country> = listOf(),
+   // var countries: List<Country> = listOf(), //it is there, but has strange data inside and thus its useless
+    @SerializedName("available_countries")
+    var availableCountries: List<String>? = null,
 
     @SerializedName("change_password")
     var email: String = "",
@@ -19,7 +21,7 @@ data class LoginReqRes(
     var vendor: String? = null,
     var roles: List<Role>? = null,
     var language: String? = null,
-    var projects: List<Project>? = null,
+   // var projects: List<Project>? = null, //it is there, but has strange data inside and thus its useless
 
     var transactions: List<Any>? = null,
     @SerializedName("phone_prefix")
