@@ -21,7 +21,7 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
     suspend fun getProjectsOnline(): List<ProjectLocal>? {
         val result = service
             .getProjects()
-            .filter{ it.iso3?.toUpperCase() == getCurrentCountry()}.map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
+            .filter{ it.iso3.equals(getCurrentCountry(), true) }.map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
         dbProvider.get().projectsDao().replaceProjects(result)
 
