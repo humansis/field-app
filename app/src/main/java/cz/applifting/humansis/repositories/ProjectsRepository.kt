@@ -15,20 +15,20 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Singleton
-class ProjectsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context, private val sp: SharedPreferences) {
+class ProjectsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
 
-    suspend fun getProjectsOnline(): List<ProjectLocal>? {
+    suspend fun getProjectsOnline(sp: SharedPreferences): List<ProjectLocal>? {
         val result = service
             .getProjects()
-            .filter{ it.iso3.equals(getCurrentCountry(), true) }.map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
+            .filter{ it.iso3.equals(getCurrentCountry(sp), true) }.map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
         dbProvider.get().projectsDao().replaceProjects(result)
 
         return result
     }
 
-    private fun getCurrentCountry(): String {
+    private fun getCurrentCountry(sp: SharedPreferences): String {
         return sp.getString(SP_COUNTRY, "") ?: ""
     }
 

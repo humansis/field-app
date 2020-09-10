@@ -145,7 +145,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (syncErrors.isEmpty()) {
 
                 val projects = try {
-                    projectsRepository.getProjectsOnline()
+                    projectsRepository.getProjectsOnline(sp)
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
                     emptyList<ProjectLocal>()
