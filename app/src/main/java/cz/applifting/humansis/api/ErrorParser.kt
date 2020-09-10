@@ -6,11 +6,13 @@ import retrofit2.HttpException
 
 fun parseError(e: HttpException, context: Context): String {
 
-    return when (e.response()?.errorBody()?.string()) {
-        "This username doesn't exist" -> context.getString(R.string.error_invalid_username)
-        "Wrong password" -> context.getString(R.string.error_invalid_password)
-        "No internet connection" -> context.getString(R.string.error_no_internet_connection)
-        "Service unavailable" -> context.getString(R.string.error_service_unavailable)
+    val errorBody = e.response()?.errorBody()?.string() ?: ""
+
+    return when {
+        errorBody.contains("This username doesn't exist") -> context.getString(R.string.error_invalid_username)
+        errorBody.contains("Wrong password") -> context.getString(R.string.error_invalid_password)
+        errorBody.contains("No internet connection") -> context.getString(R.string.error_no_internet_connection)
+        errorBody.contains("Service unavailable") -> context.getString(R.string.error_service_unavailable)
         else -> {
             val localizedError = context.getString(R.string.error_unknown)
             val message = e.response()?.errorBody()?.string()?.takeIf { it.isNotEmpty() } ?: e.message()
