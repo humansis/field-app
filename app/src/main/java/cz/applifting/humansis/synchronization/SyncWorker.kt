@@ -10,6 +10,7 @@ import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.Logger
@@ -145,7 +146,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (syncErrors.isEmpty()) {
 
                 val projects = try {
-                    projectsRepository.getProjectsOnline()
+                    projectsRepository.getProjectsOnline(getCurrentCountry(sp))
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
                     emptyList<ProjectLocal>()
@@ -180,6 +181,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             finishWork()
         }
+    }
+
+    private fun getCurrentCountry(sp: SharedPreferences): String {
+        return sp.getString(SP_COUNTRY, "") ?: ""
     }
 
     private suspend fun stopWork(location: String): Result {

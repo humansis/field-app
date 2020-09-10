@@ -41,7 +41,7 @@ class LoginManager @Inject constructor(
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
-        val defaultCountry = userResponse.projects?.firstOrNull()?.iso3 ?: "SYR"
+        val defaultCountry = userResponse.availableCountries?.firstOrNull() ?: ""
 
         if (retrieveUser()?.invalidPassword == true) {
             // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekyed using the new one.
@@ -71,7 +71,7 @@ class LoginManager @Inject constructor(
             username = userResponse.username,
             email = userResponse.email,
             saltedPassword = userResponse.password,
-            countries = userResponse.countries
+            countries = userResponse.availableCountries ?: listOf()
         )
         db.userDao().insert(user)
 
@@ -124,7 +124,7 @@ class LoginManager @Inject constructor(
         }
     }
 
-    suspend fun getCountries(): List<Country> {
+    suspend fun getCountries(): List<String> {
         return db.userDao().getUser()?.countries ?: listOf()
     }
 

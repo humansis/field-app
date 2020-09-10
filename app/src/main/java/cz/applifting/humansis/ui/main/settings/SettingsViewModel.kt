@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     val savedLD: MutableLiveData<Boolean> = MutableLiveData()
 
     suspend fun getCountries(context: Context?): List<Country> {
-        return loginManager.getCountries().map{ Country(it.iso3, translateCountry(it.iso3, context)) }
+        return loginManager.getCountries().map{ Country(it, translateCountry(it, context)) }
     }
 
     fun getCountrySettings(): String {
