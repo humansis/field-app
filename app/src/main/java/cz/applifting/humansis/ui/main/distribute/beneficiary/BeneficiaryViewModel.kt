@@ -71,10 +71,6 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
              Single.fromObservable(
                      nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
                          val id = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
-
-                         if(otherCard != null && id != otherCard) {
-                             throw CardMismatchException(otherCard)
-                         }
                          nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(tag)
                      })
         } else {

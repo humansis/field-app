@@ -285,7 +285,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         btn_remove_card.setOnClickListener{
             btn_remove_card.isEnabled = false
             if(startSmartcardScanner()) {
-                writeBalanceOnCard(0, currency, beneficiary, true, true, "")
+                writeBalanceOnCard(-value, currency, beneficiary, true, false, "")
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
                 btn_scan_smartcard.isEnabled = false
