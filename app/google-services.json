@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "1075203125993",
+    "firebase_url": "https://offline-app-39475.firebaseio.com",
+    "project_id": "offline-app-39475",
+    "storage_bucket": "offline-app-39475.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID}",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "${FIREBASE_CLIENT_ID}",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "${FIREBASE_API_KEY}"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "${FIREBASE_CLIENT_ID}",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEMO}",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "${FIREBASE_CLIENT_ID}",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "${FIREBASE_API_KEY}"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "${FIREBASE_CLIENT_ID}",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
