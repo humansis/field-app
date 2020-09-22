@@ -417,6 +417,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+                        else -> {
+                            Toast.makeText(
+                                requireContext(),
+                                 "${getString(R.string.error)}: ${ex}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
 
                     if(remove) {
