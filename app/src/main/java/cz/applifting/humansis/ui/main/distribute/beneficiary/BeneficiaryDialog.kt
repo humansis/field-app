@@ -420,7 +420,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         else -> {
                             Toast.makeText(
                                 requireContext(),
-                                 "${getString(R.string.error)}: ${ex}",
+                                getString(R.string.card_error),
                                 Toast.LENGTH_LONG
                             ).show()
                         }

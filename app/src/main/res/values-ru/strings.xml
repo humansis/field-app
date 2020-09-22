@@ -144,6 +144,5 @@
     <string name="tag_lost_card_error">Сканирование прервано. Пожалуйста, отсканируйте заново.</string>
     <string name="different_user_card_error">Эта карта уже закреплена за другим пользователем.</string>
     <string name="success">Операция успешна!</string>
-    <string name="error">Ошибка:</string>
 
 </resources>

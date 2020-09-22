@@ -137,5 +137,4 @@
     <string name="tag_lost_card_error">المسح توقف. يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="different_user_card_error">تم تخصيص هذه البطاقة بالفعل لمستخدم مختلف</string>
     <string name="success">نجاح!</string>
-    <string name="error">خطأ:</string>
 </resources>
