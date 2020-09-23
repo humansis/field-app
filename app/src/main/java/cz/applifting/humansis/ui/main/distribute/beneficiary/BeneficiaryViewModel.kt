@@ -68,15 +68,9 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
     fun depositMoneyToCard(value: Double, currency: String, otherCard: String?, isNew: Boolean, pin: String, ownerId: Int): Single<Tag> {
         return if(isNew)
         {
-             Single.fromObservable(
-                     nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
-                         val id = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
-
-                         if(otherCard != null && id != otherCard) {
-                             throw CardMismatchException(otherCard)
-                         }
-                         nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(tag)
-                     })
+            nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
+                nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(tag)
+            }
         } else {
             Single.fromObservable(
                     nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->

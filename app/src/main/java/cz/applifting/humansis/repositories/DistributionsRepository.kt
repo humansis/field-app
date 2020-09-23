@@ -31,7 +31,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                 DistributionLocal(
                     it.id,
                     it.name,
-                    it.distributionBeneficiaries?.size ?: 0,
+                    it.beneficiariesCount,
                     parseCommodities(it.commodities),
                     it.dateDistribution,
                     projectId,

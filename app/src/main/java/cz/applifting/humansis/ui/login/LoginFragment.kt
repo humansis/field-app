@@ -78,7 +78,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             } else {
                 tv_error.text = getString(R.string.auth_expiration_explanation)
                 tv_error.visibility = View.VISIBLE
-                et_username.setText(it.email)
+                et_username.setText("")
                 et_password.setText("")
             }
         })
@@ -102,6 +102,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
                 popup.menu.add(0, ApiEnvironments.DEV.id, 0, "DEV API")
                 popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
+                popup.menu.add(0, ApiEnvironments.RELEASE.id, 0, "RELEASE API")
                 popup.setOnMenuItemClickListener { item ->
                     val env = ApiEnvironments.values().find { it.id == item?.itemId }
                     changeEnvironment(env)
@@ -121,7 +122,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
     }
 
     private fun changeEnvironment(env: ApiEnvironments?) {
-        var newEnv = env ?: ApiEnvironments.BASE
+        var newEnv = env ?: ApiEnvironments.STAGE
         envTextView.text = newEnv.name
         viewModel.changeHostUrl(newEnv)
     }

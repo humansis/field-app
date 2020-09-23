@@ -14,13 +14,6 @@ class HostUrlInterceptor : Interceptor {
         this.host = host
     }
 
-    fun getHostUrl(): String {
-        host?.let {
-            return it.url
-        }
-        return ApiEnvironments.BASE.url
-    }
-
     override fun intercept(chain: Interceptor.Chain): Response {
             var request: Request = chain.request()
             host?.let { host ->

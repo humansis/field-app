@@ -130,7 +130,14 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     deactivateSmartcard(beneficiaryLocal.smartcard, time)
                 }
             }
-            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, time)
+
+            var value = 1
+            beneficiaryLocal.commodities?.forEach {
+                if (it.type == CommodityType.SMARTCARD) {
+                    value = it.value
+                }
+            }
+            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, time, value)
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
@@ -164,8 +171,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String) {
-        service.distributeSmartcard(code, DistributeSmartcardRequest(distributionId = distributionId, createdAt = date))
+    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String, value: Int) {
+        service.distributeSmartcard(code, DistributeSmartcardRequest(distributionId = distributionId, createdAt = date, value = value))
     }
 
     private fun convertTimeForApiRequestBody(date: Date): String {

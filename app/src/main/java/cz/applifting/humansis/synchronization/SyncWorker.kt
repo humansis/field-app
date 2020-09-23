@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.extensions.setDate
@@ -75,8 +76,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
-            val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.BASE.name) ?: ApiEnvironments.BASE.name)
-            hostUrlInterceptor.setHost(host)
+            if (BuildConfig.DEBUG)
+            {
+                val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
+                hostUrlInterceptor.setHost(host)
+            }
+
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 
             if (!loginManager.tryInitDB()) {
