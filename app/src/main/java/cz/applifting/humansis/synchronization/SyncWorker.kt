@@ -76,7 +76,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(BuildConfig.DEMO_ACCOUNT, true) == true)
             {
                 val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
                 hostUrlInterceptor.setHost(host)
