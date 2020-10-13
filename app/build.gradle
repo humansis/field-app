@@ -81,6 +81,8 @@ android {
             buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
             buildConfigField "String", "APP_ID", "\"$APP_ID\""
             buildConfigField "short", "APP_VESION", "$APP_VERSION"
+
+            buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
         }
 
         demo {
@@ -99,6 +101,8 @@ android {
             buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
             buildConfigField "String", "APP_ID", "\"$APP_ID\""
             buildConfigField "short", "APP_VESION", "$APP_VERSION"
+
+            buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
         }
     }
 
