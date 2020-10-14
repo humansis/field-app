@@ -121,6 +121,8 @@
             <Button
                     android:id="@+id/btn_cancel"
                     style="@style/Button.Cancel"
+                    android:backgroundTint="@color/red"
+                    android:textColor="@color/white"
                     android:text="@string/cancel" />
 
             <Button
