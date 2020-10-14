@@ -140,13 +140,21 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     if (beneficiary.edited) {
                         btn_action.text = context.getString(R.string.revert)
-                        btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            btn_action.setBackgroundTintList( context.resources.getColorStateList(R.color.background_revert_btn,context.theme) )
+                        } else {
+                            btn_action.setBackgroundTintList( context.resources.getColorStateList(R.color.background_revert_btn) )
+                        }
                     } else {
                         btn_action.visible(false)
                     }
                 } else {
                     btn_action.text = context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
-                    btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        btn_action.setBackgroundTintList( context.resources.getColorStateList(R.color.background_confirm_btn,context.theme) )
+                    } else {
+                        btn_action.setBackgroundTintList( context.resources.getColorStateList(R.color.background_confirm_btn) )
+                    }
                 }
 
                 view?.btn_action?.isEnabled = true

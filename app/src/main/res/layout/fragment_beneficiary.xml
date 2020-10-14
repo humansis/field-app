@@ -56,15 +56,14 @@
                     tools:text="John Wick" />
 
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                     android:id="@+id/btn_action"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
-                    android:textSize="14sp"
-
-                    android:backgroundTint="@color/colorAccent"
+                    android:textSize="16sp"
+                    android:backgroundTint="@color/background_revert_btn"
                     android:text="@string/confirm_distribution"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
