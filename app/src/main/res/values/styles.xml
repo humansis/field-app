@@ -71,20 +71,6 @@
         <item name="android:layout_marginTop">8dp</item>
     </style>
 
-    <style name="Button.Confirm" parent="Button">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@color/background_confirm_btn</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="Button.Cancel" parent="Button">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:textColor">@color/colorAccent</item>
-    </style>
-
     <style name="PopupMenuTheme" parent="@android:style/Widget.PopupMenu">
         <item name="android:background">@color/white</item>
         <item name="android:textColor">@color/black</item>

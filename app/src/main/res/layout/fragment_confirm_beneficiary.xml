@@ -120,16 +120,18 @@
 
             <Button
                     android:id="@+id/btn_cancel"
-                    style="@style/Button.Cancel"
+                    style="@style/Button"
                     android:backgroundTint="@color/red"
                     android:textColor="@color/white"
                     android:text="@string/cancel" />
 
             <Button
                     android:id="@+id/btn_confirm"
-                    style="@style/Button.Confirm"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/confirm_distribution" />
+                    style="@style/Button"
+                    android:backgroundTint="@color/green"
+                    android:textColor="@color/white"
+                    android:text="@string/confirm_distribution"
+                    android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
 
