@@ -109,16 +109,8 @@ class BeneficiariesAdapter(
                     val txtValue = TextView(context)
                     txtValue.text = context.getString(R.string.commodity_value, commodity.value, commodity.unit)
 
-                    if (commodity.type == CommodityType.QR_VOUCHER &&
-                        beneficiaryLocal.distributed &&
-                        beneficiaryLocal.edited
-                    ) {
-                        row.addView(commodityImage)
-                    } else {
-                        row.addView(commodityImage)
-                        row.addView(txtValue)
-                    }
-
+                    row.addView(commodityImage)
+                    row.addView(txtValue)
                     tlCommoditiesHolder.addView(row)
                 }
             }
