@@ -11,6 +11,7 @@ import cz.applifting.humansis.model.db.DistributionLocal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.roundToInt
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
@@ -71,7 +72,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
         return commodities?.map {
             val commodityName: String = it.modalityType?.name?.name ?: CommodityType.UNKNOWN.name
-            CommodityLocal(CommodityType.valueOf(commodityName), it.value, it.unit)
+            CommodityLocal(CommodityType.valueOf(commodityName), it.value.roundToInt(), it.unit)
         }
     }
 }
