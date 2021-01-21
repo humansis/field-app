@@ -137,4 +137,8 @@
     <string name="tag_lost_card_error">المسح توقف. يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="different_user_card_error">تم تخصيص هذه البطاقة بالفعل لمستخدم مختلف</string>
     <string name="success">نجاح!</string>
+    <string name="navigation_drawer_open">افتح قائمة التنقل</string>
+    <string name="navigation_drawer_close">"اغلق قائمة التنقل "</string>
+    <string name="unnamed_project">مشروع بدون اسم</string>
+    <string name="ETH">أثيوبيا</string>
 </resources>

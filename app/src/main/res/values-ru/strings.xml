@@ -144,5 +144,9 @@
     <string name="tag_lost_card_error">Сканирование прервано. Пожалуйста, отсканируйте заново.</string>
     <string name="different_user_card_error">Эта карта уже закреплена за другим пользователем.</string>
     <string name="success">Операция успешна!</string>
+    <string name="navigation_drawer_open">Откройте панель навигации.</string>
+    <string name="navigation_drawer_close">Закройте панель навигации.</string>
+    <string name="unnamed_project">Проекты без названия</string>
+    <string name="ETH">ETH</string>
 
 </resources>
