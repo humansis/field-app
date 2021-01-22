@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        app:cardCornerRadius="16dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/tv_message_referral"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/add_referral"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <fr.ganfra.materialspinner.MaterialSpinner
+                    android:id="@+id/spinner_referral_type_referral"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ms_alignLabels="true"
+                    app:ms_alwaysShowFloatingLabel="true"
+                    app:ms_enableFloatingLabel="true"
+                    app:ms_floatingLabelText="@string/referral_type_label"
+                    app:ms_multiline="false"
+                    app:ms_thickness="0.5dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_referral_note_referral"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingStart="-4dp"
+                    android:paddingEnd="-4dp"
+                    android:textColorHint="?android:attr/textColorTertiary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tv_referral_note_referral"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/referral_note_label"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+                android:id="@+id/tv_error_referral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:textColor="@color/red"
+                tools:text="Error" />
+
+        <LinearLayout
+                android:id="@+id/layout_buttons_referral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end">
+
+            <Button
+                    android:id="@+id/btn_cancel_referral"
+                    style="@style/Button"
+                    android:backgroundTint="@color/red"
+                    android:textColor="@color/white"
+                    android:text="@string/cancel" />
+
+            <Button
+                    android:id="@+id/btn_confirm_referral"
+                    style="@style/Button"
+                    android:backgroundTint="@color/green"
+                    android:textColor="@color/white"
+                    android:text="@string/ok"
+                    android:layout_marginBottom="16dp"/>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+</androidx.cardview.widget.CardView>

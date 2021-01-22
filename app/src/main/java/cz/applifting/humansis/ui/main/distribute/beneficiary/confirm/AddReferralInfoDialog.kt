@@ -8,52 +8,45 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.main.SharedViewModel
-import kotlinx.android.synthetic.main.fragment_confirm_beneficiary.*
-import kotlinx.android.synthetic.main.fragment_confirm_beneficiary.view.*
+import kotlinx.android.synthetic.main.fragment_add_referral_info.*
 import javax.inject.Inject
 
-
-class ConfirmBeneficiaryDialog : DialogFragment() {
+class AddReferralInfoDialog : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: ConfirmBeneficiaryViewModel by viewModels { viewModelFactory }
+    private val viewModel: ConfirmBeneficiaryViewModel by lazy{ ViewModelProviders.of(this, viewModelFactory)[ConfirmBeneficiaryViewModel::class.java] }
+    private val args: AddReferralInfoDialogArgs by navArgs()
     private lateinit var sharedViewModel: SharedViewModel
 
-    private val args: ConfirmBeneficiaryDialogArgs by navArgs()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_confirm_beneficiary, container, false)
-        (activity?.application as App).appComponent.inject(this)
+        (requireActivity().application as App).appComponent.inject(this)
+        val view = inflater.inflate(R.layout.fragment_add_referral_info, container, false)
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        setupViews()
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        view.setupViews()
+        isCancelable = false
 
         viewModel.initBeneficiary(args.beneficiaryId)
-
-        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
-            tv_referral_title.text = getString(if (it.hasReferral) R.string.edit_referral else R.string.add_referral)
-        })
-
-        viewModel.isReferralVisibleLD.observe(viewLifecycleOwner, Observer {
-            layout_referral.visible(it) // animated by animateLayoutChanges="true"
-            referral_header_indicator.animate().rotation(if (it) 90f else 0f).start()
-        })
+        viewModel.isReferralVisibleLD.postValue(true)
 
         viewModel.referralTypeLD.observe(viewLifecycleOwner, Observer {
-            spinner_referral_type.apply {
+            spinner_referral_type_referral?.apply {
                 val spinnerPos = it.toSpinnerPos()
                 if (selectedItemPosition != spinnerPos) {
                     setSelection(spinnerPos)
@@ -63,7 +56,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         })
 
         viewModel.referralNoteLD.observe(viewLifecycleOwner, Observer {
-            tv_referral_note.apply {
+            tv_referral_note_referral?.apply {
                 if (text.toString() != it) {
                     setText(it)
                 }
@@ -72,25 +65,21 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         })
 
         viewModel.errorLD.observe(viewLifecycleOwner, Observer {
-            tv_error.visibility = if (it == null) View.GONE else View.VISIBLE
-            tv_error.text = it?.let { getString(it) }
+            tv_error_referral?.visibility = if (it == null) View.GONE else View.VISIBLE
+            tv_error_referral?.text = it?.let { getString(it) }
         })
 
-        return view
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun View.setupViews() {
-        header_referral.setOnClickListener {
-            viewModel.toggleReferral()
-        }
-
+    private fun setupViews() {
         val spinnerOptions = viewModel.referralTypes
             .map { getString(it) }
         ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner_referral_type.adapter = adapter
+            spinner_referral_type_referral?.adapter = adapter
         }
-        spinner_referral_type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinner_referral_type_referral?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -98,17 +87,19 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
                 viewModel.referralTypeLD.value = position.toReferralType()
             }
         }
-        spinner_referral_type.showFloatingLabel() // needed when nothing is initially selected
+        spinner_referral_type_referral?.showFloatingLabel() // needed when nothing is initially selected
 
-        tv_referral_note.addTextChangedListener {
-            viewModel.referralNoteLD.postValue(tv_referral_note.text?.toString())
+        tv_referral_note_referral?.addTextChangedListener {
+            viewModel.referralNoteLD.postValue(tv_referral_note_referral.text?.toString())
         }
 
-        btn_cancel.setOnClickListener {
+        btn_cancel_referral?.setOnClickListener {
+            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
             dismiss()
         }
-        btn_confirm.setOnClickListener {
-            if (viewModel.tryConfirm(false)) {
+        btn_confirm_referral?.setOnClickListener {
+            if (viewModel.tryConfirm(true)) {
+                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
                 dismiss()
             }
         }

@@ -38,9 +38,9 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         isReferralVisibleLD.value = isReferralVisibleLD.value?.let { !it }
     }
 
-    fun tryConfirm(): Boolean {
+    fun tryConfirm(onlyReferral: Boolean): Boolean {
         if (validateFields()) {
-            confirm()
+            confirm(onlyReferral)
             return true
         }
         return false
@@ -69,20 +69,30 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
     private val BeneficiaryLocal.isAssigning: Boolean
     get() = !distributed
 
-    private fun confirm() {
+    private fun confirm(onlyReferral: Boolean) {
         launch {
             val beneficiary = beneficiaryLD.value!!
 
-            val updatedBeneficiary = beneficiary.copy(
-                distributed = beneficiary.isAssigning,
-                edited = beneficiary.isAssigning,
-                referralType = referralTypeLD.value,
-                referralNote = referralNoteLD.value.orNullIfEmpty()
-            )
+            if(onlyReferral) {
+                val updatedBeneficiary = beneficiary.copy(
+                    referralType = referralTypeLD.value,
+                    referralNote = referralNoteLD.value.orNullIfEmpty()
+                )
 
-            beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-            beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
-            beneficiaryLD.value = updatedBeneficiary
+                beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
+                beneficiaryLD.value = updatedBeneficiary
+            } else {
+                val updatedBeneficiary = beneficiary.copy(
+                    distributed = beneficiary.isAssigning,
+                    edited = beneficiary.isAssigning,
+                    referralType = referralTypeLD.value,
+                    referralNote = referralNoteLD.value.orNullIfEmpty()
+                )
+
+                beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+                beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
+                beneficiaryLD.value = updatedBeneficiary
+            }
         }
     }
 }

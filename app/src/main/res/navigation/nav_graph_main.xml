@@ -87,6 +87,9 @@
         <action
                 android:id="@+id/action_beneficiaryDialog_to_confirmBeneficiaryDialog"
                 app:destination="@+id/confirmBeneficiaryDialog" />
+        <action
+                android:id="@+id/action_beneficiaryDialog_to_addReferralInfoDialog"
+                app:destination="@+id/addReferralInfoDialog" />
         <argument
                 android:name="isFromList"
                 app:argType="boolean" />
@@ -102,6 +105,17 @@
                 app:argType="integer" />
 
     </dialog>
+
+    <dialog
+            android:id="@+id/addReferralInfoDialog"
+            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.AddReferralInfoDialog"
+            android:label="{beneficiaryName}">
+        <argument
+                android:name="beneficiaryId"
+                app:argType="integer" />
+
+    </dialog>
+
     <dialog
             android:id="@+id/uploadDialog"
             android:name="cz.applifting.humansis.ui.main.distribute.upload.UploadDialog"
