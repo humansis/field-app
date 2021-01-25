@@ -9,7 +9,7 @@ import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import cz.quanti.android.nfc.OfflineFacade
-import cz.quanti.android.nfc_io_libray.types.NfcUtil
+import cz.quanti.android.nfc.dto.UserPinBalance
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,31 +65,20 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         }
     }
 
-    fun depositMoneyToCard(value: Double, currency: String, otherCard: String?, isNew: Boolean, pin: String, ownerId: Int): Single<Tag> {
-        return if(isNew)
-        {
-            nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
-                nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).toSingleDefault(tag)
+    fun depositMoneyToCard(value: Double, currency: String, pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+            nfcFacade.writeOrIncreaseProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+                Pair(tag, it)
             }
-        } else {
-            Single.fromObservable(
-                    nfcTagPublisher.getTagObservable().take(1).flatMapSingle { tag ->
-                        val id = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
-
-                        if(otherCard == null || id != otherCard) {
-                            throw CardMismatchException(otherCard)
-                        }
-                        nfcFacade.increaseBalanceForUser(tag, value, ownerId.toString(), currency).flatMap {
-                            Single.just(tag)
-                        }
-                    })
         }
     }
 
     fun saveCard(cardId: String?) {
         launch {
             val beneficiary = beneficiaryLD.value!!.copy(
-                newSmartcard = cardId?.toUpperCase(Locale.US)
+                newSmartcard = cardId?.toUpperCase(Locale.US),
+                edited = true,
+                distributed = true
             )
 
             beneficiariesRepository.updateBeneficiaryOffline(beneficiary)

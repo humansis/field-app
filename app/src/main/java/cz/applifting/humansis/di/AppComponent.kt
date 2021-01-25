@@ -7,6 +7,7 @@ import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.login.LoginFragment
 import cz.applifting.humansis.ui.main.MainFragment
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog
+import cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.AddReferralInfoDialog
 import cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.ConfirmBeneficiaryDialog
 import cz.applifting.humansis.ui.main.distribute.upload.UploadDialog
 import cz.applifting.humansis.ui.main.settings.SettingsFragment
@@ -40,6 +41,8 @@ interface AppComponent {
     fun inject(beneficiaryDialog: BeneficiaryDialog)
 
     fun inject(confirmBeneficiaryDialog: ConfirmBeneficiaryDialog)
+
+    fun inject(addReferralInfoDialog: AddReferralInfoDialog)
 
     fun inject(uploadDialog: UploadDialog)
 

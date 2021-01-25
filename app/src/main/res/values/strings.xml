@@ -148,5 +148,6 @@
     <string name="tag_lost_card_error">Scanning interrupted. Please scan the card again.</string>
     <string name="different_user_card_error">This card was already assigned to a different user</string>
     <string name="success">Success!</string>
+    <string name="scanning_card_result">Pin: %1$s\ncard balance: %2$s</string>
 
 </resources>
