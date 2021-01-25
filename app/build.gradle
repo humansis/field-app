@@ -17,6 +17,8 @@ repositories {
 
 android {
     compileSdkVersion 29
+    ndkVersion '22.0.7026061'
+
     defaultConfig {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
@@ -151,7 +153,7 @@ dependencies {
 
     // ViewModels & Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
-    kapt "androidx.lifecycle:lifecycle-compiler:2.1.0"
+    kapt "androidx.lifecycle:lifecycle-compiler:2.2.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
 
     // Navigation
@@ -189,6 +191,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
     implementation "android.arch.lifecycle:reactivestreams:1.0.0-beta2"
 
+    // Kotlin logger
+    implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
     def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'
