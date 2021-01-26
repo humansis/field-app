@@ -41,7 +41,7 @@ class LogsDialog : DialogFragment() {
                     message = getString(R.string.logs_dialog_message),
                     emailButtonText = getString(R.string.logs_dialog_email_button),
                     dialogTheme = R.style.DialogTheme
-            ).show(supportFragmentManager, "TAG")
+            ).show(requireActivity().supportFragmentManager, "TAG")
         }
 
         view.btn_copy.setOnClickListener {

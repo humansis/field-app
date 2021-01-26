@@ -1,10 +1,12 @@
 package cz.applifting.humansis.misc
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import cz.applifting.humansis.di.LOGFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import quanti.com.kotlinlog.Log
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -28,6 +30,7 @@ class Logger @Inject constructor(@param:Named(LOGFILE_PATH) val logFilePath: Str
 
     @SuppressLint("SimpleDateFormat")
     suspend fun logToFile(ctx: Context, message: String) {
+        Log.d(TAG, message)
         withContext(Dispatchers.IO) {
             val logs = readLogs(ctx)
 
