@@ -131,7 +131,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                 }
             }
 
-            var value = 1
+            var value = 1.0
             beneficiaryLocal.commodities?.forEach {
                 if (it.type == CommodityType.SMARTCARD) {
                     value = it.value
@@ -171,7 +171,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String, value: Int) {
+    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String, value: Double) {
         service.distributeSmartcard(code, DistributeSmartcardRequest(distributionId = distributionId, createdAt = date, value = value))
     }
 
@@ -196,7 +196,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
-                val bookletValue = booklet.vouchers.sumBy { it.value }
+                val bookletValue = booklet.vouchers.sumBy { it.value }.toDouble()
                 CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }

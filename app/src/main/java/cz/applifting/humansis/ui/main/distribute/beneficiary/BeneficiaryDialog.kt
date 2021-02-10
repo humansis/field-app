@@ -223,8 +223,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         get() = (this != null && this != INVALID_CODE && this != ALREADY_ASSIGNED)
 
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
-        var value: Int = 0
-        var currency: String = ""
+        var value = 0.0
+        var currency = ""
         beneficiary.commodities?.forEach {
             if (it.type == CommodityType.SMARTCARD) {
                 value = it.value
@@ -334,7 +334,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return true
     }
 
-    private fun writeBalanceOnCard(balance: Int, currency: String, beneficiary: BeneficiaryLocal, pin: String) {
+    private fun writeBalanceOnCard(balance: Double, currency: String, beneficiary: BeneficiaryLocal, pin: String) {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
