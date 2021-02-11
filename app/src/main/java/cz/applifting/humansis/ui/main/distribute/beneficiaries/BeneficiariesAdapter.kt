@@ -16,7 +16,6 @@ import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
-import kotlin.math.floor
 
 
 /**
@@ -108,9 +107,11 @@ class BeneficiariesAdapter(
                     commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                     val txtValue = TextView(context)
-                    if ((commodity.value % 1) == 0.0){
+                    if ((commodity.value % 1) == 0.0) {
                         txtValue.text = context.getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
-                    } else {
+                    }
+                    else {
+                        // This needs to be updated if Denars or Madagascar Ariaries are used in the future
                         txtValue.text = context.getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
                     }
 
