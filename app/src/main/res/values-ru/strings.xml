@@ -148,5 +148,6 @@
     <string name="navigation_drawer_close">Закройте панель навигации.</string>
     <string name="unnamed_project">Проекты без названия</string>
     <string name="ETH">ETH</string>
+    <string name="commodity_value_decimal">%1$.2f %2$s</string>
 
 </resources>

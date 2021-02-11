@@ -141,4 +141,5 @@
     <string name="navigation_drawer_close">"اغلق قائمة التنقل "</string>
     <string name="unnamed_project">مشروع بدون اسم</string>
     <string name="ETH">أثيوبيا</string>
+    <string name="commodity_value_decimal">%1$.2f %2$s</string>
 </resources>

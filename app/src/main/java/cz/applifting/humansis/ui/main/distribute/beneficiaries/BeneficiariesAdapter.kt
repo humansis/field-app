@@ -16,6 +16,7 @@ import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
+import kotlin.math.floor
 
 
 /**
@@ -107,7 +108,11 @@ class BeneficiariesAdapter(
                     commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                     val txtValue = TextView(context)
-                    txtValue.text = context.getString(R.string.commodity_value, commodity.value, commodity.unit)
+                    if ((commodity.value % 1) == 0.0){
+                        txtValue.text = context.getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
+                    } else {
+                        txtValue.text = context.getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
+                    }
 
                     row.addView(commodityImage)
                     row.addView(txtValue)
