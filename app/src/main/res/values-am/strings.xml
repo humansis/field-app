@@ -142,5 +142,6 @@
     <string name="different_user_card_error">ይህ ካርድ ቀድሞ ለተለየ ተጠቃሚ ተመድቧል</string>
     <string name="error_resource_not_found">ሀብት አልተገኘም</string>
     <string name="unnamed_project">ያልተሰየመ ፕሮጀክት</string>
+    <string name="commodity_value_decimal">%1$.2f %2$s</string>
 
 </resources>
