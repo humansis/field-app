@@ -34,6 +34,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     familyName = it.beneficiary.familyName,
                     distributionId = distributionId,
                     distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
+                    distributedAt = getDateOfDistribution(it.smartcardDistributedAt),
                     vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
                     reliefIDs = parseReliefs(it.reliefs),
                     qrBooklets = parseQRBooklets(it.booklets),
@@ -123,7 +124,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         if(beneficiaryLocal.newSmartcard != null) {
-            val time = convertTimeForApiRequestBody(Date())
+            val time = convertTimeForApiRequestBody(beneficiaryLocal.distributedAt!!)
             if(beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
                 beneficiaryLocal.smartcard?.let{
@@ -178,6 +179,14 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     private fun convertTimeForApiRequestBody(date: Date): String {
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
             .format(date)
+    }
+
+    private fun getDateOfDistribution(string: String?): Date? {
+        return if (string != null) {
+            SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH).parse(string)
+        } else {
+            null
+        }
     }
 
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
