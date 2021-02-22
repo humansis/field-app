@@ -1,0 +1,36 @@
+include:
+  - project: 'humansis/gitlab-ci-templates'
+    ref: 'mobile/docker-ci'
+    file: 'src/mobile/gradle.template.yml'
+
+# todo: versioning
+variables:
+  ARTIFACT_PATH: ./app/build/outputs/apk/debug/settingscp-*.apk
+  EMULATOR_TIMEOUT: "60"
+
+stages:
+  - archive
+  - upload
+
+.gradle_build:
+  before_script:
+    - export PATH=$PATH:$ANDROID_SDK/platform-tools
+    - envsubst < gradle.properties.template > gradle.properties
+
+# Build debug and archive apk
+archive_debug_job:
+  stage: archive
+  extends: .gradle_build
+  when: manual
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+
+upload_to_artifactory:
+  stage: upload
+  variables:
+    ARTIFACTORY_REPOSITORY: /settingscp-gradle-local/
+  extends: .upload_gradle
+  when: manual
