@@ -360,7 +360,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId, Date())
+                    viewModel.saveCard(cardId, Date().toString())
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 

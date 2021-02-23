@@ -5,7 +5,6 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import cz.applifting.humansis.extensions.equalsIgnoreEmpty
 import cz.applifting.humansis.model.ReferralType
-import java.util.*
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -30,8 +29,8 @@ data class BeneficiaryLocal(
         val familyName: String?,
         val distributionId: Int,
         val distributed: Boolean,
+        val distributedAt: String?,
         val vulnerabilities: List<String>,
-        val distributedAt: Date?,
         val reliefIDs: List<Int>,
         val qrBooklets: List<String>?,
         val smartcard: String?,

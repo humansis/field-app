@@ -73,7 +73,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         }
     }
 
-    fun saveCard(cardId: String?, date: Date) {
+    fun saveCard(cardId: String?, date: String) {
         launch {
             val beneficiary = beneficiaryLD.value!!.copy(
                 newSmartcard = cardId?.toUpperCase(Locale.US),
