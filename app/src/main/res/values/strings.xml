@@ -150,5 +150,7 @@
     <string name="different_user_card_error">This card was already assigned to a different user</string>
     <string name="success">Success!</string>
     <string name="scanning_card_result">Pin: %1$s\ncard balance: %2$s</string>
+    <string name="change_pin">Change pin</string>
+    <string name="changing_pin_result">New Pin: %1$s</string>
 
 </resources>

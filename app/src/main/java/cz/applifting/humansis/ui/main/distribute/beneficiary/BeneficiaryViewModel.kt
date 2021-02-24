@@ -73,6 +73,14 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         }
     }
 
+    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+            nfcFacade.changePinForCard(tag, ownerId.toString(), pin).map{
+                Pair(tag, it)
+            }
+        }
+    }
+
     fun saveCard(cardId: String?) {
         launch {
             val beneficiary = beneficiaryLD.value!!.copy(

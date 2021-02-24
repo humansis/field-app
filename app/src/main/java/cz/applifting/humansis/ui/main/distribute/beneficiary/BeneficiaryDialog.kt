@@ -234,7 +234,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         val newSmartcard = beneficiary.newSmartcard
 
-        btn_action?.isEnabled == false
+        btn_action?.isEnabled = false
         btn_action?.visibility = View.INVISIBLE
 
         tv_smartcard.setStatus(beneficiary.distributed)
@@ -253,17 +253,33 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         }
 
+        btn_change_pin.setOnClickListener {
+            btn_change_pin.isEnabled = false
+            if(startSmartcardScanner()) {
+                val pin = generateRandomPin()
+                changePinOnCard(beneficiary, pin)
+            } else {
+                btn_scan_smartcard.text = getString(R.string.no_nfc_available)
+                btn_scan_smartcard.isEnabled = false
+            }
+        }
+
         if (newSmartcard == null) {
             if(beneficiary.distributed)
             {
                 btn_scan_smartcard.visibility = View.GONE
                 btn_scan_smartcard.isEnabled = false
+                btn_change_pin.visibility = View.VISIBLE
+                btn_change_pin.isEnabled = true
             } else {
                 btn_scan_smartcard.visibility = View.VISIBLE
                 btn_scan_smartcard.isEnabled = true
+                btn_change_pin.visibility = View.GONE
+                btn_change_pin.isEnabled = false
             }
         } else {
             btn_scan_smartcard.visibility = View.GONE
+            btn_change_pin.visibility = View.VISIBLE
         }
     }
 
@@ -403,6 +419,72 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
 
                     btn_scan_smartcard.isEnabled = true
+                    scanCardDialog.dismiss()
+                }
+            )
+    }
+
+    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: String) {
+        val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+            .setMessage(getString(R.string.scan_the_card))
+            .setCancelable(false)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog?.dismiss()
+                btn_change_pin?.visibility = View.VISIBLE
+                btn_change_pin?.isEnabled = true
+                disposable?.dispose()
+                disposable = null
+            }
+            .create()
+
+        scanCardDialog?.show()
+        disposable?.dispose()
+        disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                { info ->
+                    val cardContent = info.second
+
+                    btn_change_pin.visibility = View.GONE
+                    scanCardDialog.dismiss()
+
+                    val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                        .setTitle(getString((R.string.success)))
+                        .setMessage(getString(R.string.changing_pin_result, cardContent.pin))
+                        .setCancelable(true)
+                        .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
+                            showAddReferralInfoDialog(beneficiary)
+                        }
+                        .setNegativeButton(getString(R.string.close)) { _, _ ->
+                            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                            dismiss()
+                        }
+                        .create()
+                    cardResultDialog.show()
+                },
+                {
+                    var ex = it
+                    if (ex is CompositeException && ex.exceptions.isNotEmpty()) {
+                        ex = ex.exceptions[0]
+                    }
+                    when (ex) {
+                        is PINException -> {
+                            Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                            Toast.makeText(
+                                    requireContext(),
+                                    getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                    Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        else -> {
+                            Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.card_error),
+                                    Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    btn_change_pin.isEnabled = true
                     scanCardDialog.dismiss()
                 }
             )
