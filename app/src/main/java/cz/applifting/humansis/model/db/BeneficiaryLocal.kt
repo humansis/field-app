@@ -23,25 +23,25 @@ import cz.applifting.humansis.model.ReferralType
 // this is flattened object from API, original: {id, distributionId, {beneficiaryId, givenName, ...}}
 // each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple distributions
 data class BeneficiaryLocal(
-        @PrimaryKey val id: Int, // unique combination of beneficiaryId and distributionId
-        val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)
-        val givenName: String?,
-        val familyName: String?,
-        val distributionId: Int,
-        val distributed: Boolean,
-        val distributedAt: String?,
-        val vulnerabilities: List<String>,
-        val reliefIDs: List<Int>,
-        val qrBooklets: List<String>?,
-        val smartcard: String?,
-        val newSmartcard: String?,
-        val edited: Boolean,
-        val commodities: List<CommodityLocal>?,
-        val nationalId: String?,
-        val originalReferralType: ReferralType?,
-        val originalReferralNote: String?,
-        val referralType: ReferralType? = null,
-        val referralNote: String? = null
+    @PrimaryKey val id: Int, // unique combination of beneficiaryId and distributionId
+    val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)
+    val givenName: String?,
+    val familyName: String?,
+    val distributionId: Int,
+    val distributed: Boolean,
+    val distributedAt: String?,
+    val vulnerabilities: List<String>,
+    val reliefIDs: List<Int>,
+    val qrBooklets: List<String>?,
+    val smartcard: String?,
+    val newSmartcard: String?,
+    val edited: Boolean,
+    val commodities: List<CommodityLocal>?,
+    val nationalId: String?,
+    val originalReferralType: ReferralType?,
+    val originalReferralNote: String?,
+    val referralType: ReferralType? = null,
+    val referralNote: String? = null
 ) {
     val isReferralTypeChanged
         get() = originalReferralType != referralType
