@@ -43,6 +43,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -376,7 +377,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId)
+                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()))
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 
@@ -618,5 +619,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
             .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
             .show()
+    }
+
+    private fun convertTimeForApiRequestBody(date: Date): String {
+        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+                .format(date)
     }
 }
