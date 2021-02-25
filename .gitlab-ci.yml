@@ -23,12 +23,12 @@ stages:
     - cp $DEBUG_KEYSTORE ./app/keystore/debug.keystore
 
 # Just build application 
-# build_debug_job:
-#   stage: build
-#   extends: .gradle_build
-#   script:
-#     - ./gradlew clean
-#     - ./gradlew assembleDebug
+build_debug_job:
+  stage: build
+  extends: .gradle_build
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleDebug
 
 # Build debug and archive apk
 archive_debug_job:
