@@ -6,6 +6,18 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
+// ****************** CONFIGURATION ************************ ////
+
+def VERSION_MAJOR = 2
+def VERSION_MINOR = 0
+def VERSION_PATCH = 0
+def VERSION_CODE = 1
+
+
+String APK_NAME = "user-app"
+String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${VERSION_CODE}"
+
 
 repositories {
     google()
@@ -21,8 +33,9 @@ android {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode readVersionCode()
-        versionName readVersionName()
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+        setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -103,14 +116,6 @@ android {
             buildConfigField "short", "APP_VESION", "$APP_VERSION"
 
             buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
-        }
-    }
-
-    applicationVariants.all { variant ->
-        variant.outputs.all {
-            def flavor = variant.flavorName
-            def flavorAlias = flavor == 'demo' ? 'test' : flavor
-            outputFileName = "humansis-mission-$flavorAlias-${readVersionName()}.apk"
         }
     }
 }
@@ -202,36 +207,4 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:$work_version"
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.1'
     androidTestImplementation "io.mockk:mockk-android:1.9.3"
-}
-
-def readVersionName() {
-    def version = readVersion()
-    return "${version["major"]}.${version["minor"]}.${version["patch"]}"
-}
-
-def readVersionCode() {
-    def version = readVersion()
-    def patch = version["patch"] as int
-    def minor = version["minor"] as int
-    def major = version["major"] as int
-    return major * 1000000 + minor * 1000 + patch
-}
-
-def readVersion() {
-    def versionFile = new File(project.rootDir, "version.properties")
-    def version = new Properties()
-    def stream
-    try {
-        stream = new FileInputStream(versionFile)
-        version.load(stream)
-    } catch (FileNotFoundException ignore) {
-    } finally {
-        if (stream != null) stream.close()
-    }
-
-    // defaults
-    if (!version["major"]) version["major"] = "1"
-    if (!version["minor"]) version["minor"] = "0"
-    if (!version["patch"]) version["patch"] = "0"
-    return version
 }
