@@ -21,6 +21,14 @@ stages:
 archive_debug_job:
   stage: archive
   extends: .gradle_build
+  script:
+    - envsubst < ./app/google-services-template.json > ./app/google-services.json
+    - echo "Build and export apk"
+    - mkdir ./app/keystore
+    - cp $RELEASE_KEYSTORE ./app/keystore/
+    - cp $DEBUG_KEYSTORE ./app/keystore/
+    - ./gradlew clean
+    - ./gradlew assembleDebug
   when: manual
   artifacts:
     when: always
