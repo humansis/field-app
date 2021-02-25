@@ -67,7 +67,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
 
     fun depositMoneyToCard(value: Double, currency: String, pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+            nfcFacade.writeOrIncreaseProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
                 Pair(tag, it)
             }
         }
