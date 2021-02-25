@@ -16,19 +16,27 @@ stages:
   before_script:
     - export PATH=$PATH:$ANDROID_SDK/platform-tools
     - envsubst < gradle.properties.template > gradle.properties
+    - envsubst < ./app/google-services-template.json > ./app/google-services.json
+    - echo "Build and export apk"
+    - mkdir ./app/keystore
+    - cp $RELEASE_KEYSTORE ./app/keystore/
+    - cp $DEBUG_KEYSTORE ./app/keystore/
+
+# Just build application 
+build_debug_job:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleDebug
 
 # Build debug and archive apk
 archive_debug_job:
   stage: archive
   extends: .gradle_build
   script:
-    - envsubst < ./app/google-services-template.json > ./app/google-services.json
-    - echo "Build and export apk"
-    - mkdir ./app/keystore
-    - cp $RELEASE_KEYSTORE ./app/keystore/
-    - cp $DEBUG_KEYSTORE ./app/keystore/
     - ./gradlew clean
-    - ./gradlew assembleDebug
+    - ./gradlew :app:assembleDemoDebug
   when: manual
   artifacts:
     when: always
@@ -39,6 +47,6 @@ archive_debug_job:
 upload_to_artifactory:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /settingscp-gradle-local/
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   when: manual
