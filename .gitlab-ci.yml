@@ -18,10 +18,9 @@ stages:
     - export PATH=$PATH:$ANDROID_SDK/platform-tools
     - envsubst < gradle.properties.template > gradle.properties
     - envsubst < ./app/google-services-template.json > ./app/google-services.json
-    - cat ./app/google-services.json
     - mkdir ./app/keystore
-    - cp $RELEASE_KEYSTORE ./app/keystore/
-    - cp $DEBUG_KEYSTORE ./app/keystore/
+    - cp $RELEASE_KEYSTORE ./app/keystore/release.keystore
+    - cp $DEBUG_KEYSTORE ./app/keystore/debug.keystore
 
 # Just build application 
 build_debug_job:
