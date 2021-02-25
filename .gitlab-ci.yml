@@ -9,6 +9,7 @@ variables:
   EMULATOR_TIMEOUT: "60"
 
 stages:
+  - build
   - archive
   - upload
 
@@ -17,14 +18,14 @@ stages:
     - export PATH=$PATH:$ANDROID_SDK/platform-tools
     - envsubst < gradle.properties.template > gradle.properties
     - envsubst < ./app/google-services-template.json > ./app/google-services.json
-    - echo "Build and export apk"
+    - cat ./app/google-services.json
     - mkdir ./app/keystore
     - cp $RELEASE_KEYSTORE ./app/keystore/
     - cp $DEBUG_KEYSTORE ./app/keystore/
 
 # Just build application 
 build_debug_job:
-  stage: archive
+  stage: build
   extends: .gradle_build
   script:
     - ./gradlew clean
