@@ -18,9 +18,9 @@ stages:
     - export PATH=$PATH:$ANDROID_SDK/platform-tools
     - envsubst < gradle.properties.template > gradle.properties
     - envsubst < ./app/google-services-template.json > ./app/google-services.json
-    - mkdir ./app/keystore
-    - cp $RELEASE_KEYSTORE ./app/keystore/release.keystore
-    - cp $DEBUG_KEYSTORE ./app/keystore/debug.keystore
+    - mkdir -p ./app/keystore
+    - echo $BASE64_RELEASE_KEYSTORE | base64 -d > ./app/keystore/release.keystore
+    - echo $BASE64_DEBUG_KEYSTORE | base64 -d > ./app/keystore/debug.keystore
 
 # Just build application 
 build_debug_job:
@@ -29,6 +29,13 @@ build_debug_job:
   script:
     - ./gradlew clean
     - ./gradlew assembleDebug --stacktrace
+
+build_release_job:
+  stage: build
+  extends: .gradle_build
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleRelease --stacktrace
 
 # Build debug and archive apk
 archive_debug_job:
