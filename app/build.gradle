@@ -40,7 +40,23 @@ android {
         versionCode VERSION_CODE
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
+
+        resValue "string", "app_name", "Humansis"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
+
+        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL\""
+        buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
+        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
+        buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
+        buildConfigField "String", "DEV_API_URL", "\"$DEV_API_URL\""
+
+        buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
+        buildConfigField "String", "APP_ID", "\"$APP_ID\""
+        buildConfigField "short", "APP_VESION", "$APP_VERSION"
+
+        buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
     }
 
     signingConfigs {
@@ -78,50 +94,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    flavorDimensions "environment"
-
-    productFlavors {
-
-        prod {
-            dimension "environment"
-            resValue "string", "app_name", "Humansis"
-
-            buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
-
-            buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL\""
-            buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
-            buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
-            buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
-            buildConfigField "String", "DEV_API_URL", "\"$DEV_API_URL\""
-
-            buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
-            buildConfigField "String", "APP_ID", "\"$APP_ID\""
-            buildConfigField "short", "APP_VESION", "$APP_VERSION"
-
-            buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
-        }
-
-        demo {
-            dimension "environment"
-            applicationIdSuffix ".demo"
-            resValue "string", "app_name", "Humansis DEMO"
-
-            buildConfigField "String", "RELEASE_API_URL", "\"$DEMO_RELEASE_API_URL\""
-
-            buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL\""
-            buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
-            buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
-            buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
-            buildConfigField "String", "DEV_API_URL", "\"$DEV_API_URL\""
-
-            buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
-            buildConfigField "String", "APP_ID", "\"$APP_ID\""
-            buildConfigField "short", "APP_VESION", "$APP_VERSION"
-
-            buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
-        }
-    }
 }
 
 configurations {
@@ -145,10 +117,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
-
     // Artifactory
-//    implementation "cz.quanti.android.nfc:1.0.0"
-    compile(group: 'cz.quanti.android', name: 'nfc', version: '1.0.0', ext: 'aar')
+    implementation "cz.quanti.android:nfc:1.0.0"
 
     // DI
     ext.dagger2_version = '2.23.2'

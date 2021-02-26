@@ -21,29 +21,40 @@ stages:
     - mkdir -p ./app/keystore
     - echo $BASE64_RELEASE_KEYSTORE | base64 -d > ./app/keystore/release.keystore
     - echo $BASE64_DEBUG_KEYSTORE | base64 -d > ./app/keystore/debug.keystore
+    - ./gradlew clean
 
 # Just build application 
 build_debug_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew clean
-    - ./gradlew assembleDebug --stacktrace
+    - ./gradlew assembleDebug 
 
 build_release_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew clean
-    - ./gradlew assembleRelease --stacktrace
+    - ./gradlew assembleRelease 
 
 # Build debug and archive apk
 archive_debug_job:
   stage: archive
   extends: .gradle_build
   script:
-    - ./gradlew clean
-    - ./gradlew :app:assembleDemoDebug
+    - ./gradlew :app:assembleDebug
+  when: manual
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+
+# Build debug and archive apk
+archive_release_job:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:assembleRelease
   when: manual
   artifacts:
     when: always

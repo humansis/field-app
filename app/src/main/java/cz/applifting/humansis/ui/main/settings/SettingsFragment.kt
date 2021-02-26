@@ -98,13 +98,13 @@ class SettingsFragment : BaseFragment() {
             }
         }
 
-        if (BuildConfig.FLAVOR.equals("demo")) {
-            btn_test.setOnClickListener {
-                viewModel.test()
-            }
-        } else {
+//        if (BuildConfig.FLAVOR.equals("demo")) {
+//            btn_test.setOnClickListener {
+//                viewModel.test()
+//            }
+//        } else {
             btn_test.visibility = View.GONE
-        }
+//        }
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
             val message = if (it) {
