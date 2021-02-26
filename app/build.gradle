@@ -8,16 +8,24 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 // ****************** CONFIGURATION ************************ ////
 
+def gitVersionCode = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', 'HEAD', '--count'
+        standardOutput = stdout
+    }
+    def count = stdout.toString().trim().toInteger()
+    println count
+    return stdout.toString().trim().toInteger()
+}
+
 def VERSION_MAJOR = 2
 def VERSION_MINOR = 0
 def VERSION_PATCH = 0
-def VERSION_CODE = 1
-
 
 String APK_NAME = "user-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${VERSION_CODE}"
-
+String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode()}"
 
 repositories {
     google()
@@ -37,7 +45,7 @@ android {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode VERSION_CODE
+        versionCode gitVersionCode()
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
 
@@ -181,4 +189,5 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:$work_version"
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.1'
     androidTestImplementation "io.mockk:mockk-android:1.9.3"
+
 }
