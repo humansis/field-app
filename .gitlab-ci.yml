@@ -5,7 +5,7 @@ include:
 
 # todo: versioning
 variables:
-  ARTIFACT_PATH: ./app/build/outputs/apk/demo/debug/user-app-*.apk
+  ARTIFACT_PATH: ./app/build/outputs/apk/*/user-app-*.apk
   EMULATOR_TIMEOUT: "60"
 
 stages:
@@ -29,6 +29,7 @@ build_debug_job:
   extends: .gradle_build
   script:
     - ./gradlew assembleDebug 
+# Just build application 
 
 build_release_job:
   stage: build
