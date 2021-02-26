@@ -51,10 +51,10 @@ android {
             keyPassword "$RELEASE_STORE_KEY_PASSWORD"
         }
         debug {
-            storeFile file("$DEBUG_STORE_FILE_PATH")
-            keyAlias "$DEBUG_STORE_KEY_ALIAS"
-            storePassword "$DEBUG_STORE_PASSWORD"
-            keyPassword "$DEBUG_STORE_KEY_PASSWORD"
+            storeFile file(DEBUG_STORE_FILE_PATH)
+            keyAlias DEBUG_STORE_KEY_ALIAS
+            storePassword DEBUG_STORE_PASSWORD
+            keyPassword DEBUG_STORE_KEY_PASSWORD
         }
     }
 
