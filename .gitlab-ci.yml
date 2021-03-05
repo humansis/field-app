@@ -1,0 +1,71 @@
+include:
+  - project: 'humansis/gitlab-ci-templates'
+    ref: 'mobile/docker-ci'
+    file: 'src/mobile/gradle.template.yml'
+
+# todo: versioning
+variables:
+  ARTIFACT_PATH: ./app/build/outputs/apk/*/user-app-*.apk
+  EMULATOR_TIMEOUT: "60"
+
+stages:
+  - build
+  - archive
+  - upload
+
+.gradle_build:
+  before_script:
+    - export PATH=$PATH:$ANDROID_SDK/platform-tools
+    - envsubst < gradle.properties.template > gradle.properties
+    - envsubst < ./app/google-services-template.json > ./app/google-services.json
+    - mkdir -p ./app/keystore
+    - echo $BASE64_RELEASE_KEYSTORE | base64 -d > ./app/keystore/release.keystore
+    - echo $BASE64_DEBUG_KEYSTORE | base64 -d > ./app/keystore/debug.keystore
+    - ./gradlew clean
+
+# Just build application 
+build_debug_job:
+  stage: build
+  extends: .gradle_build
+  script:
+    - ./gradlew assembleDebug 
+# Just build application 
+
+build_release_job:
+  stage: build
+  extends: .gradle_build
+  script:
+    - ./gradlew assembleRelease 
+
+# Build debug and archive apk
+archive_debug_job:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:assembleDebug
+  when: manual
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+
+# Build debug and archive apk
+archive_release_job:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:assembleRelease
+  when: manual
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+
+upload_to_artifactory:
+  stage: upload
+  variables:
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
+  extends: .upload_gradle
+  when: manual
