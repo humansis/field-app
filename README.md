@@ -1,6 +1,6 @@
-# Offline app
+# User app
 
-This application is made for vendors working for PIN in the field. 
+This application is made for users working for PIN in the field. 
 
 ## Project setup 
 
