@@ -20,6 +20,17 @@ Artifactory is necessary because project depends on NFC secure library which we 
 
 <img src="img/artifactory_password.png" width="50%" height="50%">
 
+
+## Smartcard Lifecycle 
+
+Every new smartcard is in `unassigned` state.
+
+After card was distributed to a beneficiary, its state changes to `assigned`. Changing the ballance or pin does not change cards state.
+
+If the beneficiary gets another smartcard distributed, his previous smartcard gets automatically `cancelled`.
+
+<img src="img/smartcard_lifecycle.png" width="50%" height="50%">
+
 ## CI/CD Workflow
 The current workflow is following: 
 
