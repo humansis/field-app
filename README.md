@@ -18,7 +18,7 @@ Your username is the same username for all our systems. Password is obviously yo
 
 Artifactory is necessary because project depends on NFC secure library which we are developing as well. 
 
-![alt text](img/artifactory_password.png "Gitlab operations")
+<img src="img/artifactory_password.png" width="50%" height="50%">
 
 ## CI/CD Workflow
 The current workflow is following: 
