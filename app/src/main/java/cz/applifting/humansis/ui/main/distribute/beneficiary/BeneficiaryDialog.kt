@@ -16,6 +16,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setPadding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -41,6 +43,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -384,26 +387,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                         .setTitle(getString((R.string.card_updated)))
-                        .setMessage(
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                Html.fromHtml(
-                                    getString(
-                                        R.string.scanning_card_result,
-                                        cardContent.pin,
-                                        "${cardContent.balance} ${cardContent.currencyCode}"
-                                    ),
-                                    Html.FROM_HTML_MODE_LEGACY
-                                )
-                            } else {
-                                Html.fromHtml(
-                                    getString(
-                                        R.string.scanning_card_result,
-                                        cardContent.pin,
-                                        "${cardContent.balance} ${cardContent.currencyCode}"
-                                    )
-                                )
-                            }
-                        )
+                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                            this.pin.text = getString(
+                                R.string.scanning_card_pin,
+                                cardContent.pin
+                            )
+                            this.message.text = getString(
+                                R.string.scanning_card_balance,
+                                "${cardContent.balance} ${cardContent.currencyCode}"
+                            )
+                        })
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { dialog, id ->
                             showAddReferralInfoDialog(beneficiary)
@@ -469,18 +462,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                         .setTitle(getString((R.string.card_updated)))
-                        .setMessage(
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                Html.fromHtml(
-                                    getString(R.string.changing_pin_result, cardContent.pin),
-                                    Html.FROM_HTML_MODE_LEGACY
-                                )
-                            } else {
-                                Html.fromHtml(
-                                    getString(R.string.changing_pin_result, cardContent.pin)
-                                )
-                            }
-                        )
+                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                            this.pin.text = getString(
+                                    R.string.changing_pin_result,
+                                    cardContent.pin
+                            )
+                            this.message.visibility = View.GONE
+                        })
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
                             showAddReferralInfoDialog(beneficiary)
