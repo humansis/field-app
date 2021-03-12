@@ -40,6 +40,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -381,10 +382,18 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 
-
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.success)))
-                        .setMessage(getString(R.string.scanning_card_result, cardContent.pin, "${cardContent.balance} ${cardContent.currencyCode}"))
+                        .setTitle(getString((R.string.card_updated)))
+                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                            this.pin.text = getString(
+                                R.string.scanning_card_pin,
+                                cardContent.pin
+                            )
+                            this.message.text = getString(
+                                R.string.scanning_card_balance,
+                                "${cardContent.balance} ${cardContent.currencyCode}"
+                            )
+                        })
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { dialog, id ->
                             showAddReferralInfoDialog(beneficiary)
@@ -449,8 +458,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.success)))
-                        .setMessage(getString(R.string.changing_pin_result, cardContent.pin))
+                        .setTitle(getString((R.string.card_updated)))
+                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                            this.pin.text = getString(
+                                    R.string.changing_pin_result,
+                                    cardContent.pin
+                            )
+                            this.message.visibility = View.GONE
+                        })
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
                             showAddReferralInfoDialog(beneficiary)

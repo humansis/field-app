@@ -81,12 +81,13 @@
     </style>
 
     <style name="DialogButtonPositive" parent="@style/DialogButton">
-        <item name="backgroundTint">@color/green</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/green</item>
         <item name="android:layout_marginStart">6dp</item>
     </style>
 
     <style name="DialogButtonNegative" parent="@style/DialogButton">
-        <item name="backgroundTint">@color/red</item>
+        <item name="backgroundTint">@color/green</item>
     </style>
 
     <style name="DialogButtonNeutral" parent="@style/DialogButton">
