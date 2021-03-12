@@ -10,6 +10,7 @@ import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -381,10 +382,28 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 
-
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.success)))
-                        .setMessage(getString(R.string.scanning_card_result, cardContent.pin, "${cardContent.balance} ${cardContent.currencyCode}"))
+                        .setTitle(getString((R.string.card_updated)))
+                        .setMessage(
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Html.fromHtml(
+                                    getString(
+                                        R.string.scanning_card_result,
+                                        cardContent.pin,
+                                        "${cardContent.balance} ${cardContent.currencyCode}"
+                                    ),
+                                    Html.FROM_HTML_MODE_LEGACY
+                                )
+                            } else {
+                                Html.fromHtml(
+                                    getString(
+                                        R.string.scanning_card_result,
+                                        cardContent.pin,
+                                        "${cardContent.balance} ${cardContent.currencyCode}"
+                                    )
+                                )
+                            }
+                        )
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { dialog, id ->
                             showAddReferralInfoDialog(beneficiary)
@@ -449,8 +468,19 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.success)))
-                        .setMessage(getString(R.string.changing_pin_result, cardContent.pin))
+                        .setTitle(getString((R.string.card_updated)))
+                        .setMessage(
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Html.fromHtml(
+                                    getString(R.string.changing_pin_result, cardContent.pin),
+                                    Html.FROM_HTML_MODE_LEGACY
+                                )
+                            } else {
+                                Html.fromHtml(
+                                    getString(R.string.changing_pin_result, cardContent.pin)
+                                )
+                            }
+                        )
                         .setCancelable(true)
                         .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
                             showAddReferralInfoDialog(beneficiary)

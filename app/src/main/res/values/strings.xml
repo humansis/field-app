@@ -114,7 +114,7 @@
     <string name="sync_summary">Uploaded %1$d of %2$d changes.</string>
     <string name="sync_summary_nothing">No local changes were uploaded.</string>
     <string name="expand_referral_information">Expand referral information</string>
-    <string name="add_referral">Add referral information</string>
+    <string name="add_referral">Add referral</string>
     <string name="edit_referral">Edit referral information</string>
     <string name="confirm_distribution_message">Confirm to assign this item to the beneficiary</string>
 
@@ -149,8 +149,9 @@
     <string name="tag_lost_card_error">Scanning interrupted. Please scan the card again.</string>
     <string name="different_user_card_error">This card was already assigned to a different user</string>
     <string name="success">Success!</string>
-    <string name="scanning_card_result">Pin: %1$s\ncard balance: %2$s</string>
-    <string name="change_pin">Change pin</string>
-    <string name="changing_pin_result">New Pin: %1$s</string>
+    <string name="scanning_card_result"><![CDATA[<big><b>PIN: %1$s</b></big><br><br>]]>Card Balance: %2$s</string>
+    <string name="change_pin">Change Pin</string>
+    <string name="changing_pin_result"><![CDATA[<big><b>New PIN: %1$s</b></big>]]></string>
+    <string name="card_updated">Card Updated!</string>
 
 </resources>
