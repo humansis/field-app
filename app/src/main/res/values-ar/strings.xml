@@ -143,9 +143,9 @@
     <string name="ETH">أثيوبيا</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="scanning_card_pin">%1$s :رقم التعريف الشخصي</string>
-    <string name="scanning_card_balance">%2$s:رصيد البطاقة</string>
+    <string name="scanning_card_balance">%1$s :رصيد البطاقة</string>
     <string name="change_pin">تغيير رقم التعريف</string>
-    <string name="changing_pin_result">%1$s:رقم التعريف الشخصي الجديد</string>
+    <string name="changing_pin_result">%1$s :رقم التعريف الشخصي الجديد</string>
     <string name="card_updated">تم تحديث البطاقة</string>
     <string name="menu">قائمة</string>
     <string name="synchronize">تزامن</string>
