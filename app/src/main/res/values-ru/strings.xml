@@ -149,5 +149,13 @@
     <string name="unnamed_project">Проекты без названия</string>
     <string name="ETH">ETH</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
+    <string name="scanning_card_pin">пин-код : %1$s</string>
+    <string name="scanning_card_balance">баланс по карте: %2$s</string>
+    <string name="change_pin">изменить пин-код</string>
+    <string name="changing_pin_result">новый пин-код: %1$s</string>
+    <string name="card_updated">карта обновлена</string>
+    <string name="menu">меню</string>
+    <string name="synchronize">синхронизировать</string>
+    <string name="loading">загрузка</string>
 
 </resources>
