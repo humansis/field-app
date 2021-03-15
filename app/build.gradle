@@ -19,11 +19,11 @@ def gitVersionCode = { boolean isFileName ->
 
     if (!isFileName)  {
         // Ugly code that needs to be here because previous devs create high version code in google play
-        count+=2001000
+        count+=1001000
     }
 
     println count
-    return stdout.toString().trim().toInteger()
+    return count
 }
 
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
