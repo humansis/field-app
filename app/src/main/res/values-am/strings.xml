@@ -143,5 +143,6 @@
     <string name="error_resource_not_found">ሀብት አልተገኘም</string>
     <string name="unnamed_project">ያልተሰየመ ፕሮጀክት</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
+    <string name="card_updated">ካርድ ዘምኗል</string>
 
 </resources>

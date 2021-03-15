@@ -154,5 +154,8 @@
     <string name="change_pin">Change Pin</string>
     <string name="changing_pin_result">New PIN: %1$s</string>
     <string name="card_updated">Card Updated!</string>
+    <string name="menu">menu</string>
+    <string name="synchronize">synchronize</string>
+    <string name="loading">loading</string>
 
 </resources>
