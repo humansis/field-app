@@ -8,13 +8,20 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 // ****************** CONFIGURATION ************************ ////
 
-def gitVersionCode = { ->
+def gitVersionCode = { boolean isFileName ->
     def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'rev-list', 'HEAD', '--count'
         standardOutput = stdout
     }
+
     def count = stdout.toString().trim().toInteger()
+
+    if (!isFileName)  {
+        // Ugly code that needs to be here because previous devs create high version code in google play
+        count+=1001000
+    }
+
     println count
     return stdout.toString().trim().toInteger()
 }
@@ -28,7 +35,7 @@ def VERSION_PATCH = 1
 
 String APK_NAME = "user-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode()}"
+String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(true)}"
 
 repositories {
     google()
@@ -48,7 +55,7 @@ android {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode gitVersionCode()
+        versionCode gitVersionCode(false)
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
 
