@@ -19,7 +19,7 @@ def gitVersionCode = { boolean isFileName ->
 
     if (!isFileName)  {
         // Ugly code that needs to be here because previous devs create high version code in google play
-        count+=1001000
+        count+=2001000
     }
 
     println count
