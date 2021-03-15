@@ -142,7 +142,7 @@
     <string name="unnamed_project">مشروع بدون اسم</string>
     <string name="ETH">أثيوبيا</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
-    <string name="scanning_card_pin">%1$s :رقم التعريف الشخصي</string>
+    <string name="scanning_card_pin">ارقم التعريف الشخصي: %1$s</string>
     <string name="scanning_card_balance">%1$s :رصيد البطاقة</string>
     <string name="change_pin">تغيير رقم التعريف</string>
     <string name="changing_pin_result">%1$s :رقم التعريف الشخصي الجديد</string>
