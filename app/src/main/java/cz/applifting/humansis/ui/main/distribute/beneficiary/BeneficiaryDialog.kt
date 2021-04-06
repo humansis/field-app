@@ -69,7 +69,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private var pendingIntent: PendingIntent? = null
     private var disposable: Disposable? = null
 
-    val args: BeneficiaryDialogArgs by navArgs()
+    private val args: BeneficiaryDialogArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,17 +144,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         // it was distributed and already synced with the server
                         tv_smartcard.visibility = View.GONE
                     }
-                    view?.btn_action?.isEnabled = false
-                    view?.btn_action?.visibility = View.GONE
+                    view.btn_action?.isEnabled = false
+                    view.btn_action?.visibility = View.GONE
                 } else {
                     if (beneficiary.distributed) {
 
                         if (beneficiary.edited) {
                             btn_action.text = context.getString(R.string.revert)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_revert_btn, context.theme))
+                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn, context.theme)
                             } else {
-                                btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_revert_btn))
+                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn)
                             }
                         } else {
                             btn_action.visible(false)
@@ -162,13 +162,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     } else {
                         btn_action.text = context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_confirm_btn, context.theme))
+                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn, context.theme)
                         } else {
-                            btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_confirm_btn))
+                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn)
                         }
                     }
 
-                    view?.btn_action?.isEnabled = true
+                    view.btn_action?.isEnabled = true
 
                     btn_action.setOnClickListener { _ ->
                         if (beneficiary.edited) {
@@ -246,7 +246,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_scan_smartcard.setOnClickListener {
             btn_scan_smartcard.isEnabled = false
-            if(startSmartcardScanner()) {
+            if(initNfc()) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(value, currency, beneficiary, pin)
             } else {
@@ -257,7 +257,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_change_pin.setOnClickListener {
             btn_change_pin.isEnabled = false
-            if(startSmartcardScanner()) {
+            if(initNfc()) {
                 val pin = generateRandomPin()
                 changePinOnCard(beneficiary, pin)
             } else {
@@ -356,7 +356,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
-            .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
                 btn_scan_smartcard?.visibility = View.VISIBLE
                 btn_scan_smartcard?.isEnabled = true
@@ -368,12 +368,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         scanCardDialog?.show()
 
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(balance.toDouble(), currency, pin, beneficiary.beneficiaryId)
+        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 {   info ->
                     val tag = info.first
                     val cardContent = info.second
-                    val id = tag?.id
+                    val id = tag.id
                     var cardId: String? = null
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
@@ -517,10 +517,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             PINExceptionEnum.DIFFERENT_USER -> getString(R.string.different_user_card_error)
             else -> getString(R.string.card_error)
         }
-    }
-
-    private fun startSmartcardScanner(): Boolean {
-        return initNfc()
     }
 
     private fun showWirelessSettings() {
