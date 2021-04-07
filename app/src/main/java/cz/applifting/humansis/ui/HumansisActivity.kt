@@ -54,7 +54,6 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var disposable: Disposable? = null
     private var readBalanceDisposable: Disposable? = null
     private var nfcAdapter: NfcAdapter? = null
-    private val nfcInitializer = NfcInitializer(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +115,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun showReadBalanceDialog() {
-        nfcInitializer.initNfc()
+        NfcInitializer(this).initNfc()
         val scanCardDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
