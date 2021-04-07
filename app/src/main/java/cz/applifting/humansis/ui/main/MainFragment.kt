@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
+import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
@@ -52,6 +53,8 @@ class MainFragment : BaseFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        view?.hideSoftKeyboard()
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.projectsFragment, R.id.settingsFragment),

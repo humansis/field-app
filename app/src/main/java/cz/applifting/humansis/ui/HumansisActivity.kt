@@ -1,7 +1,6 @@
 package cz.applifting.humansis.ui
 
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.content.*
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -9,7 +8,6 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -53,8 +51,9 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private val networkChangeReceiver = NetworkChangeReceiver()
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
     private var disposable: Disposable? = null
+    private var readBalanceDisposable: Disposable? = null
     private var nfcAdapter: NfcAdapter? = null
-    private var pendingIntent: PendingIntent? = null
+    private val nfcInitializer = cz.applifting.humansis.misc.NfcInitializer(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +115,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun showReadBalanceDialog() {
-        initNfc()
+        nfcInitializer.initNfc()
         val scanCardDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
@@ -129,8 +128,8 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         scanCardDialog?.show()
 
-        disposable?.dispose()
-        disposable = mainViewModel.readBalance()
+        readBalanceDisposable?.dispose()
+        readBalanceDisposable = mainViewModel.readBalance()
         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             scanCardDialog.dismiss()
             val cardContent = it
@@ -145,8 +144,8 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 .setCancelable(true)
                 .setNegativeButton(getString(R.string.close)){ dialog, _ ->
                     dialog?.dismiss()
-                    disposable?.dispose()
-                    disposable = null
+                    readBalanceDisposable?.dispose()
+                    readBalanceDisposable = null
                 }
                 .create()
             cardResultDialog.show()
@@ -202,35 +201,5 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)?:return
             nfcTagPublisher.getTagSubject().onNext(tag)
         }
-    }
-
-    private fun initNfc(): Boolean {
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-
-        if (nfcAdapter == null) {
-            // NFC is not available on this device
-            return false
-        }
-
-        pendingIntent = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, this.javaClass)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
-        )
-
-        nfcAdapter?.let { nfcAdapter ->
-            if (!nfcAdapter.isEnabled) {
-                showWirelessSettings()
-            }
-            nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
-        }
-
-        return true
-    }
-
-    private fun showWirelessSettings() {
-        Toast.makeText(this, "You need to enable NFC", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-        startActivity(intent)
     }
 }

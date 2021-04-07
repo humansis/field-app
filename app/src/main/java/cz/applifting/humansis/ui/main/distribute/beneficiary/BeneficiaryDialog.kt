@@ -3,13 +3,10 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.PendingIntent
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +24,7 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
@@ -66,7 +64,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private val viewModel: BeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
     private var nfcAdapter: NfcAdapter? = null
-    private var pendingIntent: PendingIntent? = null
     private var disposable: Disposable? = null
 
     private val args: BeneficiaryDialogArgs by navArgs()
@@ -235,6 +232,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         val newSmartcard = beneficiary.newSmartcard
+        val nfcInitializer = NfcInitializer(requireActivity())
 
         btn_action?.isEnabled = false
         btn_action?.visibility = View.INVISIBLE
@@ -246,7 +244,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_scan_smartcard.setOnClickListener {
             btn_scan_smartcard.isEnabled = false
-            if(initNfc()) {
+            if(nfcInitializer.initNfc()) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(value, currency, beneficiary, pin)
             } else {
@@ -257,7 +255,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_change_pin.setOnClickListener {
             btn_change_pin.isEnabled = false
-            if(initNfc()) {
+            if(nfcInitializer.initNfc()) {
                 val pin = generateRandomPin()
                 changePinOnCard(beneficiary, pin)
             } else {
@@ -326,30 +324,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         if (!isCameraPermissionGranted() && !beneficiary.distributed) {
             requestCameraPermission()
         }
-    }
-
-    private fun initNfc(): Boolean {
-        nfcAdapter = NfcAdapter.getDefaultAdapter(requireActivity())
-
-        if (nfcAdapter == null) {
-            // NFC is not available on this device
-            return false
-        }
-
-        pendingIntent = PendingIntent.getActivity(
-            requireActivity(), 0,
-            Intent(requireActivity(), requireActivity().javaClass)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
-        )
-
-        nfcAdapter?.let { nfcAdapter ->
-            if (!nfcAdapter.isEnabled) {
-                showWirelessSettings()
-            }
-            nfcAdapter.enableForegroundDispatch(requireActivity(), pendingIntent, null, null)
-        }
-
-        return true
     }
 
     private fun writeBalanceOnCard(balance: Double, currency: String, beneficiary: BeneficiaryLocal, pin: String) {
@@ -517,16 +491,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             PINExceptionEnum.DIFFERENT_USER -> getString(R.string.different_user_card_error)
             else -> getString(R.string.card_error)
         }
-    }
-
-    private fun showWirelessSettings() {
-        Toast.makeText(
-            requireContext(),
-            getString(R.string.you_need_to_enable_nfc),
-            Toast.LENGTH_LONG
-        ).show()
-        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-        startActivity(intent)
     }
 
     override fun onResume() {
