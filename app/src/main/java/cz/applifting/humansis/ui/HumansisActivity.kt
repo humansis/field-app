@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.isWifiConnected
+import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
@@ -53,7 +54,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var disposable: Disposable? = null
     private var readBalanceDisposable: Disposable? = null
     private var nfcAdapter: NfcAdapter? = null
-    private val nfcInitializer = cz.applifting.humansis.misc.NfcInitializer(this)
+    private val nfcInitializer = NfcInitializer(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,8 +122,8 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
-                disposable?.dispose()
-                disposable = null
+//                disposable?.dispose()
+//                disposable = null
             }
             .create()
 
