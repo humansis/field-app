@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.PackageManager
-import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -63,7 +62,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: BeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
-    private var nfcAdapter: NfcAdapter? = null
     private var disposable: Disposable? = null
 
     private val args: BeneficiaryDialogArgs by navArgs()
@@ -232,7 +230,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         val newSmartcard = beneficiary.newSmartcard
-        val nfcInitializer = NfcInitializer(requireActivity())
 
         btn_action?.isEnabled = false
         btn_action?.visibility = View.INVISIBLE
@@ -244,7 +241,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_scan_smartcard.setOnClickListener {
             btn_scan_smartcard.isEnabled = false
-            if(nfcInitializer.initNfc()) {
+            if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(value, currency, beneficiary, pin)
             } else {
@@ -254,13 +251,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         btn_change_pin.setOnClickListener {
+            // todo asi nejde po navratu ze settings ? checknout i ostatni tlacitka
             btn_change_pin.isEnabled = false
-            if(nfcInitializer.initNfc()) {
+            if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 changePinOnCard(beneficiary, pin)
             } else {
-                btn_scan_smartcard.text = getString(R.string.no_nfc_available)
-                btn_scan_smartcard.isEnabled = false
+                btn_change_pin.text = getString(R.string.no_nfc_available)
+                btn_change_pin.isEnabled = false
             }
         }
 
@@ -511,7 +509,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             qr_scanner.stopCamera()
         }
         if (args.isSmartcard) {
-            nfcAdapter?.disableForegroundDispatch(requireActivity())
+            NfcInitializer.disableForegroundDispatch(requireActivity())
         }
 
         super.onPause()

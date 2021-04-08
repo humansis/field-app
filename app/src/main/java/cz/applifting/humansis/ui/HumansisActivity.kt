@@ -51,9 +51,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     private val networkChangeReceiver = NetworkChangeReceiver()
     private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
-    private var disposable: Disposable? = null
     private var readBalanceDisposable: Disposable? = null
-    private var nfcAdapter: NfcAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +62,6 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         (application as App).appComponent.inject(this)
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
     }
 
     override fun onResume() {
@@ -110,55 +107,54 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onPause() {
-        nfcAdapter?.disableForegroundDispatch(this)
+        NfcInitializer.disableForegroundDispatch(this)
         super.onPause()
     }
 
     private fun showReadBalanceDialog() {
-        NfcInitializer(this).initNfc()
-        val scanCardDialog = AlertDialog.Builder(this, R.style.DialogTheme)
-            .setMessage(getString(R.string.scan_the_card))
-            .setCancelable(false)
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog?.dismiss()
-//                disposable?.dispose()
-//                disposable = null
-            }
-            .create()
+        if (NfcInitializer.initNfc(this)) {
+            val scanCardDialog = AlertDialog.Builder(this, R.style.DialogTheme)
+                .setMessage(getString(R.string.scan_the_card))
+                .setCancelable(false)
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                }
+                .create()
 
-        scanCardDialog?.show()
+            scanCardDialog?.show()
 
-        readBalanceDisposable?.dispose()
-        readBalanceDisposable = mainViewModel.readBalance()
-        .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            scanCardDialog.dismiss()
-            val cardContent = it
-            val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
+            readBalanceDisposable?.dispose()
+            readBalanceDisposable = mainViewModel.readBalance()
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+                scanCardDialog.dismiss()
+                val cardContent = it
+                val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(getString((R.string.read_balance)))
                 .setMessage(
-                    getString(
-                        R.string.scanning_card_balance,
-                        "${cardContent.balance} ${cardContent.currencyCode}"
-                    )
+                        getString(
+                                R.string.scanning_card_balance,
+                                "${cardContent.balance} ${cardContent.currencyCode}"
+                        )
                 )
                 .setCancelable(true)
-                .setNegativeButton(getString(R.string.close)){ dialog, _ ->
+                .setNegativeButton(getString(R.string.close)) { dialog, _ ->
                     dialog?.dismiss()
                     readBalanceDisposable?.dispose()
                     readBalanceDisposable = null
                 }
                 .create()
-            cardResultDialog.show()
-        },
-        {
-            Toast.makeText(
-                this,
-                getString(R.string.card_error),
-                Toast.LENGTH_LONG
-            ).show()
-            scanCardDialog.dismiss()
-            nfcAdapter?.disableForegroundDispatch(this)
-        })
+                cardResultDialog.show()
+            },
+            {
+                Toast.makeText(
+                    this,
+                    getString(R.string.card_error),
+                    Toast.LENGTH_LONG
+                ).show()
+                scanCardDialog.dismiss()
+                NfcInitializer.disableForegroundDispatch(this)
+            })
+        }
     }
 
     private fun enqueueSynchronization() {
