@@ -154,6 +154,12 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 scanCardDialog.dismiss()
                 NfcInitializer.disableForegroundDispatch(this)
             })
+        } else {
+            Toast.makeText(
+                    this,
+                    this.getString(R.string.no_nfc_available),
+                    Toast.LENGTH_LONG
+            ).show()
         }
     }
 
