@@ -251,7 +251,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         btn_change_pin.setOnClickListener {
-            // todo asi nejde po navratu ze settings ? checknout i ostatni tlacitka
             btn_change_pin.isEnabled = false
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
