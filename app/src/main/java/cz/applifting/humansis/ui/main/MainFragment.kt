@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main
 
+import android.app.AlertDialog
 import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -8,7 +9,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import android.app.AlertDialog
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -16,9 +17,11 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
+import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
@@ -33,25 +36,36 @@ import kotlinx.android.synthetic.main.menu_status_button.view.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class MainFragment : BaseFragment() {
+class MainFragment : BaseFragment(){
 
     private val viewModel: MainViewModel by viewModels { viewModelFactory }
     private lateinit var baseNavController: NavController
     private lateinit var mainNavController: NavController
+    private lateinit var drawer: DrawerLayout
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        view?.hideSoftKeyboard()
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.projectsFragment, R.id.settingsFragment),
             drawer_layout
         )
 
-        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
+        drawer = requireActivity().findViewById(R.id.drawer_layout)
+
+        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
+            "Cannot find nav host in main"
+        )
 
         baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
@@ -114,6 +128,9 @@ class MainFragment : BaseFragment() {
         }
 
         sharedViewModel.tryFirstDownload()
+
+        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
