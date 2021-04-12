@@ -118,6 +118,8 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 .setCancelable(false)
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog?.dismiss()
+                    readBalanceDisposable?.dispose()
+                    readBalanceDisposable = null
                 }
                 .create()
 
