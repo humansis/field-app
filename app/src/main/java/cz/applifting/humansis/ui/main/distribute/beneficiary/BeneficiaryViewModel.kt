@@ -10,11 +10,11 @@ import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.C
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.UserPinBalance
+import io.reactivex.Single
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import io.reactivex.Single
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -38,7 +38,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
     private set
 
     private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
-    private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_batch[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
+    private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
 
     fun initBeneficiary(id: Int) {
         launch {
