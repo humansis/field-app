@@ -10,7 +10,6 @@ import cz.applifting.humansis.di.SPQualifier
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
-import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.model.db.User
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
@@ -133,7 +132,7 @@ class LoginManager @Inject constructor(
             try {
                 SafeHelperFactory.rekey(db.openHelper.readableDatabase, "default".toCharArray())
             } catch (e: SQLiteException) {
-                Log.d("humansis", e.toString())
+                Log.d(TAG, e.toString())
             }
         }
     }
@@ -149,5 +148,9 @@ class LoginManager @Inject constructor(
         }
 
         return salt
+    }
+
+    companion object {
+        private val TAG = LoginManager::class.java.simpleName
     }
 }

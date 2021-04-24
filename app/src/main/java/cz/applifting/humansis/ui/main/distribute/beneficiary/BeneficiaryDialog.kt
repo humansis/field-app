@@ -35,6 +35,7 @@ import cz.applifting.humansis.ui.components.TitledTextView
 import cz.applifting.humansis.ui.main.SharedViewModel
 import cz.quanti.android.nfc.exception.PINException
 import cz.quanti.android.nfc.exception.PINExceptionEnum
+import cz.quanti.android.nfc.logger.NfcLogger
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -69,6 +70,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private var pendingIntent: PendingIntent? = null
     private var disposable: Disposable? = null
 
+    private val TAG = this.javaClass.simpleName
     val args: BeneficiaryDialogArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -367,6 +369,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         scanCardDialog?.show()
 
+        NfcLogger.d(
+            TAG,
+            "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
+        )
+
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(balance.toDouble(), currency, pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -404,6 +411,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         }
                         .create()
                     cardResultDialog.show()
+                    NfcLogger.d(
+                        TAG,
+                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
+                    )
                 },
                 {
                     var ex = it
@@ -412,7 +423,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                            NfcLogger.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                             Toast.makeText(
                                 requireContext(),
                                 getNfcCardErrorMessage(ex.pinExceptionEnum),
@@ -420,6 +431,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             ).show()
                         }
                         else -> {
+                            NfcLogger.e(this.javaClass.simpleName, R.string.card_error.toString())
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.card_error),
