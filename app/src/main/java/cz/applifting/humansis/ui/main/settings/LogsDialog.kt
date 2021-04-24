@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
+import cz.applifting.humansis.R
 import kotlinx.android.synthetic.main.dialog_logs.view.*
+import quanti.com.kotlinlog.file.SendLogDialogFragment
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 13, November, 2019
@@ -24,7 +26,7 @@ class LogsDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view =  inflater.inflate(cz.applifting.humansis.R.layout.dialog_logs, container, false)
+        val view =  inflater.inflate(R.layout.dialog_logs, container, false)
         view.tv_logs.text = args.logs
         view.tv_logs.movementMethod = ScrollingMovementMethod()
 
@@ -32,12 +34,21 @@ class LogsDialog : DialogFragment() {
             dialog?.cancel()
         }
 
+        view.btn_export.setOnClickListener {
+            SendLogDialogFragment.newInstance(
+                    sendEmailAddress = getString(R.string.send_email_adress),
+                    title = getString(R.string.logs_dialog_title),
+                    message = getString(R.string.logs_dialog_message),
+                    emailButtonText = getString(R.string.logs_dialog_email_button),
+                    dialogTheme = R.style.DialogTheme
+            ).show(requireActivity().supportFragmentManager, "TAG")
+        }
+
         view.btn_copy.setOnClickListener {
             val clipboard = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
             val clip = ClipData.newPlainText("logs", args.logs)
             clipboard?.setPrimaryClip(clip)
         }
-
 
         return view
     }
