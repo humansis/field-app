@@ -25,6 +25,11 @@
                 android:icon="@drawable/ic_money"
                 android:title="@string/read_balance"/>
 
+            <item
+                android:id="@+id/action_initialize_cards"
+                android:icon="@drawable/ic_card"
+                android:title="@string/initialize_cards"/>
+
             <!--<item
                 android:id="@+id/shareLogsButton"
                 android:icon="@drawable/ic_export"

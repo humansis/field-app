@@ -324,6 +324,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun writeBalanceOnCard(balance: Double, currency: String, beneficiary: BeneficiaryLocal, pin: String) {
+        // todo vyresit plus karty
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
