@@ -133,7 +133,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:1.0.0"
+    implementation "cz.quanti.android:nfc:1.0.1"
 
     // DI
     ext.dagger2_version = '2.23.2'
@@ -187,6 +187,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
     implementation "android.arch.lifecycle:reactivestreams:1.0.0-beta2"
 
+    // Kotlin logger
+    implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
     def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'

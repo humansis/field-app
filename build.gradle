@@ -2,7 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.4.21'
-    ext.kotlin_logger_version = '2.2.3'
+    ext.kotlin_logger_version = '2.2.4'
     repositories {
         google()
         jcenter()
