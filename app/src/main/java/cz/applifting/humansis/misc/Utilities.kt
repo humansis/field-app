@@ -98,7 +98,7 @@ class Utilities(
 
     private fun initializeCard(scanCardDialog: AlertDialog) {
         initializeCardDisposable?.dispose()
-        initializeCardDisposable = mainViewModel.initializeCard()
+        initializeCardDisposable = mainViewModel.readBalance()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             showCardInitializedDialog(scanCardDialog, activity.getString(R.string.different_user_card_error))
             },

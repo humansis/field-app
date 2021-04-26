@@ -162,5 +162,6 @@
     <string name="initialize_cards">Initialize cards</string>
     <string name="scan_another_card">Scan another card</string>
     <string name="card_initialized">Card was successfully initialized</string>
+    <string name="scan_card_again">Please scan the card again.</string>
 
 </resources>

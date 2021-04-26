@@ -7,7 +7,6 @@ import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.VendorFacade
 import cz.quanti.android.nfc.dto.UserBalance
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +22,6 @@ class MainViewModel @Inject constructor(
 
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var vendorFacade: VendorFacade
     @Inject
     lateinit var pinFacade: PINFacade
     @Inject
@@ -48,14 +45,6 @@ class MainViewModel @Inject constructor(
 
     fun readBalance(): Single<UserBalance> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            pinFacade.readUserBalance(tag)
-        }
-    }
-
-    fun initializeCard(): Single<UserBalance> {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
-            //todo vymenit to za neco, co nebude hazet exceptiony pri neinicializovanych plus kartach
-            //napsat do pinfacade metodu na inicializaci
             pinFacade.readUserBalance(tag)
         }
     }
