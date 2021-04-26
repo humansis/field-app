@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.appdistribution'
 apply plugin: 'com.google.firebase.crashlytics'
 
 // ****************** CONFIGURATION ************************ ////
@@ -75,6 +76,12 @@ android {
         buildConfigField "short", "APP_VESION", "$APP_VERSION"
 
         buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
+
+        firebaseAppDistribution {
+            appId="1:1075203125993:android:e6616d8f23331ac2cb3678"
+            releaseNotes="Release notes"
+            groups="quanti-android-testers"
+        }
     }
 
     signingConfigs {
