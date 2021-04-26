@@ -23,6 +23,7 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -31,7 +32,6 @@ import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.components.TitledTextView
 import cz.applifting.humansis.ui.main.SharedViewModel
 import cz.quanti.android.nfc.exception.PINException
-import cz.quanti.android.nfc.exception.PINExceptionEnum
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -387,7 +387,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                             Toast.makeText(
                                 requireContext(),
-                                getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                NfcCardErrorMessage.getNfcCardErrorMessage(
+                                    ex.pinExceptionEnum,
+                                    requireActivity()
+                                ),
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -459,7 +462,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                             Toast.makeText(
                                     requireContext(),
-                                    getNfcCardErrorMessage(ex.pinExceptionEnum),
+                                    NfcCardErrorMessage.getNfcCardErrorMessage(
+                                        ex.pinExceptionEnum,
+                                        requireActivity()
+                                    ),
                                     Toast.LENGTH_LONG
                             ).show()
                         }
@@ -476,19 +482,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
                 }
             )
-    }
-
-    private fun getNfcCardErrorMessage(pinExceptionEnum: PINExceptionEnum): String {
-        return when (pinExceptionEnum) {
-            PINExceptionEnum.CARD_LOCKED -> getString(R.string.card_locked)
-            PINExceptionEnum.INCORRECT_PIN -> getString(R.string.incorrect_pin)
-            PINExceptionEnum.INVALID_DATA -> getString(R.string.invalid_data)
-            PINExceptionEnum.UNSUPPORTED_VERSION -> getString(R.string.invalid_version)
-            PINExceptionEnum.DIFFERENT_CURRENCY -> getString(R.string.currency_mismatch)
-            PINExceptionEnum.TAG_LOST -> getString(R.string.tag_lost_card_error)
-            PINExceptionEnum.DIFFERENT_USER -> getString(R.string.different_user_card_error)
-            else -> getString(R.string.card_error)
-        }
     }
 
     override fun onResume() {

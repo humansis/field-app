@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.widget.Toast
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.main.MainViewModel
+import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -98,31 +99,36 @@ class Utilities(
     private fun initializeCard(scanCardDialog: AlertDialog) {
         initializeCardDisposable?.dispose()
         initializeCardDisposable = mainViewModel.initializeCard()
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    scanCardDialog.dismiss()
-                    val cardResultDialog = AlertDialog.Builder(activity, R.style.DialogTheme)
-                            .setTitle(activity.getString(R.string.card_initialized))
-                            .setMessage(activity.getString(R.string.scan_the_card))
-                            .setCancelable(true)
-                            .setNegativeButton(activity.getString(R.string.close)) { dialog, _ ->
-                                dialog?.dismiss()
-                                initializeCardDisposable?.dispose()
-                                initializeCardDisposable = null
-                            }
-                            .create()
-                    cardResultDialog.show()
-                    NfcInitializer.initNfc(activity)
-                    initializeCard(cardResultDialog)
-                },
-                        {
-                            //todo not plus card, no need to initialize
-                            Toast.makeText(
-                                    activity,
-                                    activity.getString(R.string.card_error),
-                                    Toast.LENGTH_LONG
-                            ).show()
-                            scanCardDialog.dismiss()
-                            NfcInitializer.disableForegroundDispatch(activity)
-                        })
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            showCardInitializedDialog(scanCardDialog, activity.getString(R.string.different_user_card_error))
+            },
+            {
+                if(it is PINException){
+                    showCardInitializedDialog(
+                        scanCardDialog,
+                        NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, activity)
+                    )
+                } else {
+                    showCardInitializedDialog(scanCardDialog, activity.getString(R.string.card_error))
+                }
+            })
+    }
+
+    private fun showCardInitializedDialog(scanCardDialog: AlertDialog, title: String) {
+        scanCardDialog.dismiss()
+        val cardResultDialog = AlertDialog.Builder(activity, R.style.DialogTheme)
+            .setTitle(title)
+            .setMessage(activity.getString(R.string.scan_another_card))
+            .setCancelable(true)
+            .setNegativeButton(activity.getString(R.string.close)) { dialog, _ ->
+                dialog?.dismiss()
+                initializeCardDisposable?.dispose()
+                initializeCardDisposable = null
+                NfcInitializer.disableForegroundDispatch(activity)
+            }
+            .create()
+        cardResultDialog.show()
+        NfcInitializer.initNfc(activity)
+        initializeCard(cardResultDialog)
     }
 }

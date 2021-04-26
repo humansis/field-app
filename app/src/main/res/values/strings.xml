@@ -160,7 +160,7 @@
     <string name="read_balance">Read balance</string>
     <string name="utilities">Utilities</string>
     <string name="initialize_cards">Initialize cards</string>
-    <string name="card_initialized">Card initialized!</string>
     <string name="scan_another_card">Scan another card</string>
+    <string name="card_initialized">Card was successfully initialized</string>
 
 </resources>
