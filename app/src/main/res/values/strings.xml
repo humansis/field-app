@@ -70,7 +70,7 @@
     <string name="logout_alert_pending_changes_text">You cannot log out right now. Pending changes need to be synchronized before log out.</string>
     <string name="show_developer_logs">Show developer logs</string>
     <string name="copy">Copy</string>
-    <string name="close">close</string>
+    <string name="close">Close</string>
     <string name="error_server">Server responded with error.</string>
     <string name="error_bad_request">Bad request.</string>
     <string name="error_user_not_allowed">User not allowed.</string>
@@ -163,5 +163,7 @@
     <string name="menu">menu</string>
     <string name="synchronize">synchronize</string>
     <string name="loading">loading</string>
+    <string name="read_balance">Read balance</string>
+    <string name="utilities">Utilities</string>
 
 </resources>

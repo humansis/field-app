@@ -3,13 +3,9 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.PendingIntent
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +23,7 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
@@ -66,8 +63,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: BeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
-    private var nfcAdapter: NfcAdapter? = null
-    private var pendingIntent: PendingIntent? = null
     private var disposable: Disposable? = null
 
     private val TAG = this.javaClass.simpleName
@@ -146,17 +141,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         // it was distributed and already synced with the server
                         tv_smartcard.visibility = View.GONE
                     }
-                    view?.btn_action?.isEnabled = false
-                    view?.btn_action?.visibility = View.GONE
+                    view.btn_action?.isEnabled = false
+                    view.btn_action?.visibility = View.GONE
                 } else {
                     if (beneficiary.distributed) {
 
                         if (beneficiary.edited) {
                             btn_action.text = context.getString(R.string.revert)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_revert_btn, context.theme))
+                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn, context.theme)
                             } else {
-                                btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_revert_btn))
+                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn)
                             }
                         } else {
                             btn_action.visible(false)
@@ -164,13 +159,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     } else {
                         btn_action.text = context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_confirm_btn, context.theme))
+                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn, context.theme)
                         } else {
-                            btn_action.setBackgroundTintList(context.resources.getColorStateList(R.color.background_confirm_btn))
+                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn)
                         }
                     }
 
-                    view?.btn_action?.isEnabled = true
+                    view.btn_action?.isEnabled = true
 
                     btn_action.setOnClickListener { _ ->
                         if (beneficiary.edited) {
@@ -248,7 +243,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_scan_smartcard.setOnClickListener {
             btn_scan_smartcard.isEnabled = false
-            if(startSmartcardScanner()) {
+            if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(value, currency, beneficiary, pin)
             } else {
@@ -259,12 +254,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         btn_change_pin.setOnClickListener {
             btn_change_pin.isEnabled = false
-            if(startSmartcardScanner()) {
+            if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 changePinOnCard(beneficiary, pin)
             } else {
-                btn_scan_smartcard.text = getString(R.string.no_nfc_available)
-                btn_scan_smartcard.isEnabled = false
+                btn_change_pin.text = getString(R.string.no_nfc_available)
+                btn_change_pin.isEnabled = false
             }
         }
 
@@ -330,35 +325,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun initNfc(): Boolean {
-        nfcAdapter = NfcAdapter.getDefaultAdapter(requireActivity())
-
-        if (nfcAdapter == null) {
-            // NFC is not available on this device
-            return false
-        }
-
-        pendingIntent = PendingIntent.getActivity(
-            requireActivity(), 0,
-            Intent(requireActivity(), requireActivity().javaClass)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
-        )
-
-        nfcAdapter?.let { nfcAdapter ->
-            if (!nfcAdapter.isEnabled) {
-                showWirelessSettings()
-            }
-            nfcAdapter.enableForegroundDispatch(requireActivity(), pendingIntent, null, null)
-        }
-
-        return true
-    }
-
     private fun writeBalanceOnCard(balance: Double, currency: String, beneficiary: BeneficiaryLocal, pin: String) {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
-            .setNegativeButton(getString(R.string.cancel)) { dialog, id ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
                 btn_scan_smartcard?.visibility = View.VISIBLE
                 btn_scan_smartcard?.isEnabled = true
@@ -375,12 +346,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         )
 
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(balance.toDouble(), currency, pin, beneficiary.beneficiaryId)
+        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 {   info ->
                     val tag = info.first
                     val cardContent = info.second
-                    val id = tag?.id
+                    val id = tag.id
                     var cardId: String? = null
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
@@ -531,20 +502,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun startSmartcardScanner(): Boolean {
-        return initNfc()
-    }
-
-    private fun showWirelessSettings() {
-        Toast.makeText(
-            requireContext(),
-            getString(R.string.you_need_to_enable_nfc),
-            Toast.LENGTH_LONG
-        ).show()
-        val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
-        startActivity(intent)
-    }
-
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
@@ -563,7 +520,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             qr_scanner.stopCamera()
         }
         if (args.isSmartcard) {
-            nfcAdapter?.disableForegroundDispatch(requireActivity())
+            NfcInitializer.disableForegroundDispatch(requireActivity())
         }
 
         super.onPause()
