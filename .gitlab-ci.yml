@@ -12,6 +12,7 @@ stages:
   - build
   - archive
   - upload
+  - firebase
 
 .gradle_build:
   before_script:
@@ -21,6 +22,8 @@ stages:
     - mkdir -p ./app/keystore
     - echo $BASE64_RELEASE_KEYSTORE | base64 -d > ./app/keystore/release.keystore
     - echo $BASE64_DEBUG_KEYSTORE | base64 -d > ./app/keystore/debug.keystore
+    - echo $FIREBASE_APP_DISTRIBUTION_ADMIN | base64 -d > ./app/adc.json;
+      export GOOGLE_APPLICATION_CREDENTIALS=./app/adc.json;
     - ./gradlew clean
 
 # Just build application 
@@ -68,4 +71,12 @@ upload_to_artifactory:
   variables:
     ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
+  when: manual
+
+upload_to_firebase:
+  stage: firebase
+  extends: .gradle_build
+  script:
+    - ./gradlew --build-cache clean
+        app:assembleDebug app:appDistributionUploadDebug
   when: manual
