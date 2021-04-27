@@ -80,7 +80,7 @@ android {
         firebaseAppDistribution {
             appId="1:1075203125993:android:e6616d8f23331ac2cb3678"
             releaseNotes="Release notes"
-            groups="quanti-android-testers"
+            groups="quanti-android-testers, pin-testers"
         }
     }
 
