@@ -249,7 +249,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     currency,
                     beneficiary,
                     pin,
-                    showScanCardDialog(value, currency, beneficiary, pin)
+                    showScanCardDialog()
                 )
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
@@ -264,7 +264,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 changePinOnCard(
                     beneficiary,
                     pin,
-                    showScanCardDialog(value, currency, beneficiary, pin)
+                    showScanCardDialog()
                 )
             } else {
                 btn_change_pin.text = getString(R.string.no_nfc_available)
@@ -334,7 +334,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun showScanCardDialog(balance: Double, currency: String, beneficiary: BeneficiaryLocal, pin: String): AlertDialog {
+    private fun showScanCardDialog(): AlertDialog {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
