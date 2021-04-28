@@ -39,7 +39,7 @@ class App : Application() {
         }
 
         override fun e(tag: String, throwable: Throwable) {
-            Log.e(tag, throwable.localizedMessage)
+            Log.e(tag, throwable)
         }
 
         override fun d(tag: String, message: String) {
