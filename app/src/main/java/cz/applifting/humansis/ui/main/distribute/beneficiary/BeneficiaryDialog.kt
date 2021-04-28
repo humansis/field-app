@@ -352,6 +352,29 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return scanCardDialog
     }
 
+    private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
+        val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                .setTitle(getString((R.string.card_updated)))
+                .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                    this.pin.text = pin
+                    if(message != null){
+                        this.message.text = message
+                    } else {
+                        this.message.visibility = View.GONE
+                    }
+                })
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
+                    showAddReferralInfoDialog(beneficiary)
+                }
+                .setNegativeButton(getString(R.string.close)){ _, _ ->
+                    sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                    dismiss()
+                }
+                .create()
+        cardResultDialog.show()
+    }
+
     private fun writeBalanceOnCard(
         balance: Double,
         currency: String,
@@ -374,28 +397,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 
-                    val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.card_updated)))
-                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
-                            this.pin.text = getString(
-                                R.string.scanning_card_pin,
-                                cardContent.pin
-                            )
-                            this.message.text = getString(
-                                R.string.scanning_card_balance,
-                                "${cardContent.balance} ${cardContent.currencyCode}"
-                            )
-                        })
-                        .setCancelable(true)
-                        .setPositiveButton(getString(R.string.add_referral)) { dialog, id ->
-                            showAddReferralInfoDialog(beneficiary)
-                        }
-                        .setNegativeButton(getString(R.string.close)){ dialog, id ->
-                            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
-                            dismiss()
-                        }
-                        .create()
-                    cardResultDialog.show()
+                    showCardUpdatedDialog(
+                        beneficiary,
+                        getString(
+                            R.string.scanning_card_pin,
+                            cardContent.pin
+                        ),
+                        getString(
+                            R.string.scanning_card_balance,
+                            "${cardContent.balance} ${cardContent.currencyCode}"
+                        )
+                    )
                 },
                 {
                     var ex = it
@@ -464,25 +476,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_change_pin.visibility = View.GONE
                     scanCardDialog.dismiss()
 
-                    val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                        .setTitle(getString((R.string.card_updated)))
-                        .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
-                            this.pin.text = getString(
-                                    R.string.changing_pin_result,
-                                    cardContent.pin
-                            )
-                            this.message.visibility = View.GONE
-                        })
-                        .setCancelable(true)
-                        .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
-                            showAddReferralInfoDialog(beneficiary)
-                        }
-                        .setNegativeButton(getString(R.string.close)) { _, _ ->
-                            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
-                            dismiss()
-                        }
-                        .create()
-                    cardResultDialog.show()
+                    showCardUpdatedDialog(
+
+                        beneficiary,
+                        getString(
+                            R.string.changing_pin_result,
+                            cardContent.pin
+                        ),
+                null
+                    )
                 },
                 {
                     var ex = it
