@@ -4,19 +4,30 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.widget.Toast
 import cz.applifting.humansis.R
-import cz.applifting.humansis.ui.main.MainViewModel
+import cz.applifting.humansis.ui.App
+import cz.quanti.android.nfc.PINFacade
+import cz.quanti.android.nfc.dto.UserBalance
 import cz.quanti.android.nfc.exception.PINException
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 class Utilities(
-        private val activity: Activity,
-        private val mainViewModel: MainViewModel
+        private val activity: Activity
 ) {
+    @Inject
+    lateinit var nfcTagPublisher: NfcTagPublisher
+    @Inject
+    lateinit var pinFacade: PINFacade
 
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
+
+    init {
+        (activity.application as App).appComponent.inject(this)
+    }
 
     fun showReadBalanceDialog() {
         if (NfcInitializer.initNfc(activity)) {
@@ -33,7 +44,7 @@ class Utilities(
             scanCardDialog?.show()
 
             readBalanceDisposable?.dispose()
-            readBalanceDisposable = mainViewModel.readBalance()
+            readBalanceDisposable = readBalance()
                     .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
                         scanCardDialog.dismiss()
                         val cardContent = it
@@ -98,7 +109,7 @@ class Utilities(
 
     private fun initializeCard(scanCardDialog: AlertDialog) {
         initializeCardDisposable?.dispose()
-        initializeCardDisposable = mainViewModel.readBalance()
+        initializeCardDisposable = readBalance()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             showCardInitializedDialog(scanCardDialog, activity.getString(R.string.different_user_card_error))
             },
@@ -130,5 +141,11 @@ class Utilities(
         cardResultDialog.show()
         NfcInitializer.initNfc(activity)
         initializeCard(cardResultDialog)
+    }
+
+    private fun readBalance(): Single<UserBalance> {
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+            pinFacade.readUserBalance(tag)
+        }
     }
 }

@@ -8,11 +8,9 @@ import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.work.*
 import com.google.android.material.navigation.NavigationView
@@ -25,8 +23,6 @@ import cz.applifting.humansis.misc.Utilities
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import cz.applifting.humansis.ui.main.MainViewModel
-import cz.quanti.android.nfc.VendorFacade
 import java.util.*
 import javax.inject.Inject
 
@@ -40,15 +36,10 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     lateinit var sp: SharedPreferences
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject
-    lateinit var vendorFacade: VendorFacade
 
     lateinit var utilities: Utilities
 
     private val networkChangeReceiver = NetworkChangeReceiver()
-    private val mainViewModel: MainViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +60,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         filter.addAction("android.net.wifi.STATE_CHANGE")
         registerReceiver(networkChangeReceiver, filter)
-        utilities = Utilities(this,mainViewModel)
+        utilities = Utilities(this)
     }
 
     override fun onDestroy() {

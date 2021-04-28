@@ -14,6 +14,7 @@ class ParamsModule {
     @Provides
     @Named(BASE_URL)
     fun baseUrl(): String {
+        //todo poresit v2
         return "https://" + ApiEnvironments.RELEASE.url + "/api/wsse/offline-app/v1/"
     }
 
