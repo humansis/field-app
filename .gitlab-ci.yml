@@ -1,3 +1,4 @@
+---
 include:
   - project: 'humansis/gitlab-ci-templates'
     ref: 'mobile/docker-ci'
@@ -26,21 +27,18 @@ stages:
       export GOOGLE_APPLICATION_CREDENTIALS=./app/adc.json;
     - ./gradlew clean
 
-# Just build application 
 build_debug_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleDebug 
-# Just build application 
+    - ./gradlew assembleDebug
 
 build_release_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleRelease 
+    - ./gradlew assembleRelease
 
-# Build debug and archive apk
 archive_debug_job:
   stage: archive
   extends: .gradle_build
@@ -53,7 +51,6 @@ archive_debug_job:
     paths:
       - $ARTIFACT_PATH
 
-# Build debug and archive apk
 archive_release_job:
   stage: archive
   extends: .gradle_build
