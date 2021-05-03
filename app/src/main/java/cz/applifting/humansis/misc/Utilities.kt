@@ -15,13 +15,10 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class Utilities(
-        private val activity: Activity
+        private val activity: Activity,
+        private val nfcTagPublisher: NfcTagPublisher,
+        private val pinFacade: PINFacade
 ) {
-    @Inject
-    lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var pinFacade: PINFacade
-
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
 

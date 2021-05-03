@@ -23,6 +23,7 @@ import cz.applifting.humansis.misc.Utilities
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
+import cz.quanti.android.nfc.PINFacade
 import java.util.*
 import javax.inject.Inject
 
@@ -36,6 +37,8 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     lateinit var sp: SharedPreferences
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
+    @Inject
+    lateinit var pinFacade: PINFacade
 
     lateinit var utilities: Utilities
 
@@ -60,7 +63,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         filter.addAction("android.net.wifi.STATE_CHANGE")
         registerReceiver(networkChangeReceiver, filter)
-        utilities = Utilities(this)
+        utilities = Utilities(this, nfcTagPublisher, pinFacade)
     }
 
     override fun onDestroy() {
