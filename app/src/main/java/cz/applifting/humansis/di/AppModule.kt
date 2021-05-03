@@ -119,6 +119,16 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun providePINFacade(): PINFacade {
+        return PINFacade(
+                BuildConfig.APP_VESION,
+                NfcUtil.hexStringToByteArray(BuildConfig.MASTER_KEY),
+                NfcUtil.hexStringToByteArray(BuildConfig.APP_ID)
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideOfflineFacade(): OfflineFacade {
         return PINFacade(
             BuildConfig.APP_VESION,
