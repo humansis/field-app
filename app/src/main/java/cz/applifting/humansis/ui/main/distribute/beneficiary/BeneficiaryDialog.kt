@@ -384,12 +384,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         pin: String,
         scanCardDialog: AlertDialog
     ) {
-
         NfcLogger.d(
                 TAG,
                 "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
         )
-
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
