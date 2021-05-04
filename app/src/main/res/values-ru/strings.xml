@@ -157,5 +157,9 @@
     <string name="menu">меню</string>
     <string name="synchronize">синхронизировать</string>
     <string name="loading">загрузка</string>
+    <string name="export_logs">послать журналы учета</string>
+    <string name="logs_dialog_title">Поделиться журналами учета</string>
+    <string name="logs_dialog_message">Вы хотите поделиться журналами учета?</string>
+    <string name="logs_dialog_email_button">Поделиться</string>
 
 </resources>

@@ -150,4 +150,8 @@
     <string name="menu">قائمة</string>
     <string name="synchronize">تزامن</string>
     <string name="loading">جار التحميل</string>
+    <string name="export_logs">إرسال سجلات</string>
+    <string name="logs_dialog_title">شارك السجلات</string>
+    <string name="logs_dialog_message">هل ترغب في مشاركة السجلات؟</string>
+    <string name="logs_dialog_email_button">شارك</string>
 </resources>
