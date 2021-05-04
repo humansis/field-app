@@ -14,6 +14,7 @@ stages:
   - archive
   - upload
   - firebase
+  - publish
 
 .gradle_build:
   before_script:
@@ -77,3 +78,19 @@ upload_to_firebase:
     - ./gradlew --build-cache clean
         app:assembleDebug app:appDistributionUploadDebug
   when: manual
+
+publish_to_playstore:
+  stage: publish
+  extends: .gradle_build
+  script:
+    - echo $BASE64_PLAYSTORE_API_KEY | base64 -d > $PLAYSTORE_API_KEY_PATH;
+    - export PATH=$PATH:/root/.local/share/gem/ruby/2.7.0/bin;
+      gem install bundler;
+      bundle update --bundler;
+      bundle install;
+    - bundle exec fastlane deploy json_key:$PLAYSTORE_API_KEY_PATH
+  after_script:
+    - rm -rf $PLAYSTORE_API_KEY_PATH
+  when: manual
+  only:
+    - tags
