@@ -154,4 +154,10 @@
     <string name="logs_dialog_title">شارك السجلات</string>
     <string name="logs_dialog_message">هل ترغب في مشاركة السجلات؟</string>
     <string name="logs_dialog_email_button">شارك</string>
+    <string name="utilities">خدمات</string>
+    <string name="initialize_cards">تهيئة البطاقات</string>
+    <string name="scan_another_card">امسح بطاقة أخرى</string>
+    <string name="card_initialized">تمت تهيئة البطاقة بنجاح</string>
+    <string name="scan_card_again">يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
+    <string name="read_balance">قراءة الرصيد</string>
 </resources>
