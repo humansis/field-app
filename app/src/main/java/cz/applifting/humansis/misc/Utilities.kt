@@ -27,6 +27,7 @@ class Utilities(
 
     fun showReadBalanceDialog() {
         if (NfcInitializer.initNfc(activity)) {
+            Log.d(TAG,"ReadBalanceDialog()")
             val scanCardDialog = AlertDialog.Builder(activity, R.style.DialogTheme)
                     .setMessage(activity.getString(R.string.scan_the_card))
                     .setCancelable(false)
@@ -72,6 +73,7 @@ class Utilities(
                                 NfcInitializer.disableForegroundDispatch(activity)
                             })
         } else {
+            Log.d(TAG,activity.getString(R.string.no_nfc_available))
             Toast.makeText(
                     activity,
                     activity.getString(R.string.no_nfc_available),
@@ -82,6 +84,7 @@ class Utilities(
 
     fun showInitializeCardsDialog() {
         if (NfcInitializer.initNfc(activity)) {
+            Log.d(TAG,"InitializeCardsDialog()")
             val scanCardDialog = AlertDialog.Builder(activity, R.style.DialogTheme)
                     .setMessage(activity.getString(R.string.scan_the_card))
                     .setCancelable(false)
@@ -96,6 +99,7 @@ class Utilities(
             initializeCard(scanCardDialog)
 
         } else {
+            Log.d(TAG,activity.getString(R.string.no_nfc_available))
             Toast.makeText(
                     activity,
                     activity.getString(R.string.no_nfc_available),
