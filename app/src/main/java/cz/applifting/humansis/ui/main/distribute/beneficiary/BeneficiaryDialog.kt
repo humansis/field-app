@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
