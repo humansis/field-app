@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +41,7 @@ import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import quanti.com.kotlinlog.Log
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject

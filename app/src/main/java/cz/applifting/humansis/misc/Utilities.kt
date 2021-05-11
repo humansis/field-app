@@ -12,6 +12,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import quanti.com.kotlinlog.Log
 
 class Utilities(
         private val activity: Activity,
@@ -20,6 +21,7 @@ class Utilities(
 ) {
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
+    private val TAG = this.javaClass.simpleName
 
     init {
         (activity.application as App).appComponent.inject(this)
