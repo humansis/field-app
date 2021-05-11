@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
@@ -428,6 +427,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         is PINException -> {
                             NfcLogger.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                             if (ex.pinExceptionEnum == PINExceptionEnum.CARD_INITIALIZED) {
+                                Log.e(this.javaClass.simpleName,ex)
                                 val cardInitializedDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                                     .setTitle(getString(R.string.card_initialized))
                                     .setMessage(getString(R.string.scan_card_again))
@@ -463,6 +463,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             }
                         }
                         else -> {
+                            Log.e(this.javaClass.simpleName,ex)
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.card_error),
@@ -470,7 +471,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             ).show()
                         }
                     }
-
                     btn_scan_smartcard.isEnabled = true
                     scanCardDialog.dismiss()
                 }
@@ -515,6 +515,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             ).show()
                         }
                         else -> {
+                            Log.e(this.javaClass.simpleName,ex)
                             Toast.makeText(
                                     requireContext(),
                                     getString(R.string.card_error),
