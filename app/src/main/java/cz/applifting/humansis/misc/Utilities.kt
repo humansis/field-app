@@ -12,7 +12,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
 class Utilities(
         private val activity: Activity,
@@ -63,6 +62,7 @@ class Utilities(
                         cardResultDialog.show()
                     },
                             {
+                                Log.e(TAG,it)
                                 Toast.makeText(
                                         activity,
                                         activity.getString(R.string.card_error),
@@ -119,6 +119,7 @@ class Utilities(
                 } else {
                     showCardInitializedDialog(scanCardDialog, activity.getString(R.string.card_error))
                 }
+                Log.e(TAG,it)
             })
     }
 
