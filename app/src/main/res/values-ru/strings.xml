@@ -161,5 +161,6 @@
     <string name="logs_dialog_title">Поделиться журналами учета</string>
     <string name="logs_dialog_message">Вы хотите поделиться журналами учета?</string>
     <string name="logs_dialog_email_button">Поделиться</string>
+    <string name="version">Версия %1$s</string>
 
 </resources>

@@ -3,8 +3,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_vertical_margin">32dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_items_vertical_margin">16dp</dimen>
     <dimen name="default_card_radius">12dp</dimen>
+    <dimen name="nav_header_image_height_regular">64dp</dimen>
+    <dimen name="nav_header_image_height_tall">128dp</dimen>
 </resources>

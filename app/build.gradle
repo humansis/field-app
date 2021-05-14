@@ -60,7 +60,6 @@ android {
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
 
-        resValue "string", "app_name", "Humansis"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
