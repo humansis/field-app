@@ -13,6 +13,7 @@ fun parseError(e: HttpException, context: Context): String {
         errorBody.contains("Wrong password") -> context.getString(R.string.error_invalid_password)
         errorBody.contains("No internet connection") -> context.getString(R.string.error_no_internet_connection)
         errorBody.contains("Service unavailable") -> context.getString(R.string.error_service_unavailable)
+        errorBody.contains("You must login to web app and change password") -> context.getString(R.string.error_expired_password)
         else -> {
             val localizedError = context.getString(R.string.error_unknown)
             val message = e.response()?.errorBody()?.string()?.takeIf { it.isNotEmpty() } ?: e.message()
