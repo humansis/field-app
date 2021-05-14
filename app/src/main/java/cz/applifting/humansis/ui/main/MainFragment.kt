@@ -85,11 +85,11 @@ class MainFragment : BaseFragment(){
         }
 
         val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
-        tvAppVersion.text = (
-                getString(R.string.app_name)
-                        + " "
-                        + getString(R.string.version, BuildConfig.VERSION_NAME)
-                )
+        var appVersion = getString(R.string.app_name) + " " + getString(R.string.version, BuildConfig.VERSION_NAME)
+        if (BuildConfig.DEBUG){
+            appVersion += (" (" + BuildConfig.BUILD_NUMBER + ")")
+        }
+        tvAppVersion.text = appVersion
 
         val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
         if(BuildConfig.DEBUG) {

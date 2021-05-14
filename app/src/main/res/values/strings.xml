@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Humansis</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -162,6 +161,6 @@
     <string name="scan_another_card">Scan another card</string>
     <string name="card_initialized">Card was successfully initialized</string>
     <string name="scan_card_again">Please scan the card again.</string>
-    <string name="version">v %1$s</string> //todo pridat preklad
+    <string name="version">v%1$s</string>
     <string name="environment">Environment: %1$s</string>
 </resources>
