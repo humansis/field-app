@@ -12,6 +12,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 class Utilities(
@@ -63,6 +64,7 @@ class Utilities(
                         cardResultDialog.show()
                     },
                             {
+                                Log.e(this.javaClass.simpleName, it)
                                 Toast.makeText(
                                         activity,
                                         activity.getString(R.string.card_error),
@@ -72,6 +74,7 @@ class Utilities(
                                 NfcInitializer.disableForegroundDispatch(activity)
                             })
         } else {
+            Log.e(this.javaClass.simpleName, activity.getString(R.string.no_nfc_available))
             Toast.makeText(
                     activity,
                     activity.getString(R.string.no_nfc_available),
@@ -96,6 +99,7 @@ class Utilities(
             initializeCard(scanCardDialog)
 
         } else {
+            Log.e(this.javaClass.simpleName, activity.getString(R.string.no_nfc_available))
             Toast.makeText(
                     activity,
                     activity.getString(R.string.no_nfc_available),
@@ -111,6 +115,7 @@ class Utilities(
             showCardInitializedDialog(scanCardDialog, activity.getString(R.string.different_user_card_error))
             },
             {
+                Log.e(this.javaClass.simpleName, it)
                 if(it is PINException){
                     showCardInitializedDialog(
                         scanCardDialog,
