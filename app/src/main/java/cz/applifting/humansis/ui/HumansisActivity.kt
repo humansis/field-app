@@ -281,7 +281,6 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             .create()
         cardResultDialog.show()
         displayedDialog = cardResultDialog
-        Log.d("xxx","init nfc")
         if (NfcInitializer.initNfc(this)) {
             initializeCard(cardResultDialog)
         }
