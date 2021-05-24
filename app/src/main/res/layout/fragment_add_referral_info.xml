@@ -85,7 +85,7 @@
             <Button
                     android:id="@+id/btn_confirm_referral"
                     style="@style/Button"
-                    android:backgroundTint="@color/green"
+                    android:background="@drawable/background_green_btn"
                     android:textColor="@color/white"
                     android:text="@string/ok"
                     android:layout_marginBottom="16dp"/>

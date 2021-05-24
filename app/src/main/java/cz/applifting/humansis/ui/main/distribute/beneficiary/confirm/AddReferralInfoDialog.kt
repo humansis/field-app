@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -25,8 +26,10 @@ class AddReferralInfoDialog : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ConfirmBeneficiaryViewModel by lazy{ ViewModelProviders.of(this, viewModelFactory)[ConfirmBeneficiaryViewModel::class.java] }
-    private val args: AddReferralInfoDialogArgs by navArgs()
     private lateinit var sharedViewModel: SharedViewModel
+    private val args: AddReferralInfoDialogArgs by navArgs()
+
+    private var shouldEnableConfirmLD = MutableLiveData<Pair<Boolean, Boolean>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (requireActivity().application as App).appComponent.inject(this)
@@ -60,6 +63,7 @@ class AddReferralInfoDialog : DialogFragment() {
                 if (text.toString() != it) {
                     setText(it)
                 }
+                setUpConfirmButton()
                 viewModel.errorLD.value = null
             }
         })
@@ -67,6 +71,10 @@ class AddReferralInfoDialog : DialogFragment() {
         viewModel.errorLD.observe(viewLifecycleOwner, Observer {
             tv_error_referral?.visibility = if (it == null) View.GONE else View.VISIBLE
             tv_error_referral?.text = it?.let { getString(it) }
+        })
+
+        shouldEnableConfirmLD.observe(viewLifecycleOwner, Observer {
+            btn_confirm_referral.isEnabled = it.first && it.second
         })
 
         super.onViewCreated(view, savedInstanceState)
@@ -84,12 +92,14 @@ class AddReferralInfoDialog : DialogFragment() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                setUpConfirmButton()
                 viewModel.referralTypeLD.value = position.toReferralType()
             }
         }
         spinner_referral_type_referral?.showFloatingLabel() // needed when nothing is initially selected
 
         tv_referral_note_referral?.addTextChangedListener {
+            setUpConfirmButton()
             viewModel.referralNoteLD.postValue(tv_referral_note_referral.text?.toString())
         }
 
@@ -103,6 +113,16 @@ class AddReferralInfoDialog : DialogFragment() {
                 dismiss()
             }
         }
+    }
+
+    private fun setUpConfirmButton() {
+        var first: Boolean
+        spinner_referral_type_referral.apply {
+            first = selectedItemPosition.toReferralType() != null
+        }
+        val second: Boolean = !tv_referral_note_referral.text.isNullOrEmpty()
+        shouldEnableConfirmLD.postValue(Pair(first, second))
+
     }
 
     // +-1 for the "none" value which is not in the enum

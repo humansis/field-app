@@ -168,7 +168,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     view.btn_action?.isEnabled = true
 
-                    btn_action.setOnClickListener { _ ->
+                    btn_action.setOnClickListener {
                         if (beneficiary.edited) {
                             if (viewModel.isAssignedInOtherDistribution) {
                                 showConfirmBeneficiaryDialog(beneficiary)
