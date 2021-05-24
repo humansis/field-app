@@ -1,7 +1,6 @@
 package cz.applifting.humansis.di
 
 import android.content.Context
-import cz.applifting.humansis.misc.Utilities
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -48,8 +47,6 @@ interface AppComponent {
     fun inject(uploadDialog: UploadDialog)
 
     fun inject(worker: SyncWorker)
-
-    fun inject(utilities: Utilities)
 
     @Component.Builder
     interface Builder {
