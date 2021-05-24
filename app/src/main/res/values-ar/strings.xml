@@ -103,7 +103,7 @@
     <string name="sync_summary">تم تحميل %1$d من التغييرات %2$d.</string>
     <string name="sync_summary_nothing">لم يتم تحميل أي تغييرات محلية</string>
     <string name="expand_referral_information">توسيع معلومات الإحالة</string>
-    <string name="add_referral">اضافة معلومات الإحالة</string>
+    <string name="add_referral">اضافة إحالة</string>
     <string name="edit_referral">تحرير معلومات الإحالة</string>
     <string name="confirm_distribution_message">تأكيد لتعيين هذا العنصر للمستفيد</string>
     <string name="acra_notif_channel">إرسال تقرير العطل</string>

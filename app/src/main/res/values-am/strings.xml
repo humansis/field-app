@@ -107,7 +107,7 @@
     <string name="sync_summary">%1$d ከ%2$d ለውጦች ተሰቅሏል</string>
     <string name="sync_summary_nothing">ምንም የአከባቢ ለውጦች አልተሰቀሉም</string>
     <string name="expand_referral_information">" የማጣቀሻ መረጃን ያስፋፉ"</string>
-    <string name="add_referral">የማጣቀሻ መረጃን ያክሉ</string>
+    <string name="add_referral">ማጣቀሻ (ማመሳከሪያ) አክል</string>
     <string name="edit_referral">የማጣቀሻ መረጃን ያርትዑ</string>
     <string name="confirm_distribution_message">ይህንን ንጥል ለተጠቃሚው ለመመደብ ያረጋግጡ</string>
     <string name="acra_notif_channel">የብልሽት ሪፖርት ያስገቡ</string>
