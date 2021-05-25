@@ -33,14 +33,14 @@ class DistributionsFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.title = args.projectName
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
-        val viewAdapter = DistributionsAdapter {
-            it.distribution.also {
+        val viewAdapter = DistributionsAdapter { it ->
+            it.distribution.also { distribution ->
                 val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(
-                    it.id,
-                    it.name,
+                    distribution.id,
+                    distribution.name,
                     args.projectName,
-                    isQRVoucherDistribution = it.isQRVoucherDistribution,
-                    isSmartcardDistribution = it.isSmartcardDistribution
+                    isQRVoucherDistribution = distribution.isQRVoucherDistribution,
+                    isSmartcardDistribution = distribution.isSmartcardDistribution
                 )
                 this.findNavController().navigate(action)
             }

@@ -31,7 +31,7 @@ class CryptoTest {
 
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"
-        );
+        )
 
         keyGenerator.init(
             KeyGenParameterSpec.Builder(

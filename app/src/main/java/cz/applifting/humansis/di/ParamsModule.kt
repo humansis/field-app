@@ -21,6 +21,8 @@ class ParamsModule {
     @Provides
     @Named(LOGFILE_PATH)
     fun logFilePath(): String {
+        //todo cesta k kotlinloggerfile
+        //pridat adb do path
         return "log.txt"
     }
 

@@ -1,7 +1,9 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -45,9 +47,9 @@ class ProjectsAdapter(
     }
 
     inner class ProjectViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
-        val context = layout.context
-        val tvName = layout.tv_location
-        val tvHouseHolds = layout.tv_households
+        val context: Context = layout.context
+        val tvName: TextView = layout.tv_location
+        private val tvHouseHolds: TextView = layout.tv_households
 
         fun bind(project: ProjectLocal) {
             tvName.text = project.name

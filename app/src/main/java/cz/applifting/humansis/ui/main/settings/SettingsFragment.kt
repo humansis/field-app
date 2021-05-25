@@ -10,10 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
-import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.ui.App
@@ -33,7 +31,7 @@ class SettingsFragment : BaseFragment() {
 
     @Inject
     lateinit var logger: Logger
-    lateinit var adapter: CountryAdapter
+    private lateinit var adapter: CountryAdapter
 
     private val viewModel: SettingsViewModel by viewModels {
         viewModelFactory
@@ -51,7 +49,7 @@ class SettingsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as HumansisActivity).supportActionBar?.title = getString(cz.applifting.humansis.R.string.action_settings)
+        (activity as HumansisActivity).supportActionBar?.title = getString(R.string.action_settings)
         (activity as HumansisActivity).supportActionBar?.subtitle = ""
 
         val navController = findNavController()
@@ -90,7 +88,7 @@ class SettingsFragment : BaseFragment() {
 
                 val sb = StringBuilder()
                 for (log in logs) {
-                    sb.append(log).append('\n')
+                    sb.append(log+'\n')
                 }
 
                 val action = SettingsFragmentDirections.actionSettingsFragmentToLogsDialog(sb.toString())

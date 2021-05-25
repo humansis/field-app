@@ -1,9 +1,7 @@
 package cz.applifting.humansis.ui.login
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
-import android.widget.Button
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
@@ -14,6 +12,7 @@ import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.hashAndSaltPassword
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -25,12 +24,12 @@ const val SP_ENVIRONMENT = "pin_offline_app_api_url"
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
  */
 class LoginViewModel @Inject constructor(
-        private val hostUrlInterceptor: HostUrlInterceptor,
-        private val service: HumansisService,
-        private val loginManager: LoginManager,
-        private val context: Context,
-        private val sp: SharedPreferences
-) : BaseViewModel() {
+    private val hostUrlInterceptor: HostUrlInterceptor,
+    private val service: HumansisService,
+    private val loginManager: LoginManager,
+    private val sp: SharedPreferences,
+    app: App
+) : BaseViewModel(app) {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
     val loginLD = MutableLiveData<User>()
@@ -45,7 +44,7 @@ class LoginViewModel @Inject constructor(
 
     fun changeHostUrl(host: ApiEnvironments?) {
         hostUrlInterceptor.setHost(host)
-        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.commit()
+        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.apply()
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
@@ -79,7 +78,7 @@ class LoginViewModel @Inject constructor(
                 viewStateLD.value = createViewStateErrorOnLogin(e.message)
                 loginFinishCallback.finishLogin(true)
             } catch (e: HttpException) {
-                val message = parseError(e, context)
+                val message = parseError(e, getApplication())
                 viewStateLD.value = createViewStateErrorOnLogin(message)
                 loginFinishCallback.finishLogin(true)
             }

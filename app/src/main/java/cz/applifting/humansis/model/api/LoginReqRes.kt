@@ -1,8 +1,6 @@
 package cz.applifting.humansis.model.api
 
 import com.google.gson.annotations.SerializedName
-import cz.applifting.humansis.model.Role
-import cz.applifting.humansis.model.Country
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
@@ -19,9 +17,9 @@ data class LoginReqRes(
     var email: String = "",
     var changePassword: Boolean = false,
     var vendor: String? = null,
-    var roles: List<Role>? = null,
+//    var roles: List<Role>? = null,
     var language: String? = null,
-   // var projects: List<Project>? = null, //it is there, but has strange data inside and thus its useless
+//    var projects: List<Project>? = null, //it is there, but has strange data inside and thus its useless
 
     var transactions: List<Any>? = null,
     @SerializedName("phone_prefix")

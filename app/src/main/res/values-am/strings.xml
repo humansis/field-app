@@ -87,7 +87,7 @@
     <string name="ETH">ETH</string>
     <string name="warning_country_change">ማስጠንቀቂያ-ሀገርን መለወጥ የአሁኑን መረጃዎን ያጠፋዋል!</string>
     <string name="unknwon_error">ያልታወቀ ስህተት ተከስቷል</string>
-    <string name="download_error">% S ን ማውረድ አልተቻለም</string>
+    <string name="download_error">%1$s ን ማውረድ አልተቻለም</string>
     <string name="auth_expiration_explanation">ዘግተው ወጥተዋል ምክንያቱም የእርስዎ ክፍለ ጊዜ አልቋል። የእርስዎ ውሂብ አሁንም በመሣሪያው ላይ ተቀምጧል። ለማመሳሰል ይግቡ</string>
     <string name="sync_error">በማመሳሰል ጊዜ አንድ ስህተት ነበር</string>
     <string name="dont_save">አታስቀምጥ</string>

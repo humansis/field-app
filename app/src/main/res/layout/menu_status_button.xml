@@ -1,42 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="false">
+
+    <ImageView
+        android:id="@+id/iv_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:orientation="horizontal">
-
-    <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false">
-
-        <ImageView
-                android:id="@+id/iv_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                app:srcCompat="@drawable/ic_online" />
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/ic_online" />
 
 
-        <ImageView
-                android:id="@+id/iv_pending_changes"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_gravity="top|end"
-                android:layout_marginEnd="12dp"
-                android:tint="@color/red"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_circle" />
+    <ImageView
+        android:id="@+id/iv_pending_changes"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="top|end"
+        android:layout_marginEnd="12dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_circle"
+        app:tint="@color/red" />
 
-        <ProgressBar
-                android:id="@+id/pb_sync_progress"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                android:background="@color/screenBackgroundColor"
-                android:visibility="gone" />
-    </FrameLayout>
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/pb_sync_progress"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        android:background="@color/screenBackgroundColor"
+        android:visibility="gone" />
+</FrameLayout>

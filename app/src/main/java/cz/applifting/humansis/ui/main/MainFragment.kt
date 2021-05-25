@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui.main
 
 import android.app.AlertDialog
 import android.content.*
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -140,7 +139,7 @@ class MainFragment : BaseFragment(){
 
     override fun onResume() {
         super.onResume()
-        val networkFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        val networkFilter = IntentFilter("android.net.conn.CONNECTIVITY_ACTION")
         activity?.registerReceiver(networkReceiver, networkFilter)
     }
 

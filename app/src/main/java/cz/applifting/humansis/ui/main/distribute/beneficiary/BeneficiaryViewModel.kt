@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
@@ -21,12 +22,14 @@ import javax.inject.Inject
  * @since 9. 9. 2019
  */
 
-class BeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficiariesRepository) :
-    BaseViewModel() {
+class BeneficiaryViewModel @Inject constructor(
+    private val beneficiariesRepository: BeneficiariesRepository,
+    app: App
+) : BaseViewModel(app) {
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
-    val scannedCardIdLD = MutableLiveData<String>()
+    private val scannedCardIdLD = MutableLiveData<String>()
     val goBackEventLD = MutableLiveData<Unit>()
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher

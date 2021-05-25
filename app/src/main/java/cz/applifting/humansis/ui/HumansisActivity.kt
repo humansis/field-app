@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui
 
 import android.content.*
 import android.graphics.Color
-import android.net.ConnectivityManager
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
@@ -40,7 +39,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     @Inject
     lateinit var pinFacade: PINFacade
 
-    lateinit var utilities: Utilities
+    private lateinit var utilities: Utilities
 
     private val networkChangeReceiver = NetworkChangeReceiver()
 
@@ -60,7 +59,7 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         enqueueSynchronization()
 
         val filter = IntentFilter()
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        filter.addAction("android.net.conn.CONNECTIVITY_ACTION")
         filter.addAction("android.net.wifi.STATE_CHANGE")
         registerReceiver(networkChangeReceiver, filter)
         utilities = Utilities(this, nfcTagPublisher, pinFacade)
