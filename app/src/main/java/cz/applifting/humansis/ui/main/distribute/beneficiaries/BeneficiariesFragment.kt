@@ -70,6 +70,13 @@ class BeneficiariesFragment : BaseFragment() {
             lc_beneficiaries.scrollToTop()
         }
 
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                cmp_search_beneficiary.clearSearch()
+                sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(false)
+            }
+        })
+
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
         viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
