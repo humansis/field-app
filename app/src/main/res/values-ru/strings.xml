@@ -109,7 +109,7 @@
     <string name="sync_summary">Загружено %1$d из %2$d изменений.</string>
     <string name="sync_summary_nothing">Никаких местных изменений не загружено.</string>
     <string name="expand_referral_information">Расширить информацию о перенаправлении.</string>
-    <string name="add_referral">Добавить информацию о перенаправлении.</string>
+    <string name="add_referral">добавить перенаправление</string>
     <string name="edit_referral">Редактировать информацию о перенаправлении.</string>
     <string name="confirm_distribution_message">Подтвердить назначение этого товара бенефициару.</string>
 
