@@ -144,5 +144,6 @@
     <string name="unnamed_project">ያልተሰየመ ፕሮጀክት</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="card_updated">ካርድ ዘምኗል</string>
+    <string name="version">v%1$s</string>
 
 </resources>

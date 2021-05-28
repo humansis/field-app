@@ -160,4 +160,5 @@
     <string name="card_initialized">تمت تهيئة البطاقة بنجاح</string>
     <string name="scan_card_again">يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="read_balance">قراءة الرصيد</string>
+    <string name="version">الإصدار \\u200f%1$s\\u200f</string>
 </resources>
