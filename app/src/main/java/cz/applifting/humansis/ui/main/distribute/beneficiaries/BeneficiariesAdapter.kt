@@ -1,9 +1,11 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -12,7 +14,6 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
@@ -64,13 +65,13 @@ class BeneficiariesAdapter(
 
     inner class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        val tvNationalId = view.tv_id
-        val tvHumansisId = view.tv_info
-        val tvName = view.tv_location
-        val ivDistributionState = view.iv_distribution_state
-        val tlCommoditiesHolder = view.tl_commodities_holder
-        val ivOffline = view.iv_offline
-        val context = view.context
+        val tvNationalId: TextView = view.tv_id
+        val tvHumansisId: TextView = view.tv_info
+        val tvName: TextView = view.tv_location
+        private val ivDistributionState: ImageView = view.iv_distribution_state
+        private val tlCommoditiesHolder: TableLayout = view.tl_commodities_holder
+        val ivOffline: ImageView = view.iv_offline
+        val context: Context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 

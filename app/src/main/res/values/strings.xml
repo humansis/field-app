@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -16,7 +16,7 @@
     <string name="households">Households: %1$d</string>
     <string name="beneficiaries_title">Beneficiaries</string>
     <string name="national_id">National ID: %1$s</string>
-    <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
+    <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
@@ -105,7 +105,7 @@
     <string name="cancel">Cancel</string>
     <string name="referral_type_label">Type</string>
     <string name="referral_note_label">Comment</string>
-    <string name="sync_summary">Uploaded %1$d of %2$d changes.</string>
+    <string name="sync_summary" tools:ignore="PluralsCandidate">Uploaded %1$d of %2$d changes.</string>
     <string name="sync_summary_nothing">No local changes were uploaded.</string>
     <string name="expand_referral_information">Expand referral information</string>
     <string name="add_referral">Add referral</string>
@@ -130,7 +130,7 @@
     <string name="none">none</string>
     <string name="old_card">old card</string>
     <string name="new_card">new card</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="card_locked">This card is locked and cannot be used anymore.</string>
     <string name="incorrect_pin">Invalid PIN</string>
     <string name="invalid_data">Data on the card are not valid for this request.</string>

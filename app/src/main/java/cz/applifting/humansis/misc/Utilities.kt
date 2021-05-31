@@ -13,7 +13,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import quanti.com.kotlinlog.Log
-import javax.inject.Inject
 
 class Utilities(
         private val activity: Activity,

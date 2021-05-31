@@ -107,4 +107,6 @@
         </item>
     </style>
 
+    <style name="AppTheme.NoActionBar" />
+
 </resources>
