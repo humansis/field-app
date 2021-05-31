@@ -48,6 +48,7 @@ class SharedViewModel @Inject constructor(
     val networkStatus = MutableLiveData<Boolean>()
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
     val shouldDismissBeneficiaryDialog = MutableLiveData<Boolean>()
+    val beneficiaryDialogDissmissedOnSuccess = MutableLiveData<Boolean>()
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 
