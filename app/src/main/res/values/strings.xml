@@ -1,5 +1,4 @@
 <resources>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -80,13 +79,9 @@
     <string name="error_too_many_requests">Too many request.</string>
     <string name="error_server_failure">Server failure</string>
     <string name="error_other">An unexpected error occurred.</string>
-
-
-
     <string name="show_error_detail">Show error detail</string>
     <string name="errors_list_label">The following errors have occurred:</string>
     <string name="detail">Detail</string>
-
     <string name="KHM">KHM</string>
     <string name="SYR">SYR</string>
     <string name="UKR">UKR</string>
@@ -99,7 +94,6 @@
     <string name="dont_save">Don\'t save</string>
     <string name="confirm_scan_question">Do you want to confirm the scanned code?</string>
     <string name="confirm_scan_title">Confirm booklet</string>
-
     <string name="referral_type_none">None</string>
     <string name="referral_type_health">Health</string>
     <string name="referral_type_protection">Protection</string>
@@ -117,7 +111,6 @@
     <string name="add_referral">Add referral</string>
     <string name="edit_referral">Edit referral information</string>
     <string name="confirm_distribution_message">Confirm to assign this item to the beneficiary</string>
-
     <string name="acra_notif_channel">Submit crash report</string>
     <string name="acra_notif_title">Humansis crashed</string>
     <string name="acra_notif_text">Sorry, the app crashed. Please send a report to the developers.</string>
@@ -168,5 +161,7 @@
     <string name="scan_another_card">Scan another card</string>
     <string name="card_initialized">Card was successfully initialized</string>
     <string name="scan_card_again">Please scan the card again.</string>
+    <string name="version">v%1$s</string>
+    <string name="environment">Environment: %1$s</string>
     <string name="error_expired_password">You must login to web app and change password</string>
 </resources>

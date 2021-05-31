@@ -36,6 +36,7 @@ def VERSION_PATCH = 5
 
 String APK_NAME = "user-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+String BUILD_NUMBER = "${gitVersionCode(true)}"
 String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(true)}"
 
 repositories {
@@ -61,7 +62,10 @@ android {
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
 
         resValue "string", "app_name", "Humansis"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "short", "BUILD_NUMBER", "$BUILD_NUMBER"
 
         buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
 

@@ -63,4 +63,8 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
         btn_sort.text = context.getString(textResId)
     }
 
+    internal fun clearSearch() {
+        et_search.text.clear()
+    }
+
 }

@@ -39,7 +39,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.*
+import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -170,7 +172,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     view.btn_action?.isEnabled = true
 
-                    btn_action.setOnClickListener { _ ->
+                    btn_action.setOnClickListener {
                         if (beneficiary.edited) {
                             if (viewModel.isAssignedInOtherDistribution) {
                                 showConfirmBeneficiaryDialog(beneficiary)
@@ -217,6 +219,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun leaveWithSuccess() {
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(true)
         sharedViewModel.showToast(getString(R.string.success))
         dismiss()
     }
