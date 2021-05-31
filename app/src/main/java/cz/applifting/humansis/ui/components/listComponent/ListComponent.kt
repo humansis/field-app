@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.component_list.view.*
  */
 class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
-    lateinit var adapter: ListComponentAdapter<*>
+    private lateinit var adapter: ListComponentAdapter<*>
 
     fun init(viewAdapter: ListComponentAdapter<*>) {
         View.inflate(context, R.layout.component_list, this)
@@ -80,7 +80,7 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         rv_list.layoutManager?.scrollToPosition(0)
     }
 
-    inner class VerticalMarginItemDecoration() : RecyclerView.ItemDecoration() {
+    inner class VerticalMarginItemDecoration : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
 
             val margin = context.resources.getDimension(R.dimen.list_items_vertical_margin).toInt()

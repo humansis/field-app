@@ -1,9 +1,14 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
@@ -87,14 +92,14 @@ class DistributionsAdapter(
     }
 
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
-        val tvName = layout.tv_location
-        val tvDate = layout.tv_date
-        val tvBeneficiariesCnt = layout.tv_beneficiaries_cnt
-        val ivTarget = layout.iv_target
-        val ivStatus = layout.iv_status
-        val llComoditiesHolder = layout.tl_commodities_holder
-        val pbDistributionProgress = layout.pb_distribution_progress
-        val context = layout.context
+        val tvName: TextView = layout.tv_location
+        val tvDate: TextView = layout.tv_date!!
+        private val tvBeneficiariesCnt: TextView = layout.tv_beneficiaries_cnt
+        private val ivTarget: ImageView = layout.iv_target
+        private val ivStatus: ImageView = layout.iv_status
+        private val llComoditiesHolder: LinearLayout = layout.tl_commodities_holder
+        val pbDistributionProgress: ProgressBar = layout.pb_distribution_progress
+        val context: Context = layout.context
 
         fun bind(distributionItemWrapper: DistributionItemWrapper) = with(distributionItemWrapper.distribution) {
 
@@ -126,13 +131,13 @@ class DistributionsAdapter(
             // Set target
             val targetImage =
                 if (target == Target.INDIVIDUAL) {
-                    context.getDrawable(R.drawable.ic_person_black_24dp)
+                    ContextCompat.getDrawable(context, R.drawable.ic_person_black_24dp)
                 } else {
-                    context.getDrawable(R.drawable.ic_home_black_24dp)
+                    ContextCompat.getDrawable(context, R.drawable.ic_home_black_24dp)
                 }
             ivTarget.setImageDrawable(targetImage)
 
-            layout.setOnClickListener { if (clickable) onItemClick(distributions[position]) }
+            layout.setOnClickListener { if (clickable) onItemClick(distributions[layoutPosition]) }
 
             val statusColor = if (completed) R.color.green else R.color.darkBlue
             ivStatus.tintedDrawable(R.drawable.ic_circle, statusColor)

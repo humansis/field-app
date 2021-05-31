@@ -21,6 +21,7 @@ class ParamsModule {
     @Provides
     @Named(LOGFILE_PATH)
     fun logFilePath(): String {
+        //todo cesta k kotlinloggerfile
         return "log.txt"
     }
 

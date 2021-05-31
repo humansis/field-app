@@ -29,6 +29,7 @@ class App : Application() {
         NfcLogger.registerListener(Logger())
 
         appComponent = DaggerAppComponent.builder()
+            .app(this)
             .context(this)
             .build()
     }

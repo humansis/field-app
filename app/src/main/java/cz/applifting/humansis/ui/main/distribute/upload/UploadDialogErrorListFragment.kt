@@ -33,9 +33,9 @@ class UploadDialogErrorListFragment : BaseFragment() {
         uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
 
         val adapter = ErrorListAdapter {
-            it.beneficiaryId?.let {
+            it.beneficiaryId?.let { beneficiaryId ->
                 if (!isOpeningBeneficiary) {
-                    openBeneficiaryDialog(it)
+                    openBeneficiaryDialog(beneficiaryId)
                 }
             }
         }

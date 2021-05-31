@@ -87,7 +87,7 @@
     <string name="ETH">ETH</string>
     <string name="warning_country_change">ማስጠንቀቂያ-ሀገርን መለወጥ የአሁኑን መረጃዎን ያጠፋዋል!</string>
     <string name="unknwon_error">ያልታወቀ ስህተት ተከስቷል</string>
-    <string name="download_error">% S ን ማውረድ አልተቻለም</string>
+    <string name="download_error">%1$s ን ማውረድ አልተቻለም</string>
     <string name="auth_expiration_explanation">ዘግተው ወጥተዋል ምክንያቱም የእርስዎ ክፍለ ጊዜ አልቋል። የእርስዎ ውሂብ አሁንም በመሣሪያው ላይ ተቀምጧል። ለማመሳሰል ይግቡ</string>
     <string name="sync_error">በማመሳሰል ጊዜ አንድ ስህተት ነበር</string>
     <string name="dont_save">አታስቀምጥ</string>
@@ -107,7 +107,7 @@
     <string name="sync_summary">%1$d ከ%2$d ለውጦች ተሰቅሏል</string>
     <string name="sync_summary_nothing">ምንም የአከባቢ ለውጦች አልተሰቀሉም</string>
     <string name="expand_referral_information">" የማጣቀሻ መረጃን ያስፋፉ"</string>
-    <string name="add_referral">የማጣቀሻ መረጃን ያክሉ</string>
+    <string name="add_referral">ማጣቀሻ (ማመሳከሪያ) አክል</string>
     <string name="edit_referral">የማጣቀሻ መረጃን ያርትዑ</string>
     <string name="confirm_distribution_message">ይህንን ንጥል ለተጠቃሚው ለመመደብ ያረጋግጡ</string>
     <string name="acra_notif_channel">የብልሽት ሪፖርት ያስገቡ</string>
@@ -144,5 +144,6 @@
     <string name="unnamed_project">ያልተሰየመ ፕሮጀክት</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="card_updated">ካርድ ዘምኗል</string>
+    <string name="version">v%1$s</string>
 
 </resources>

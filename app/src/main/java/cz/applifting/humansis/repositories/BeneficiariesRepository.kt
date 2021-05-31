@@ -9,7 +9,6 @@ import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
 import kotlinx.coroutines.flow.Flow
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,7 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal>? {
+    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal> {
 
         val distribution = dbProvider.get().distributionsDao().getById(distributionId)
 

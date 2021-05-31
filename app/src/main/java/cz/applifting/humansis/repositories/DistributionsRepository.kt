@@ -1,7 +1,6 @@
 package cz.applifting.humansis.repositories
 
 import android.content.Context
-import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.model.CommodityType
@@ -18,12 +17,12 @@ import javax.inject.Singleton
 @Singleton
 class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal>? {
+    suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal> {
         val result = service
             .getDistributions(projectId)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
                 it.commodities.fold(true, { acc, commodity ->
-                    commodity?.modalityType?.name != CommodityType.MOBILE_MONEY && acc
+                    commodity.modalityType?.name != CommodityType.MOBILE_MONEY && acc
                 })
             }
             .filter { it.validated && !it.archived && !it.completed }
@@ -69,7 +68,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     }
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
-        return commodities?.map {
+        return commodities.map {
             val commodityName: String = it.modalityType?.name?.name ?: CommodityType.UNKNOWN.name
             CommodityLocal(CommodityType.valueOf(commodityName), it.value, it.unit)
         }

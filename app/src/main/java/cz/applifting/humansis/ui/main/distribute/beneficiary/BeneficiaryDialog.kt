@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -39,7 +40,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.*
+import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -56,8 +59,8 @@ import javax.inject.Inject
 class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     companion object {
         private const val CAMERA_REQUEST_CODE = 0
-        val INVALID_CODE = "Invalid code"
-        val ALREADY_ASSIGNED = "Already assigned"
+        const val INVALID_CODE = "Invalid code"
+        const val ALREADY_ASSIGNED = "Already assigned"
     }
 
     @Inject
@@ -152,7 +155,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn, context.theme)
                             } else {
-                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn)
+                                btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_revert_btn)
                             }
                         } else {
                             btn_action.visible(false)
@@ -162,13 +165,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn, context.theme)
                         } else {
-                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn)
+                            btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_confirm_btn)
                         }
                     }
 
                     view.btn_action?.isEnabled = true
 
-                    btn_action.setOnClickListener { _ ->
+                    btn_action.setOnClickListener {
                         if (beneficiary.edited) {
                             if (viewModel.isAssignedInOtherDistribution) {
                                 showConfirmBeneficiaryDialog(beneficiary)
@@ -215,6 +218,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun leaveWithSuccess() {
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(true)
         sharedViewModel.showToast(getString(R.string.success))
         dismiss()
     }
@@ -422,7 +426,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 {
                     var ex = it
                     if (ex is CompositeException && ex.exceptions.isNotEmpty()) {
-                        ex = ex.exceptions.get(0)
+                        ex = ex.exceptions[0]
                     }
                     when (ex) {
                         is PINException -> {

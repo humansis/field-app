@@ -1,11 +1,9 @@
 package cz.applifting.humansis.repositories
 
 import android.content.Context
-import android.content.SharedPreferences
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.model.db.ProjectLocal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -18,7 +16,7 @@ import javax.inject.Singleton
 class ProjectsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
 
-    suspend fun getProjectsOnline(currentCountry: String): List<ProjectLocal>? {
+    suspend fun getProjectsOnline(currentCountry: String): List<ProjectLocal> {
         val result = service
             .getProjects()
             .filter{ it.iso3.equals(currentCountry, true) }.map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }

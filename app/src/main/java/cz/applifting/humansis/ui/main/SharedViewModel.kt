@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -17,9 +16,9 @@ import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.quanti.android.nfc.VendorFacade
 import kotlinx.coroutines.flow.collect
@@ -35,13 +34,12 @@ const val LAST_SYNC_FAILED_ID_KEY = "lastSyncFailedIdKey"
 
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
-    private val distributionsRepository: DistributionsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
     private val logger: Logger,
     private val sp: SharedPreferences,
-    private val context: Context
-) : BaseViewModel() {
+    app: App
+) : BaseViewModel(app) {
 
     val toastLD = MediatorLiveData<String>()
     private val pendingChangesLD = MutableLiveData<Boolean>()
@@ -50,12 +48,13 @@ class SharedViewModel @Inject constructor(
     val networkStatus = MutableLiveData<Boolean>()
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
     val shouldDismissBeneficiaryDialog = MutableLiveData<Boolean>()
+    val beneficiaryDialogDissmissedOnSuccess = MutableLiveData<Boolean>()
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 
     private val workInfos: LiveData<List<WorkInfo>>
 
-    private val workManager = WorkManager.getInstance(context)
+    private val workManager = WorkManager.getInstance(getApplication())
 
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
@@ -79,7 +78,7 @@ class SharedViewModel @Inject constructor(
                 shouldReauthenticateLD.value = loginManager.retrieveUser()?.invalidPassword == true
 
                 if (loginManager.retrieveUser()?.invalidPassword == true) {
-                    sp.edit().putBoolean("test", false).commit()
+                    sp.edit().putBoolean("test", false).apply()
                 }
             }
         }
@@ -154,7 +153,7 @@ class SharedViewModel @Inject constructor(
         if (workInfos.isNullOrEmpty()) {
             return false
         }
-        launch { logger.logToFile(context, "Worker state: ${workInfos.first().state}") }
+        launch { logger.logToFile(getApplication(), "Worker state: ${workInfos.first().state}") }
         return workInfos.first().state == WorkInfo.State.RUNNING
     }
 }

@@ -3,6 +3,7 @@ package cz.applifting.humansis.di
 import android.content.Context
 import cz.applifting.humansis.misc.Utilities
 import cz.applifting.humansis.synchronization.SyncWorker
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.login.LoginFragment
@@ -16,7 +17,6 @@ import cz.applifting.humansis.ui.splash.SplashFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
-
 
 
 /**
@@ -53,6 +53,9 @@ interface AppComponent {
 
     @Component.Builder
     interface Builder {
+
+        @BindsInstance
+        fun app(app: App): Builder
 
         @BindsInstance
         fun context(context: Context): Builder

@@ -1,5 +1,4 @@
-<resources>
-
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -17,7 +16,7 @@
     <string name="households">Households: %1$d</string>
     <string name="beneficiaries_title">Beneficiaries</string>
     <string name="national_id">National ID: %1$s</string>
-    <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
+    <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
@@ -80,13 +79,9 @@
     <string name="error_too_many_requests">Too many request.</string>
     <string name="error_server_failure">Server failure</string>
     <string name="error_other">An unexpected error occurred.</string>
-
-
-
     <string name="show_error_detail">Show error detail</string>
     <string name="errors_list_label">The following errors have occurred:</string>
     <string name="detail">Detail</string>
-
     <string name="KHM">KHM</string>
     <string name="SYR">SYR</string>
     <string name="UKR">UKR</string>
@@ -99,7 +94,6 @@
     <string name="dont_save">Don\'t save</string>
     <string name="confirm_scan_question">Do you want to confirm the scanned code?</string>
     <string name="confirm_scan_title">Confirm booklet</string>
-
     <string name="referral_type_none">None</string>
     <string name="referral_type_health">Health</string>
     <string name="referral_type_protection">Protection</string>
@@ -111,13 +105,12 @@
     <string name="cancel">Cancel</string>
     <string name="referral_type_label">Type</string>
     <string name="referral_note_label">Comment</string>
-    <string name="sync_summary">Uploaded %1$d of %2$d changes.</string>
+    <string name="sync_summary" tools:ignore="PluralsCandidate">Uploaded %1$d of %2$d changes.</string>
     <string name="sync_summary_nothing">No local changes were uploaded.</string>
     <string name="expand_referral_information">Expand referral information</string>
     <string name="add_referral">Add referral</string>
     <string name="edit_referral">Edit referral information</string>
     <string name="confirm_distribution_message">Confirm to assign this item to the beneficiary</string>
-
     <string name="acra_notif_channel">Submit crash report</string>
     <string name="acra_notif_title">Humansis crashed</string>
     <string name="acra_notif_text">Sorry, the app crashed. Please send a report to the developers.</string>
@@ -137,7 +130,7 @@
     <string name="none">none</string>
     <string name="old_card">old card</string>
     <string name="new_card">new card</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="card_locked">This card is locked and cannot be used anymore.</string>
     <string name="incorrect_pin">Invalid PIN</string>
     <string name="invalid_data">Data on the card are not valid for this request.</string>
@@ -168,5 +161,7 @@
     <string name="scan_another_card">Scan another card</string>
     <string name="card_initialized">Card was successfully initialized</string>
     <string name="scan_card_again">Please scan the card again.</string>
+    <string name="version">v%1$s</string>
+    <string name="environment">Environment: %1$s</string>
     <string name="error_expired_password">You must login to web app and change password</string>
 </resources>

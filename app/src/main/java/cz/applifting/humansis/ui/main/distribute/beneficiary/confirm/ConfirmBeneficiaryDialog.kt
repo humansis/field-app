@@ -30,7 +30,6 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ConfirmBeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
-
     private val args: ConfirmBeneficiaryDialogArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
