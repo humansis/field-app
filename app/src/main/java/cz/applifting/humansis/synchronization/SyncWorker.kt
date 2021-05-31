@@ -96,7 +96,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             errorsRepository.clearAll()
 
             suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
-                val errBody = "${e.response()?.errorBody()?.string()}"
+                val errBody = "${e.response()?.errorBody()?.toString()}"
                 logger.logToFile(applicationContext, "Failed uploading [$action]: ${it.id}: $errBody")
 
                 // Mark conflicts in DB
@@ -160,10 +160,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 if (isStopped) return@supervisorScope stopWork("Downloading projects")
 
                 val distributions = try {
-                    projects.orEmpty().map {
+                    projects.map {
                         async { distributionsRepository.getDistributionsOnline(it.id) }
                     }.flatMap {
-                        it.await().orEmpty().toList()
+                        it.await().toList()
                     }
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
@@ -251,8 +251,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     private suspend fun getDownloadError(e: Exception, resourceName: String): SyncError {
         logger.logToFile(applicationContext, "Failed downloading ${resourceName}: ${e.message}}")
 
-        return when {
-            e is HttpException -> {
+        return when (e) {
+            is HttpException -> {
                 SyncError(
                     location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.error_server),
@@ -260,7 +260,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     code = e.code()
                 )
             }
-
             else -> {
                 SyncError(
                     location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),

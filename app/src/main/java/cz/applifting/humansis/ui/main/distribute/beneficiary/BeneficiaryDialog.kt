@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -58,8 +59,8 @@ import javax.inject.Inject
 class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     companion object {
         private const val CAMERA_REQUEST_CODE = 0
-        val INVALID_CODE = "Invalid code"
-        val ALREADY_ASSIGNED = "Already assigned"
+        const val INVALID_CODE = "Invalid code"
+        const val ALREADY_ASSIGNED = "Already assigned"
     }
 
     @Inject
@@ -156,7 +157,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn, context.theme)
                             } else {
-                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn)
+                                btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_revert_btn)
                             }
                         } else {
                             btn_action.visible(false)
@@ -166,7 +167,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn, context.theme)
                         } else {
-                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn)
+                            btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_confirm_btn)
                         }
                     }
 
@@ -429,7 +430,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 {
                     var ex = it
                     if (ex is CompositeException && ex.exceptions.isNotEmpty()) {
-                        ex = ex.exceptions.get(0)
+                        ex = ex.exceptions[0]
                     }
                     when (ex) {
                         is PINException -> {

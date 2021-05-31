@@ -1,10 +1,10 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
-import android.content.Context
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.components.listComponent.ListComponentState
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
@@ -18,8 +18,8 @@ import javax.inject.Inject
  */
 class BeneficiariesViewModel @Inject constructor(
     private val beneficiariesRepository: BeneficiariesRepository,
-    context: Context
-) : BaseListViewModel(context) {
+    app: App
+) : BaseListViewModel(app) {
 
     enum class Sort {
         DEFAULT,
@@ -57,7 +57,7 @@ class BeneficiariesViewModel @Inject constructor(
                         }
                     }
 
-                    showRetrieving(false, newBeneficiaries.isNotEmpty())
+                    showRetrieving(false)
                 }
         }
     }

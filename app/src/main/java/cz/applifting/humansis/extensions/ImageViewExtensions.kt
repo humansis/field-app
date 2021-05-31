@@ -25,6 +25,6 @@ fun ImageView.tintedDrawable(@DrawableRes drawableRes: Int, @ColorRes colorRes: 
 }
 
 fun ImageView.simpleDrawable(@DrawableRes drawableRes: Int) {
-    val drawable = this.context.getDrawable(drawableRes)
+    val drawable = ContextCompat.getDrawable(this.context, drawableRes)
     this.setImageDrawable(drawable)
 }

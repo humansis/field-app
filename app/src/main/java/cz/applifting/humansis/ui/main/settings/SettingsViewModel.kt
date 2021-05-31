@@ -10,9 +10,9 @@ import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 
@@ -24,8 +24,9 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val sp: SharedPreferences,
     private val projectsRepository: ProjectsRepository,
-    private val loginManager: LoginManager
-) : BaseViewModel() {
+    private val loginManager: LoginManager,
+    app: App
+) : BaseViewModel(app) {
     val savedLD: MutableLiveData<Boolean> = MutableLiveData()
 
     suspend fun getCountries(context: Context?): List<Country> {
@@ -37,7 +38,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun test() {
-        sp.edit().putBoolean("test", !sp.getBoolean("test", false)).commit()
+        sp.edit().putBoolean("test", !sp.getBoolean("test", false)).apply()
     }
 
     fun updateCountrySettings(country: String) {

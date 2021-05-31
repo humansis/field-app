@@ -11,6 +11,7 @@ import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.SP_SYNC_SUMMARY
+import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -29,8 +30,9 @@ class UploadDialogViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
-    sp: SharedPreferences
-) : BaseViewModel() {
+    sp: SharedPreferences,
+    app: App
+) : BaseViewModel(app) {
 
     val currentScreenLD: MutableLiveData<Screen> = MutableLiveData()
     val syncErrorListLD: MutableLiveData<List<SyncError>> = MutableLiveData()

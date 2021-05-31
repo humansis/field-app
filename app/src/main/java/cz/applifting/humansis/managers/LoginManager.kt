@@ -119,7 +119,7 @@ class LoginManager @Inject constructor(
 
         val user = retrieveUser()
         return user?.let {
-            generateXWSSEHeader(user.username, user.saltedPassword ?: "", sp.getBoolean("test", false))
+            generateXWSSEHeader(user.username, user.saltedPassword, sp.getBoolean("test", false))
         }
     }
 

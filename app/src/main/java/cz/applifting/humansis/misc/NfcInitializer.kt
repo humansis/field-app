@@ -42,7 +42,7 @@ object NfcInitializer {
                 }
                 .setNegativeButton(activity.getString(R.string.cancel), null)
                 .create()
-                .show();
+                .show()
     }
 
     fun disableForegroundDispatch(activity: Activity) {

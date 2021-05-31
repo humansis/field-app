@@ -19,9 +19,9 @@ class UploadDialog : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var uploadDialogViewModel: UploadDialogViewModel
+    private lateinit var uploadDialogViewModel: UploadDialogViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         (activity?.application as App).appComponent.inject(this)
         uploadDialogViewModel = ViewModelProviders.of(this, viewModelFactory)[UploadDialogViewModel::class.java]
 

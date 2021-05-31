@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.login
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -126,7 +125,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
     }
 
     private fun changeEnvironment(env: ApiEnvironments?) {
-        var newEnv = env ?: ApiEnvironments.STAGE
+        val newEnv = env ?: ApiEnvironments.STAGE
         envTextView.text = newEnv.name
         viewModel.changeHostUrl(newEnv)
     }

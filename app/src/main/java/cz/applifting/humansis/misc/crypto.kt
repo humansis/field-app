@@ -198,7 +198,7 @@ private fun encryptAES(secret: ByteArray, key: SecretKey, sp: SharedPreferences)
     val ivEncoded = base64encode(cipher.iv)
 
     // Save IV
-    sp.edit().putString(SP_AES_IV_KEY, ivEncoded).commit()
+    sp.edit().putString(SP_AES_IV_KEY, ivEncoded).apply()
 
     return cipher.doFinal(secret)
 }

@@ -3,6 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.upload
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.model.db.SyncError
@@ -37,9 +38,9 @@ class ErrorListAdapter(
     }
 
     inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view) {
-        val tvLocation = view.tv_location
-        val tvInfo = view.tv_info
-        val tvError = view.tv_error
+        private val tvLocation: TextView = view.tv_location
+        private val tvInfo: TextView = view.tv_info
+        private val tvError: TextView = view.tv_error
 
         fun bind(syncError: SyncError) {
             tvLocation.text = syncError.location

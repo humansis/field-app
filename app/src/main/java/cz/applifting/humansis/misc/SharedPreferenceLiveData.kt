@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 // https://stackoverflow.com/questions/53028621/how-to-observe-changes-in-shared-preference-using-livedata
 abstract class SharedPreferenceLiveData<T>(
     val sharedPrefs: SharedPreferences,
-    val key: String,
+    private val key: String,
     val defValue: T
 ) : LiveData<T>() {
 
