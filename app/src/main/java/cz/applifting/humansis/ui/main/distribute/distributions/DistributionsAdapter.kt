@@ -59,6 +59,12 @@ class DistributionsAdapter(
                 false
         })
 
+        newDistributions.filter {
+            it.numberOfReachedBeneficiaries == it.distribution.numberOfBeneficiaries
+        }.onEach {
+            it.distribution.completed = true
+        }
+
         this.distributions.clear()
         this.distributions.addAll(sortDistributions(newDistributions.toMutableList()))
         diffResult.dispatchUpdatesTo(this)
@@ -68,25 +74,12 @@ class DistributionsAdapter(
 
         newDistributions.sortBy { DateConverter().stringToDate(it.distribution.dateOfDistribution) }
 
-        val finishedDistributions = newDistributions.filter {
-            it.numberOfReachedBeneficiaries == it.distribution.numberOfBeneficiaries
-        }.onEach {
-            it.distribution.completed = true
-            newDistributions.remove(it)
-        }
-
-        val today = Date()
-        val pastDistributions = newDistributions.filter {
+        newDistributions.sortBy {
             val date = DateConverter().stringToDate(it.distribution.dateOfDistribution)
-            date != null && date < today
-        }.onEach {
-            newDistributions.remove(it)
+            date != null && date < Date()
         }
 
-        newDistributions.apply {
-            addAll(pastDistributions)
-            addAll(finishedDistributions)
-        }
+        newDistributions.sortBy { it.distribution.completed }
 
         return newDistributions
     }
@@ -139,7 +132,11 @@ class DistributionsAdapter(
 
             layout.setOnClickListener { if (clickable) onItemClick(distributions[layoutPosition]) }
 
-            val statusColor = if (completed) R.color.green else R.color.darkBlue
+            val statusColor = when {
+                completed -> R.color.green
+                hasPassed(dateOfDistribution) -> R.color.error
+                else -> R.color.darkBlue
+            }
             ivStatus.tintedDrawable(R.drawable.ic_circle, statusColor)
 
             pbDistributionProgress.visible(!completed)
@@ -147,6 +144,11 @@ class DistributionsAdapter(
             if (numberOfBeneficiaries > 0) {
                 pbDistributionProgress.progress = distributionItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
+        }
+
+        private fun hasPassed(string: String?): Boolean {
+            val date = DateConverter().stringToDate(string)
+            return (date != null && date < Date())
         }
     }
 }
