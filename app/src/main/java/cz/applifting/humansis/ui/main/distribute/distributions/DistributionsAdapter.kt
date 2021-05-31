@@ -72,12 +72,7 @@ class DistributionsAdapter(
 
     private fun sortDistributions(newDistributions: MutableList<DistributionItemWrapper>): List<DistributionItemWrapper> {
 
-        newDistributions.sortBy { DateConverter().stringToDate(it.distribution.dateOfDistribution) }
-
-        newDistributions.sortBy {
-            val date = DateConverter().stringToDate(it.distribution.dateOfDistribution)
-            date != null && date < Date()
-        }
+        newDistributions.sortByDescending{ DateConverter().stringToDate(it.distribution.dateOfDistribution) }
 
         newDistributions.sortBy { it.distribution.completed }
 
@@ -134,9 +129,9 @@ class DistributionsAdapter(
 
             val statusColor = when {
                 completed -> R.color.green
-                hasPassed(dateOfDistribution) -> R.color.error
                 else -> R.color.darkBlue
             }
+
             ivStatus.tintedDrawable(R.drawable.ic_circle, statusColor)
 
             pbDistributionProgress.visible(!completed)
