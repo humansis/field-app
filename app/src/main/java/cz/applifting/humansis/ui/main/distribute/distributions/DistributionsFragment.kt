@@ -33,7 +33,7 @@ class DistributionsFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.title = args.projectName
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
-        val viewAdapter = DistributionsAdapter { it ->
+        val viewAdapter = DistributionsAdapter {
             it.distribution.also { distribution ->
                 val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(
                     distribution.id,

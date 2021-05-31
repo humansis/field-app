@@ -28,7 +28,7 @@ class MainViewModel @Inject constructor(
             val user = loginManager.retrieveUser()
             userLD.value = user
         }
-        launch() {
+        launch {
             environmentLD.value = sp.getString(cz.applifting.humansis.ui.login.SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
         }
     }
