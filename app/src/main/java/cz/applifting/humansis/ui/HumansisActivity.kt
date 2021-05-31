@@ -48,8 +48,6 @@ class HumansisActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     @Inject
     lateinit var pinFacade: PINFacade
 
-    lateinit var utilities: Utilities
-
     private val networkChangeReceiver = NetworkChangeReceiver()
 
     private var displayedDialog: AlertDialog? = null
