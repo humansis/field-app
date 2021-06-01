@@ -53,6 +53,8 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
     private val networkChangeReceiver = NetworkChangeReceiver()
 
+    private var displayedDialog: AlertDialog? = null
+
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
 
@@ -65,6 +67,8 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
 
         (application as App).appComponent.inject(this)
+
+        setUpObservers()
     }
 
     override fun onResume() {
@@ -75,6 +79,16 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         filter.addAction("android.net.conn.CONNECTIVITY_ACTION")
         filter.addAction("android.net.wifi.STATE_CHANGE")
         registerReceiver(networkChangeReceiver, filter)
+    }
+
+    override fun onPause() {
+        NfcInitializer.disableForegroundDispatch(this)
+        super.onPause()
+    }
+
+    override fun onStop() {
+        dispose()
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -110,16 +124,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onPause() {
-        NfcInitializer.disableForegroundDispatch(this)
-        super.onPause()
-    }
-
-    override fun onStop() {
-        dispose()
-        super.onStop()
     }
 
     private fun enqueueSynchronization() {
@@ -164,6 +168,38 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
+    private fun setUpObservers() {
+        observe(vm.readBalanceResult) {
+            showReadBalanceResult(it)
+        }
+
+        observe(vm.readBalanceError) {
+            Log.e(this.javaClass.simpleName, it)
+            Toast.makeText(
+                this,
+                getString(R.string.card_error),
+                Toast.LENGTH_LONG
+            ).show()
+            displayedDialog?.dismiss()
+            NfcInitializer.disableForegroundDispatch(this)
+        }
+
+        observe(vm.initializeCardResult) {
+            showCardInitializedDialog(getString(R.string.different_user_card_error))
+        }
+
+        observe(vm.initializeCardError) {
+            Log.e(this.javaClass.simpleName, it)
+            if(it is PINException){
+                showCardInitializedDialog(
+                    NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
+                )
+            } else {
+                showCardInitializedDialog(getString(R.string.card_error))
+            }
+        }
+    }
+
     private fun showReadBalanceDialog() {
         if (NfcInitializer.initNfc(this)) {
             val scanCardDialog = AlertDialog.Builder(this, R.style.DialogTheme)
@@ -177,25 +213,10 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
                 .create()
 
             scanCardDialog?.show()
-            vm.displayedDialog.value = scanCardDialog
+            displayedDialog = scanCardDialog
 
             readBalanceDisposable = null
             readBalanceDisposable = vm.readBalance()
-
-            observe(vm.readBalanceResult) {
-                showReadBalanceResult(it)
-            }
-
-            observe(vm.readBalanceError) {
-                Log.e(this.javaClass.simpleName, it)
-                Toast.makeText(
-                    this,
-                    getString(R.string.card_error),
-                    Toast.LENGTH_LONG
-                ).show()
-                vm.displayedDialog.value?.dismiss()
-                NfcInitializer.disableForegroundDispatch(this)
-            }
 
         } else {
             noNfcAvailable()
@@ -203,7 +224,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun showReadBalanceResult(userBalance: UserBalance) {
-        vm.displayedDialog.value?.dismiss()
+        displayedDialog?.dismiss()
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
@@ -220,7 +241,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             }
             .create()
         cardResultDialog.show()
-        vm.displayedDialog.value = cardResultDialog
+        displayedDialog = cardResultDialog
     }
 
     private fun showInitializeCardsDialog() {
@@ -236,7 +257,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
                 .create()
 
             scanCardDialog?.show()
-            vm.displayedDialog.value = scanCardDialog
+            displayedDialog = scanCardDialog
             initializeCard()
 
         } else {
@@ -247,25 +268,10 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     private fun initializeCard() {
         initializeCardDisposable?.dispose()
         initializeCardDisposable = vm.initializeCard()
-
-        observe(vm.initializeCardResult) {
-                showCardInitializedDialog(getString(R.string.different_user_card_error))
-        }
-
-        observe(vm.initializeCardError) {
-            Log.e(this.javaClass.simpleName, it)
-            if(it is PINException){
-                showCardInitializedDialog(
-                    NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
-                )
-            } else {
-                showCardInitializedDialog(getString(R.string.card_error))
-            }
-        }
     }
 
     private fun showCardInitializedDialog(title: String) {
-        vm.displayedDialog.value?.dismiss()
+        displayedDialog?.dismiss()
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(title)
             .setMessage(getString(R.string.scan_another_card))
@@ -278,7 +284,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             }
             .create()
         cardResultDialog.show()
-        vm.displayedDialog.value = cardResultDialog
+        displayedDialog = cardResultDialog
         if (NfcInitializer.initNfc(this)) {
             initializeCard()
         }
@@ -294,7 +300,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     }
 
     private fun dispose() {
-        vm.displayedDialog.value?.dismiss()
+        displayedDialog?.dismiss()
         initializeCardDisposable?.dispose()
         initializeCardDisposable = null
         readBalanceDisposable?.dispose()

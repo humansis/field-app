@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main
 
-import android.app.AlertDialog
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -60,7 +59,6 @@ class SharedViewModel @Inject constructor(
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
     val shouldDismissBeneficiaryDialog = MutableLiveData<Boolean>()
     val beneficiaryDialogDissmissedOnSuccess = MutableLiveData<Boolean>()
-    val displayedDialog = MutableLiveData<AlertDialog>()
 
     val readBalanceResult = SingleLiveEvent<UserBalance>()
     val readBalanceError = SingleLiveEvent<Throwable>()
