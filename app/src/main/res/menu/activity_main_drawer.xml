@@ -30,10 +30,10 @@
                 android:icon="@drawable/ic_card"
                 android:title="@string/initialize_cards"/>
 
-            <!--<item
-                android:id="@+id/shareLogsButton"
-                android:icon="@drawable/ic_export"
-                android:title="@string/export_logs"/>-->
+            <item
+                android:id="@+id/dummy_item"
+                android:title=""
+                android:enabled="false"/>
 
         </menu>
 
