@@ -25,7 +25,7 @@ import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import cz.applifting.humansis.ui.main.SharedViewModel
+import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.dto.UserBalance
 import cz.quanti.android.nfc.exception.PINException
@@ -38,7 +38,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
-class HumansisActivity : BaseActivity(), ActivityCallback, NavigationView.OnNavigationItemSelectedListener  {
+class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -49,7 +49,7 @@ class HumansisActivity : BaseActivity(), ActivityCallback, NavigationView.OnNavi
     @Inject
     lateinit var pinFacade: PINFacade
 
-    private val vm: SharedViewModel by viewModels { viewModelFactory }
+    private val vm: MainViewModel by viewModels { viewModelFactory }
 
     private val networkChangeReceiver = NetworkChangeReceiver()
 
@@ -67,6 +67,8 @@ class HumansisActivity : BaseActivity(), ActivityCallback, NavigationView.OnNavi
         }
 
         (application as App).appComponent.inject(this)
+
+        setUpObservers()
     }
 
     override fun onResume() {
@@ -92,10 +94,6 @@ class HumansisActivity : BaseActivity(), ActivityCallback, NavigationView.OnNavi
     override fun onDestroy() {
         unregisterReceiver(networkChangeReceiver)
         super.onDestroy()
-    }
-
-    override fun onLoggedIn() {
-        setUpObservers()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

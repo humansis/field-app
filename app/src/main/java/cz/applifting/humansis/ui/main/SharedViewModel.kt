@@ -13,19 +13,12 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
-import cz.applifting.humansis.misc.NfcTagPublisher
-import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.UserBalance
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,11 +39,6 @@ class SharedViewModel @Inject constructor(
     app: App
 ) : BaseViewModel(app) {
 
-    @Inject
-    lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var pinFacade: PINFacade
-
     val toastLD = MediatorLiveData<String>()
     private val pendingChangesLD = MutableLiveData<Boolean>()
     private val uploadIncompleteLD = sp.booleanLiveData(SP_SYNC_UPLOAD_INCOMPLETE, false)
@@ -59,11 +47,6 @@ class SharedViewModel @Inject constructor(
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
     val shouldDismissBeneficiaryDialog = MutableLiveData<Boolean>()
     val beneficiaryDialogDissmissedOnSuccess = MutableLiveData<Boolean>()
-
-    val readBalanceResult = SingleLiveEvent<UserBalance>()
-    val readBalanceError = SingleLiveEvent<Throwable>()
-    val initializeCardResult = SingleLiveEvent<UserBalance>()
-    val initializeCardError = SingleLiveEvent<Throwable>()
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 
@@ -165,25 +148,5 @@ class SharedViewModel @Inject constructor(
         }
         launch { logger.logToFile(getApplication(), "Worker state: ${workInfos.first().state}") }
         return workInfos.first().state == WorkInfo.State.RUNNING
-    }
-
-    fun readBalance(): Disposable {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            pinFacade.readUserBalance(tag)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
-            readBalanceResult.postValue(it)
-        },{
-            readBalanceError.postValue(it)
-        })
-    }
-
-    fun initializeCard(): Disposable {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            pinFacade.readUserBalance(tag)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
-            initializeCardResult.postValue(it)
-        },{
-            initializeCardError.postValue(it)
-        })
     }
 }
