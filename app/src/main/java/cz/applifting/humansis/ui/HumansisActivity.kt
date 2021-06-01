@@ -38,7 +38,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
-class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
+class HumansisActivity : BaseActivity(), ActivityCallback, NavigationView.OnNavigationItemSelectedListener  {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -69,11 +69,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         (application as App).appComponent.inject(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-        setUpObservers()
-    }
-
     override fun onResume() {
         super.onResume()
         enqueueSynchronization()
@@ -97,6 +92,10 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     override fun onDestroy() {
         unregisterReceiver(networkChangeReceiver)
         super.onDestroy()
+    }
+
+    override fun onLoggedIn() {
+        setUpObservers()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

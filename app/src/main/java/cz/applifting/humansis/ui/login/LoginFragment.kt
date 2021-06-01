@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.ui.ActivityCallback
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.CoroutineScope
@@ -76,6 +77,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             if (it != null && !it.invalidPassword) {
                 val action = LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
                 navController.navigate(action)
+                (requireActivity() as ActivityCallback).onLoggedIn()
             } else if (it == null) {
                 et_username.isEnabled = true
             } else {
