@@ -67,7 +67,10 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
 
         (application as App).appComponent.inject(this)
+    }
 
+    override fun onStart() {
+        super.onStart()
         setUpObservers()
     }
 
