@@ -25,7 +25,7 @@ import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import cz.applifting.humansis.ui.main.SharedViewModel
+import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.dto.UserBalance
 import cz.quanti.android.nfc.exception.PINException
@@ -49,7 +49,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     @Inject
     lateinit var pinFacade: PINFacade
 
-    private val vm: SharedViewModel by viewModels { viewModelFactory }
+    private val vm: MainViewModel by viewModels { viewModelFactory }
 
     private val networkChangeReceiver = NetworkChangeReceiver()
 
@@ -67,10 +67,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
 
         (application as App).appComponent.inject(this)
-    }
 
-    override fun onStart() {
-        super.onStart()
         setUpObservers()
     }
 
