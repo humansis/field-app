@@ -59,24 +59,9 @@ class DistributionsAdapter(
                 false
         })
 
-        newDistributions.filter {
-            it.numberOfReachedBeneficiaries == it.distribution.numberOfBeneficiaries
-        }.onEach {
-            it.distribution.completed = true
-        }
-
         this.distributions.clear()
-        this.distributions.addAll(sortDistributions(newDistributions.toMutableList()))
+        this.distributions.addAll(newDistributions)
         diffResult.dispatchUpdatesTo(this)
-    }
-
-    private fun sortDistributions(newDistributions: MutableList<DistributionItemWrapper>): List<DistributionItemWrapper> {
-
-        newDistributions.sortByDescending{ DateConverter().stringToDate(it.distribution.dateOfDistribution) }
-
-        newDistributions.sortBy { it.distribution.completed }
-
-        return newDistributions
     }
 
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {

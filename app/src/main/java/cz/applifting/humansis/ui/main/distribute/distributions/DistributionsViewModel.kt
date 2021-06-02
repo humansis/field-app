@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.db.converters.DateConverter
 import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -42,12 +43,24 @@ class DistributionsViewModel @Inject constructor(
                     }
 
                 }
-                .collect {
-                    distributionsLD.value = it
+                .collect { list ->
+                    list.filter {
+                        it.numberOfReachedBeneficiaries == it.distribution.numberOfBeneficiaries
+                    }.onEach {
+                        it.distribution.completed = true
+                    }
+                    distributionsLD.value = list.defaultSort()
                     showRetrieving(false)
                 }
         }
+    }
 
-
+    /**
+     * Sorts currently displayed distributions by date, completed are put last.
+     */
+    private fun List<DistributionItemWrapper>.defaultSort(): List<DistributionItemWrapper> {
+        return this.sortedWith(compareBy<DistributionItemWrapper> { it.distribution.completed }
+                .thenByDescending { DateConverter().stringToDate(it.distribution.dateOfDistribution) }
+        )
     }
 }
