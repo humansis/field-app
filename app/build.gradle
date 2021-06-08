@@ -147,7 +147,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:1.2.5"
+    implementation "cz.quanti.android:nfc:1.2.7"
 
     // DI
     ext.dagger2_version = '2.23.2'
