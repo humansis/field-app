@@ -144,7 +144,7 @@
     <string name="success">Success!</string>
     <string name="card_updated">Card Updated!</string>
     <string name="export_logs">Send logs</string>
-    <string name="send_email_adress" translatable="false">support@humansis.org</string>
+    <string name="send_email_adress" translatable="false">support@humansis.org, mobilne-pin@quanti.cz</string>
     <string name="logs_dialog_title">Share logs</string>
     <string name="logs_dialog_message">Would you like to share logs?</string>
     <string name="logs_dialog_email_button">Share</string>
