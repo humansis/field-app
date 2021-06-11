@@ -58,7 +58,6 @@ class DistributionsFragment : BaseFragment() {
             viewModel.showRefreshing(it.isLoading)
         })
 
-
         viewModel.init(args.projectId)
     }
 
