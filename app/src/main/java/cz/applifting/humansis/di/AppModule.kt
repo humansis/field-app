@@ -20,6 +20,7 @@ import dagger.Provides
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import quanti.com.kotlinlog.Log
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -51,14 +52,9 @@ class AppModule {
     @Provides
     @Singleton
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
-        val logging = HttpLoggingInterceptor().apply {
-            @Suppress("ConstantConditionIf")
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.BASIC
-            }
-        }
+        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
+
+        logging.level = HttpLoggingInterceptor.Level.BODY
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
