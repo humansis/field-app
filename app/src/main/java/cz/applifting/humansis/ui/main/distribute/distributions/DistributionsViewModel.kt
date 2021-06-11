@@ -1,7 +1,7 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.db.converters.DateConverter
+import cz.applifting.humansis.misc.DateUtil
 import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -60,7 +60,7 @@ class DistributionsViewModel @Inject constructor(
      */
     private fun List<DistributionItemWrapper>.defaultSort(): List<DistributionItemWrapper> {
         return this.sortedWith(compareBy<DistributionItemWrapper> { it.distribution.completed }
-                .thenByDescending { DateConverter().stringToDate(it.distribution.dateOfDistribution) }
+                .thenByDescending { DateUtil.stringToDate(it.distribution.dateOfDistribution) }
         )
     }
 }

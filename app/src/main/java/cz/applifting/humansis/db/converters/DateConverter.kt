@@ -1,7 +1,6 @@
 package cz.applifting.humansis.db.converters
 
 import androidx.room.TypeConverter
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -19,10 +18,5 @@ class DateConverter {
     @TypeConverter
     fun toLong(value: Date?): Long? {
         return value?.time
-    }
-
-    fun stringToDate(value: String?): Date? {
-        val format = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        return value?.let { format.parse(it) }
     }
 }

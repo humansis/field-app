@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.db.converters.DateConverter
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
@@ -21,7 +20,6 @@ import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_distribution.view.*
 import kotlinx.android.synthetic.main.item_project.view.tv_location
-import java.util.*
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -124,11 +122,6 @@ class DistributionsAdapter(
             if (numberOfBeneficiaries > 0) {
                 pbDistributionProgress.progress = distributionItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
-        }
-
-        private fun hasPassed(string: String?): Boolean {
-            val date = DateConverter().stringToDate(string)
-            return (date != null && date < Date())
         }
     }
 }
