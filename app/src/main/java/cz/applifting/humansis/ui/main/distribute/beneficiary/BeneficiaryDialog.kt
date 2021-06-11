@@ -553,11 +553,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.checkScannedId(scannedId)
     }
 
-    override fun onStart() {
-        super.onStart()
-        enableButtons()
-    }
-
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
@@ -579,6 +574,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onStop() {
         displayedDialog?.dismiss()
         disposable?.dispose()
+        enableButtons()
         super.onStop()
     }
 
