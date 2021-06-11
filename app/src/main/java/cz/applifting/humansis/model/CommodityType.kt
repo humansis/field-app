@@ -11,7 +11,7 @@ enum class CommodityType(val drawableResId: Int) {
     @SerializedName("Loan") LOAN(R.drawable.ic_commodity_loan),
     @SerializedName("NFI Kit") NFI_KIT(R.drawable.ic_commodity_nfi_kit),
     @SerializedName("RTE Kit") RTE_KIT(R.drawable.ic_commodity_rte_kit),
-    @SerializedName("Ready To Eat Rations") READY_TO_EAT_RATIONS(R.drawable.ic_commodity_rte_kit),
+    @SerializedName("Ready to Eat Rations") READY_TO_EAT_RATIONS(R.drawable.ic_commodity_rte_kit),
     @SerializedName("Paper Voucher") PAPER_VOUCHER(R.drawable.ic_commodity_voucher),
     @SerializedName("Food") FOOD(R.drawable.ic_commodity_food),
     @SerializedName("Food Rations") FOOD_RATIONS(R.drawable.ic_commodity_food),
@@ -22,7 +22,7 @@ enum class CommodityType(val drawableResId: Int) {
     @SerializedName("Shelter tool kit") SHELTER_TOOL_KIT(R.drawable.ic_commodity_shelter),
     @SerializedName("Hygiene kit") HYGIENE_KIT(R.drawable.ic_commodity_hygiene_kit),
     @SerializedName("Dignity kit") DIGNITY_KIT(R.drawable.ic_commodity_dignity),
-    @SerializedName("Mobile Money") MOBILE_MONEY(0),
     @SerializedName("Smartcard") SMARTCARD(R.drawable.ic_smartcard),
+    @SerializedName("Mobile Money") MOBILE_MONEY(0),
     UNKNOWN(R.drawable.ic_commodity_unknown)
 }
