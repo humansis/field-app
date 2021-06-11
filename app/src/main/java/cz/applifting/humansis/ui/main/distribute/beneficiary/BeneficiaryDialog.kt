@@ -67,6 +67,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: BeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
+
+    private var displayedDialog: AlertDialog? = null
     private var disposable: Disposable? = null
 
     private val TAG = this.javaClass.simpleName
@@ -354,6 +356,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .create()
 
         scanCardDialog.show()
+        displayedDialog = scanCardDialog
 
         return scanCardDialog
     }
@@ -379,6 +382,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 }
                 .create()
         cardResultDialog.show()
+        displayedDialog = cardResultDialog
     }
 
     private fun writeBalanceOnCard(
@@ -445,6 +449,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     }
                                     .create()
                                 cardInitializedDialog.show()
+                                displayedDialog = cardInitializedDialog
                                 if(NfcInitializer.initNfc(requireActivity())) {
                                     writeBalanceOnCard(
                                         balance,
@@ -557,9 +562,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         super.onPause()
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
+        displayedDialog?.dismiss()
         disposable?.dispose()
-        super.onDestroy()
+        super.onStop()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

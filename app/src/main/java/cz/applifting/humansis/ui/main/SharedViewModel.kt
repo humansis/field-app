@@ -13,14 +13,12 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
-import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.quanti.android.nfc.VendorFacade
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,11 +53,6 @@ class SharedViewModel @Inject constructor(
     private val workInfos: LiveData<List<WorkInfo>>
 
     private val workManager = WorkManager.getInstance(getApplication())
-
-    @Inject
-    lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var vendorFacade: VendorFacade
 
     init {
         workInfos = workManager.getWorkInfosForUniqueWorkLiveData(SYNC_WORKER)
