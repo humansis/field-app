@@ -54,7 +54,7 @@ class AppModule {
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
         val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
 
-        logging.level = HttpLoggingInterceptor.Level.BODY
+        logging.level = HttpLoggingInterceptor.Level.BASIC
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
