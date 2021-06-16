@@ -1,7 +1,6 @@
 package cz.applifting.humansis.misc
 
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
 import android.content.Context
 import cz.applifting.humansis.di.LOGFILE_PATH
 import kotlinx.coroutines.Dispatchers
@@ -16,10 +15,6 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-
-
-
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 13, November, 2019
  */
@@ -29,8 +24,8 @@ class Logger @Inject constructor(@param:Named(LOGFILE_PATH) val logFilePath: Str
     val maxLines = 30
 
     @SuppressLint("SimpleDateFormat")
-    suspend fun logToFile(ctx: Context, message: String) {
-        Log.d(TAG, message)
+    suspend fun logToFile(tag: String, ctx: Context, message: String) {
+        Log.d(tag, message)
         withContext(Dispatchers.IO) {
             val logs = readLogs(ctx)
 
