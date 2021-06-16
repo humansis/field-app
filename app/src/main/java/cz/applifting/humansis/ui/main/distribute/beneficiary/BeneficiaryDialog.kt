@@ -299,6 +299,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
+    private fun enableButtons() {
+        if (btn_scan_smartcard.visibility == View.VISIBLE) {
+            btn_scan_smartcard.isEnabled = true
+        }
+        if (btn_change_pin.visibility == View.VISIBLE) {
+            btn_change_pin.isEnabled = true
+        }
+    }
+
     private fun generateRandomPin(): String {
         val first = (0..9).random().toString()
         val second = (0..9).random().toString()
@@ -538,17 +547,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             )
     }
 
+    override fun handleResult(rawResult: Result?) {
+        qr_scanner_holder?.visibility = View.GONE
+        val scannedId = rawResult.toString()
+        viewModel.checkScannedId(scannedId)
+    }
+
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
             startScanner(view!!)
         }
-    }
-
-    override fun handleResult(rawResult: Result?) {
-        qr_scanner_holder?.visibility = View.GONE
-        val scannedId = rawResult.toString()
-        viewModel.checkScannedId(scannedId)
     }
 
     override fun onPause() {
@@ -565,6 +574,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onStop() {
         displayedDialog?.dismiss()
         disposable?.dispose()
+        enableButtons()
         super.onStop()
     }
 
