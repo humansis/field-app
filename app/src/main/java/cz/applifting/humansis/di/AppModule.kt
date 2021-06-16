@@ -70,7 +70,7 @@ class AppModule {
                         runBlocking {
                             val headersBuilder = oldRequest.headers().newBuilder()
 
-                            headersBuilder.add("country", sp.getString(SP_COUNTRY, "SYR"))
+                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("country", it ) }
 
                             loginManager.getAuthHeader()?.let {
                                 headersBuilder.add("x-wsse", it)

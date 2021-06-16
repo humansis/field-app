@@ -3,7 +3,6 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.Target
@@ -13,7 +12,6 @@ import cz.applifting.humansis.model.Target
  */
 @Entity(
     tableName = "distributions",
-    indices = [Index(value = ["id", "projectId"])],
     foreignKeys = [ForeignKey(
         entity = ProjectLocal::class,
         parentColumns = arrayOf("id"),
