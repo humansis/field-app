@@ -17,6 +17,7 @@ import cz.applifting.humansis.ui.splash.SplashViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.FlowPreview
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -28,6 +29,7 @@ abstract class ViewModelModule {
     @Binds
     internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 
+    @FlowPreview
     @Binds
     @IntoMap
     @ViewModelKey(ProjectsViewModel::class)

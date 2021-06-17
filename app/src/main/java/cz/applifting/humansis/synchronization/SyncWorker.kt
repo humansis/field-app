@@ -75,7 +75,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
-            logger.logToFile(applicationContext, "Started Sync")
+            logger.logToFile(TAG, applicationContext, "Started Sync")
             if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(BuildConfig.DEMO_ACCOUNT, true) == true)
             {
                 val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
@@ -89,7 +89,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     ERROR_MESSAGE_KEY,
                     arrayOf("Could not read DB.")
                 )
-                logger.logToFile(applicationContext, "Failed to read db")
+                logger.logToFile(TAG, applicationContext, "Failed to read db")
                 return@supervisorScope Result.failure(reason.build())
             }
 
@@ -97,7 +97,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
                 val errBody = "${e.response()?.errorBody()?.toString()}"
-                logger.logToFile(applicationContext, "Failed uploading [$action]: ${it.id}: $errBody")
+                logger.logToFile(TAG, applicationContext, "Failed uploading [$action]: ${it.id}: $errBody")
 
                 // Mark conflicts in DB
                 val distributionName = distributionsRepository.getNameById(it.distributionId)
@@ -211,7 +211,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             sp.setDate(LAST_SYNC_FAILED_KEY, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
             sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
-            logger.logToFile(applicationContext, "Sync finished successfully")
+            logger.logToFile(TAG, applicationContext, "Sync finished successfully")
             Result.success()
         } else {
             errorsRepository.insertAll(syncErrors)
@@ -221,7 +221,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 loginManager.markInvalidPassword()
             }
 
-            logger.logToFile(applicationContext, "Sync finished with failure")
+            logger.logToFile(TAG, applicationContext, "Sync finished with failure")
             sp.setDate(LAST_SYNC_FAILED_KEY, Date())
             Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build())
         }
@@ -249,7 +249,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     private suspend fun getDownloadError(e: Exception, resourceName: String): SyncError {
-        logger.logToFile(applicationContext, "Failed downloading ${resourceName}: ${e.message}}")
+        logger.logToFile(TAG, applicationContext, "Failed downloading ${resourceName}: ${e.message}}")
 
         return when (e) {
             is HttpException -> {
@@ -290,5 +290,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 applicationContext.getString(R.string.sync_summary, uploadedSuccessfullyCount, uploadCandidatesCount)
             }
         }
+    }
+
+    companion object {
+        private val TAG = SyncWorker::class.java.simpleName
     }
 }

@@ -54,7 +54,7 @@ class AppModule {
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
         val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
 
-        logging.level = HttpLoggingInterceptor.Level.BODY
+        logging.level = HttpLoggingInterceptor.Level.BASIC
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
@@ -70,7 +70,7 @@ class AppModule {
                         runBlocking {
                             val headersBuilder = oldRequest.headers().newBuilder()
 
-                            headersBuilder.add("country", sp.getString(SP_COUNTRY, "SYR"))
+                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("country", it ) }
 
                             loginManager.getAuthHeader()?.let {
                                 headersBuilder.add("x-wsse", it)
