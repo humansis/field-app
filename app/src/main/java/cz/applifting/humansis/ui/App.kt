@@ -1,11 +1,14 @@
 package cz.applifting.humansis.ui
 
 import android.app.Application
+import cz.applifting.humansis.BuildConfig
+import cz.applifting.humansis.R
 import cz.applifting.humansis.di.AppComponent
 import cz.applifting.humansis.di.DaggerAppComponent
 import cz.quanti.android.nfc.logger.NfcLogger
 import quanti.com.kotlinlog.Log
 import quanti.com.kotlinlog.android.AndroidLogger
+import quanti.com.kotlinlog.android.MetadataLogger
 import quanti.com.kotlinlog.base.LogLevel
 import quanti.com.kotlinlog.base.LoggerBundle
 import quanti.com.kotlinlog.file.FileLogger
@@ -21,17 +24,26 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Use custom logger
-        Log.initialise(this)
-        Log.addLogger(AndroidLogger(LoggerBundle(LogLevel.DEBUG)))
-        Log.addLogger(FileLogger(applicationContext, DayLogBundle(maxDaysSaved = 3)))
-        Log.useUncheckedErrorHandler()
-        NfcLogger.registerListener(Logger())
+        initLogger()
 
         appComponent = DaggerAppComponent.builder()
             .app(this)
             .context(this)
             .build()
+    }
+
+    private fun initLogger() {
+        Log.initialise(this)
+        Log.addLogger(AndroidLogger(LoggerBundle(LogLevel.DEBUG)))
+        Log.addLogger(FileLogger(applicationContext, DayLogBundle(maxDaysSaved = 3)))
+        Log.useUncheckedErrorHandler()
+        NfcLogger.registerListener(Logger())
+        MetadataLogger.customMetadataLambda = {
+            val metadata: MutableList<Pair<String, String>> = mutableListOf()
+            metadata.add(Pair("VERSION:", getString(R.string.version, BuildConfig.VERSION_NAME)))
+            metadata.add(Pair("BUILD_NUMBER:", BuildConfig.BUILD_NUMBER.toString()))
+            metadata
+        }
     }
 
     private class Logger : NfcLogger.Listener {
