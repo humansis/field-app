@@ -11,11 +11,13 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_projects.*
+import kotlinx.coroutines.FlowPreview
 
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
+@FlowPreview
 class ProjectsFragment : BaseFragment() {
 
     private val viewModel: ProjectsViewModel by viewModels { this.viewModelFactory }

@@ -146,7 +146,11 @@ class SharedViewModel @Inject constructor(
         if (workInfos.isNullOrEmpty()) {
             return false
         }
-        launch { logger.logToFile(getApplication(), "Worker state: ${workInfos.first().state}") }
+        launch { logger.logToFile(TAG, getApplication(), "Worker state: ${workInfos.first().state}") }
         return workInfos.first().state == WorkInfo.State.RUNNING
+    }
+
+    companion object {
+        private val TAG = SharedViewModel::class.java.simpleName
     }
 }
