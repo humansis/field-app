@@ -31,6 +31,10 @@ class DistributionsViewModel @Inject constructor(
         }
         this.projectId = projectId
 
+        getDistributions(projectId)
+    }
+
+    fun getDistributions(projectId: Int) {
         launch {
             showRetrieving(true)
 
@@ -39,16 +43,14 @@ class DistributionsViewModel @Inject constructor(
                 .map { newDistributions ->
                     newDistributions.map {
                         val reachedBeneficiaries = beneficiariesRepository.countReachedBeneficiariesOffline(it.id)
+                        if (reachedBeneficiaries == it.numberOfBeneficiaries) {
+                            it.completed = true
+                        }
                         DistributionItemWrapper(it, reachedBeneficiaries)
                     }
 
                 }
                 .collect { list ->
-                    list.filter {
-                        it.numberOfReachedBeneficiaries == it.distribution.numberOfBeneficiaries
-                    }.onEach {
-                        it.distribution.completed = true
-                    }
                     distributionsLD.value = list.defaultSort()
                     showRetrieving(false)
                 }

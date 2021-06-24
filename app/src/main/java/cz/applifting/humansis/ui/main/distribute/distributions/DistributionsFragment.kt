@@ -56,6 +56,9 @@ class DistributionsFragment : BaseFragment() {
 
         sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
             viewModel.showRefreshing(it.isLoading)
+            if (!it.isLoading) {
+                viewModel.getDistributions(args.projectId)
+            }
         })
 
         viewModel.init(args.projectId)

@@ -2,6 +2,8 @@ package cz.applifting.humansis.extensions
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -11,14 +13,26 @@ import androidx.navigation.fragment.findNavController
 
 fun Context.isNetworkConnected(): Boolean {
     val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val networkInfo = connectivityManager.activeNetworkInfo
-    return networkInfo != null && networkInfo.isConnected
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        val cellular = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
+        val wifi = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+        (cellular || wifi)
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo
+        networkInfo != null && networkInfo.isConnected
+    }
 }
 
 fun Context.isWifiConnected(): Boolean {
     val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-    return networkInfo.isConnected
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+    } else {
+        val networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+        networkInfo != null && networkInfo.isConnected
+    }
 }
 
 fun Fragment.tryNavController(): NavController? =
