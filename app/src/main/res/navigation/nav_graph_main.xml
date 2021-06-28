@@ -132,22 +132,10 @@
             android:id="@+id/action_global_uploadDialogFragment"
             app:destination="@id/uploadDialog" />
 
-    <dialog
-            android:id="@+id/logsDialog"
-            android:name="cz.applifting.humansis.ui.main.settings.LogsDialog"
-            android:label="LogsDialog">
-        <argument
-                android:name="logs"
-                app:argType="string" />
-    </dialog>
-
     <fragment
             android:id="@+id/settingsFragment"
             android:name="cz.applifting.humansis.ui.main.settings.SettingsFragment"
             android:label="Settings">
-        <action
-                android:id="@+id/action_settingsFragment_to_logsDialog"
-                app:destination="@id/logsDialog" />
     </fragment>
 
     <action

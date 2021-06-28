@@ -32,12 +32,12 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_country" />
 
     <Button
-            android:id="@+id/btn_show_dev_logs"
+            android:id="@+id/btn_export_logs"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="@string/show_developer_logs"
+            android:text="@string/export_logs"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -55,18 +55,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-            android:id="@+id/btn_test"
-            android:backgroundTint="@color/colorAccent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            app:layout_constraintBottom_toTopOf="@+id/btn_show_dev_logs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.18"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_country" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
