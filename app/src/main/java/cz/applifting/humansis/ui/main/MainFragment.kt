@@ -133,10 +133,10 @@ class MainFragment : BaseFragment(){
                  AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                     .setTitle(R.string.logout_alert_title)
                     .setMessage(getString(R.string.logout_alert_text))
-                    .setPositiveButton(android.R.string.yes) { _, _ ->
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         viewModel.logout()
                     }
-                    .setNegativeButton(android.R.string.no, null)
+                    .setNegativeButton(android.R.string.cancel, null)
                     .setIcon(R.drawable.ic_warning)
                     .show()
             } else {
