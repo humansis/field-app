@@ -41,7 +41,7 @@
     <string name="sync">مزامنة البيانات</string>
     <string name="revert">تراجع عن التسليم</string>
     <string name="logout_alert_text">هل انت متأكد انك تريد تسجيل الخروج؟  سوف يتم فقدان بيانات التطبيق</string>
-    <string name="humansis_id">رقم الهوية الخاص بالتطبيق: %1$d</string>
+    <string name="humansis_id_format">رقم الهوية الخاص بالتطبيق: %1$d</string>
     <string name="country">البلد</string>
     <string name="settings_country_update_success">تم تحديث البلد</string>
     <string name="settings_country_update_error">كود غير صالح</string>
@@ -161,4 +161,5 @@
     <string name="scan_card_again">يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="read_balance">قراءة الرصيد</string>
     <string name="version">الإصدار \\u200f%1$s\\u200f</string>
+    <string name="humansis_id">رقم الهوية الخاص بالتطبيق</string>
 </resources>

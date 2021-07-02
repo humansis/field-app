@@ -134,6 +134,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             view.apply {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
+                tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
