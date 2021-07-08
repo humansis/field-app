@@ -6,19 +6,20 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.provider.Settings
+import android.widget.Toast
 import cz.applifting.humansis.R
 
 object NfcInitializer {
 
-    fun initNfc( activity: Activity): Boolean {
+    fun initNfc(activity: Activity): Boolean {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
-                ?: // NFC is not available on this device
-                return false
+            ?: // NFC is not available on this device
+            return noNfcAvailable(activity)
 
         val pendingIntent = PendingIntent.getActivity(
-                activity, 0,
-                Intent(activity, activity.javaClass)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+            activity, 0,
+            Intent(activity, activity.javaClass)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
         )
 
         nfcAdapter.let {
@@ -33,16 +34,24 @@ object NfcInitializer {
     }
 
     private fun showWirelessSettings(activity: Activity) {
-
         AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setMessage(activity.getString(R.string.you_need_to_enable_nfc))
-                .setCancelable(true)
-                .setPositiveButton(activity.getString(R.string.action_settings)) { _,_ ->
-                    activity.startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-                }
-                .setNegativeButton(activity.getString(R.string.cancel), null)
-                .create()
-                .show()
+            .setMessage(activity.getString(R.string.you_need_to_enable_nfc))
+            .setCancelable(true)
+            .setPositiveButton(activity.getString(R.string.action_settings)) { _,_ ->
+                activity.startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+            }
+            .setNegativeButton(activity.getString(R.string.cancel), null)
+            .create()
+            .show()
+    }
+
+    private fun noNfcAvailable(activity: Activity): Boolean {
+        Toast.makeText(
+            activity,
+            activity.getString(R.string.no_nfc_available),
+            Toast.LENGTH_LONG
+        ).show()
+        return false
     }
 
     fun disableForegroundDispatch(activity: Activity) {
