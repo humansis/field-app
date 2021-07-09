@@ -41,7 +41,8 @@ String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(tr
 
 repositories {
     google()
-    jcenter()
+    jcenter() // needs to be here, because of zxing and material-spinner
+    mavenCentral()
     flatDir {
         dirs 'libs'
     }
@@ -49,14 +50,14 @@ repositories {
 
 android {
 
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     ndkVersion "21.3.6528147"
 
     defaultConfig {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode gitVersionCode(false)
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
@@ -101,6 +102,10 @@ android {
             storePassword DEBUG_STORE_PASSWORD
             keyPassword DEBUG_STORE_KEY_PASSWORD
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
