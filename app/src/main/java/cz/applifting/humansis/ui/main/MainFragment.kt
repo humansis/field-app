@@ -22,9 +22,9 @@ import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
-import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.ConnectionObserver
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -42,6 +42,8 @@ class MainFragment : BaseFragment(){
     private lateinit var baseNavController: NavController
     private lateinit var mainNavController: NavController
     private lateinit var drawer: DrawerLayout
+
+    private lateinit var connectionObserver: ConnectionObserver
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +71,9 @@ class MainFragment : BaseFragment(){
 
         baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
+
+        connectionObserver = ConnectionObserver(requireContext())
+        connectionObserver.registerCallback()
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
@@ -162,13 +167,12 @@ class MainFragment : BaseFragment(){
 
     override fun onResume() {
         super.onResume()
-        val networkFilter = IntentFilter("android.net.conn.CONNECTIVITY_ACTION")
-        activity?.registerReceiver(networkReceiver, networkFilter)
+        sharedViewModel.observeConnection(connectionObserver)
     }
 
-    override fun onPause() {
-        super.onPause()
-        activity?.unregisterReceiver(networkReceiver)
+    override fun onDestroy() {
+        connectionObserver.unregisterCallback()
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -180,7 +184,11 @@ class MainFragment : BaseFragment(){
 
         val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
-        ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
+
+        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner, Observer { available ->
+            val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
+            ivStatus.simpleDrawable(drawable)
+        })
 
         sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
@@ -203,15 +211,6 @@ class MainFragment : BaseFragment(){
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    private val networkReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            context?.let {
-                sharedViewModel.networkStatus.value = context.isNetworkConnected()
-                activity?.invalidateOptionsMenu()
-            }
-        }
     }
 
     private fun showToast(text: String) {
