@@ -74,6 +74,7 @@ class MainFragment : BaseFragment(){
 
         connectionObserver = ConnectionObserver(requireContext())
         connectionObserver.registerCallback()
+        sharedViewModel.observeConnection(connectionObserver)
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
@@ -163,11 +164,6 @@ class MainFragment : BaseFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        sharedViewModel.observeConnection(connectionObserver)
     }
 
     override fun onDestroy() {
