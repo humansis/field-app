@@ -59,12 +59,12 @@ class BeneficiaryViewModel @Inject constructor(
 
     fun scanQRBooklet(code: String?) {
         launch {
-            val beneficiary = beneficiaryLD.value!!.copy(
-                qrBooklets = listOfNotNull(code)
-            )
-
-            beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
-            beneficiaryLD.value = beneficiary
+            beneficiaryLD.value?.let {
+                val beneficiary = it.copy(
+                    qrBooklets = listOfNotNull(code)
+                )
+                beneficiaryLD.value = beneficiary
+            }
         }
     }
 
