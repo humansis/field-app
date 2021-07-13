@@ -12,7 +12,6 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
-import cz.applifting.humansis.misc.ConnectionObserver
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -20,9 +19,6 @@ import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,7 +50,7 @@ class SharedViewModel @Inject constructor(
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 
-    private var connectionDisposable: Disposable? = null
+
 
     private val workInfos: LiveData<List<WorkInfo>>
 
@@ -160,19 +156,8 @@ class SharedViewModel @Inject constructor(
         return networkStatus
     }
 
-    fun observeConnection(connectionObserver: ConnectionObserver) {
-        connectionDisposable?.dispose()
-        connectionDisposable = connectionObserver.getNetworkAvailability()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    networkStatus.value = it
-                },
-                {
-                }
-            )
-
+    fun setNetworkStatus(it: Boolean?) {
+        networkStatus.value = it
     }
 
     companion object {

@@ -28,6 +28,9 @@ import cz.applifting.humansis.misc.ConnectionObserver
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
@@ -43,6 +46,7 @@ class MainFragment : BaseFragment(){
     private lateinit var mainNavController: NavController
     private lateinit var drawer: DrawerLayout
 
+    private var connectionDisposable: Disposable? = null
     private lateinit var connectionObserver: ConnectionObserver
 
     override fun onCreateView(
@@ -74,7 +78,7 @@ class MainFragment : BaseFragment(){
 
         connectionObserver = ConnectionObserver(requireContext())
         connectionObserver.registerCallback()
-        sharedViewModel.observeConnection(connectionObserver)
+        observeConnection()
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
@@ -218,5 +222,20 @@ class MainFragment : BaseFragment(){
         toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
+    }
+
+    private fun observeConnection() {
+        connectionDisposable?.dispose()
+        connectionDisposable = connectionObserver.getNetworkAvailability()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    sharedViewModel.setNetworkStatus(it)
+                },
+                {
+                }
+            )
+
     }
 }
