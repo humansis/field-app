@@ -3,6 +3,7 @@ package cz.applifting.humansis.misc
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.provider.Settings
@@ -14,7 +15,7 @@ object NfcInitializer {
     fun initNfc(activity: Activity): Boolean {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
             ?: // NFC is not available on this device
-            return noNfcAvailable(activity)
+            return onNfcUnavailable(activity)
 
         val pendingIntent = PendingIntent.getActivity(
             activity, 0,
@@ -45,10 +46,10 @@ object NfcInitializer {
             .show()
     }
 
-    private fun noNfcAvailable(activity: Activity): Boolean {
+    private fun onNfcUnavailable(context: Context): Boolean {
         Toast.makeText(
-            activity,
-            activity.getString(R.string.no_nfc_available),
+            context,
+            context.getString(R.string.no_nfc_available),
             Toast.LENGTH_LONG
         ).show()
         return false
