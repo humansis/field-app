@@ -3,7 +3,6 @@ package cz.applifting.humansis.misc
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.provider.Settings
@@ -14,8 +13,15 @@ object NfcInitializer {
 
     fun initNfc(activity: Activity): Boolean {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
-            ?: // NFC is not available on this device
-            return onNfcUnavailable(activity)
+
+        if (nfcAdapter == null) {
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.no_nfc_available),
+                Toast.LENGTH_LONG
+            ).show()
+            return false
+        }
 
         val pendingIntent = PendingIntent.getActivity(
             activity, 0,
@@ -44,15 +50,6 @@ object NfcInitializer {
             .setNegativeButton(activity.getString(R.string.cancel), null)
             .create()
             .show()
-    }
-
-    private fun onNfcUnavailable(context: Context): Boolean {
-        Toast.makeText(
-            context,
-            context.getString(R.string.no_nfc_available),
-            Toast.LENGTH_LONG
-        ).show()
-        return false
     }
 
     fun disableForegroundDispatch(activity: Activity) {
