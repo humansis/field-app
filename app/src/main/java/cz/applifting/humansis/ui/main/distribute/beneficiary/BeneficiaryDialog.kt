@@ -650,7 +650,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setPositiveButton(R.string.confirm_distribution) { _, _ ->
                 viewModel.beneficiaryLD.value?.let { showConfirmBeneficiaryDialog(it) } ?: dismiss()
             }
-            .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
+            .setNegativeButton(R.string.dont_save) { _, _ ->
+                viewModel.beneficiaryLD.value?.let {
+                    viewModel.beneficiaryLD.value = it.copy(
+                        qrBooklets = null
+                    )
+                }
+                dismiss()
+            }
             .show()
     }
 
