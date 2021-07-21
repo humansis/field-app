@@ -608,10 +608,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         get() = args.isQRVoucher && qrBooklets?.firstOrNull().isValidBooklet && !distributed
 
     private fun handleBackPressed() {
-        if (viewModel.beneficiaryLD.value?.hasUnsavedQr == true) {
-            showDismissConfirmDialog()
-        } else {
-            dismiss()
+        when {
+            viewModel.beneficiaryLD.value?.hasUnsavedQr == true -> {
+                showDismissConfirmDialog()
+            }
+            !viewModel.beneficiaryLD.value?.qrBooklets?.firstOrNull().isValidBooklet  -> {
+                viewModel.revertBeneficiary()
+                dismiss()
+            }
+            else -> {
+                dismiss()
+            }
         }
     }
 
@@ -649,11 +656,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 viewModel.beneficiaryLD.value?.let { showConfirmBeneficiaryDialog(it) } ?: dismiss()
             }
             .setNegativeButton(R.string.dont_save) { _, _ ->
-                viewModel.beneficiaryLD.value?.let {
-                    viewModel.beneficiaryLD.value = it.copy(
-                        qrBooklets = null
-                    )
-                }
+                viewModel.revertBeneficiary()
                 dismiss()
             }
             .show()
