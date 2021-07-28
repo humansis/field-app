@@ -50,12 +50,18 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
 
         btn_login.isEnabled = true
         btn_login.setOnClickListener {
-            val username = et_username.text.toString()
-            btn_login.isEnabled = false
-            if(username.equals(BuildConfig.DEMO_ACCOUNT, true)) {
-                changeEnvironment(ApiEnvironments.STAGE)
+            if (et_username.text.length > 1) {
+                val username = et_username.text.toString()
+                btn_login.isEnabled = false
+                if(username.equals(BuildConfig.DEMO_ACCOUNT, true)) {
+                    changeEnvironment(ApiEnvironments.STAGE)
+                }
+                viewModel.login(username, et_password.text.toString(), this)
+            } else {
+                tv_error.visibility = View.VISIBLE
+                tv_error.text = getString(R.string.short_username)
             }
-            viewModel.login(username, et_password.text.toString(), this)
+
         }
 
         viewModel.viewStateLD.observe(viewLifecycleOwner, Observer { viewState ->

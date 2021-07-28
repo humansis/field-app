@@ -165,4 +165,5 @@
     <string name="version">v%1$s</string>
     <string name="environment">Environment: %1$s</string>
     <string name="error_expired_password">You must login to web app and change password</string>
+    <string name="short_username">Username should have 2 characters or more</string>
 </resources>
