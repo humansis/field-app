@@ -159,7 +159,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 val distributions = try {
                     projects.map {
-                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                        async { distributionsRepository.getDistributionsOnline(it.id, getCurrentCountry(sp)) }
                     }.flatMap {
                         it.await().toList()
                     }

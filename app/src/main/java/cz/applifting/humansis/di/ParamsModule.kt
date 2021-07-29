@@ -14,15 +14,6 @@ class ParamsModule {
     @Provides
     @Named(BASE_URL)
     fun baseUrl(): String {
-        //todo poresit v2
-        return "https://" + ApiEnvironments.RELEASE.url + "/api/wsse/offline-app/v1/"
+        return "https://" + ApiEnvironments.RELEASE.url + "/api/wsse/offline-app/"
     }
-
-    @Provides
-    @Named(LOGFILE_PATH)
-    fun logFilePath(): String {
-        //todo cesta k kotlinloggerfile
-        return "log.txt"
-    }
-
 }

@@ -17,12 +17,13 @@ import javax.inject.Singleton
 @Singleton
 class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal> {
+    suspend fun getDistributionsOnline(projectId: Int, currentCountry: String): List<DistributionLocal> {
         val result = service
-            .getDistributions(projectId)
+            .getAssistances(projectId, currentCountry, null, null, null)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
 
                 //todo otestovat chování téhle podmínky
+                // todo asi podminku muzeme zrusit
 //                val test = it.commodities.firstOrNull { commodity ->
 //                    commodity?.modalityType?.name == CommodityType.MOBILE_MONEY
 //                }

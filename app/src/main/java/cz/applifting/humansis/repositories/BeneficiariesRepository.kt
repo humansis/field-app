@@ -160,7 +160,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+        service.assignBooklet(beneficiaryId, distributionId, AssignBookletRequest(code))
     }
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {

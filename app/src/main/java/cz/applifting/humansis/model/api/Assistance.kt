@@ -6,7 +6,7 @@ import cz.applifting.humansis.model.Target
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
-data class Distribution (
+data class Assistance (
     val id : Int,
     val name : String,
     @SerializedName("updated_on") val updatedOn : String?,
