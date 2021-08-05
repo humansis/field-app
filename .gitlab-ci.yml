@@ -1,3 +1,4 @@
+---
 include:
   - project: 'humansis/gitlab-ci-templates'
     ref: 'mobile/docker-ci'
@@ -13,6 +14,7 @@ stages:
   - archive
   - upload
   - firebase
+  - publish
 
 .gradle_build:
   before_script:
@@ -26,21 +28,18 @@ stages:
       export GOOGLE_APPLICATION_CREDENTIALS=./app/adc.json;
     - ./gradlew clean
 
-# Just build application 
 build_debug_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleDebug 
-# Just build application 
+    - ./gradlew assembleDebug
 
 build_release_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleRelease 
+    - ./gradlew assembleRelease
 
-# Build debug and archive apk
 archive_debug_job:
   stage: archive
   extends: .gradle_build
@@ -53,7 +52,6 @@ archive_debug_job:
     paths:
       - $ARTIFACT_PATH
 
-# Build debug and archive apk
 archive_release_job:
   stage: archive
   extends: .gradle_build
@@ -90,3 +88,19 @@ upload_to_firebase:
     - ./gradlew --build-cache clean
         app:assembleDebug app:appDistributionUploadDebug
   when: manual
+
+publish_to_playstore:
+  stage: publish
+  extends: .gradle_build
+  script:
+    - echo $BASE64_PLAYSTORE_API_KEY | base64 -d > $PLAYSTORE_API_KEY_PATH;
+    - export PATH=$PATH:/root/.local/share/gem/ruby/2.7.0/bin;
+      gem install bundler;
+      bundle update --bundler;
+      bundle install;
+    - bundle exec fastlane deploy json_key:$PLAYSTORE_API_KEY_PATH
+  after_script:
+    - rm -rf $PLAYSTORE_API_KEY_PATH
+  when: manual
+  only:
+    - tags
