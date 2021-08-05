@@ -72,6 +72,16 @@ upload_to_artifactory:
     ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   when: manual
+  except:
+    - tags
+
+upload_to_artifactory_automatically:
+  stage: upload
+  variables:
+    ARTIFACTORY_REPOSITORY: /vendor_app-gradle-local/
+  extends: .upload_gradle
+  only:
+    - tags
 
 upload_to_firebase:
   stage: firebase
