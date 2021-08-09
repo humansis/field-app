@@ -14,13 +14,13 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
-import cz.applifting.humansis.misc.Logger
+import cz.applifting.humansis.model.api.Commodity
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
@@ -29,6 +29,7 @@ import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
+import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -48,7 +49,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     @Inject
     lateinit var projectsRepository: ProjectsRepository
     @Inject
-    lateinit var distributionsRepository: DistributionsRepository
+    lateinit var assistancesRepository: AssistancesRepository
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
     @Inject
@@ -100,7 +101,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 logger.logToFile(TAG, applicationContext, "Failed uploading [$action]: ${it.id}: $errBody")
 
                 // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.distributionId)
+                val distributionName = assistancesRepository.getNameById(it.distributionId)
                 val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
                 val beneficiaryName = "${it.givenName} ${it.familyName}"
 
@@ -159,9 +160,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 if (isStopped) return@supervisorScope stopWork("Downloading projects")
 
+                val commodities = try {
+                    assistancesRepository.getCommoditiesOnline()
+                } catch (e: Exception) {
+                    syncErrors.add(getDownloadError(e, "Commodities"))
+                    emptyList<Commodity>()
+                }
+
+                if (isStopped) return@supervisorScope stopWork("Downloading commodities")
+
                 val distributions = try {
                     projects.map {
-                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                        async { assistancesRepository.getDistributionsOnline(it.id, getCurrentCountry(sp), commodities) }
                     }.flatMap {
                         it.await().toList()
                     }
@@ -180,7 +190,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
-                    emptyList<ProjectLocal>()
+                    emptyList<BeneficiaryLocal>()
                 }
             }
 
@@ -248,8 +258,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         )
     }
 
-    private suspend fun getDownloadError(e: Exception, resourceName: String): SyncError {
-        logger.logToFile(TAG, applicationContext, "Failed downloading ${resourceName}: ${e.message}}")
+    private fun getDownloadError(e: Exception, resourceName: String): SyncError {
+        Log.d(TAG, "Failed downloading ${resourceName}: ${e.message}}")
+        Log.e(TAG, e)
 
         return when (e) {
             is HttpException -> {
@@ -294,5 +305,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     companion object {
         private val TAG = SyncWorker::class.java.simpleName
+        private val MOBILE_MONEY = "Mobile Money"
     }
 }

@@ -3,8 +3,8 @@ package cz.applifting.humansis.ui.main.distribute.distributions
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.misc.DateUtil
 import cz.applifting.humansis.model.ui.DistributionItemWrapper
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
 class DistributionsViewModel @Inject constructor(
-    private val distributionsRepository: DistributionsRepository,
+    private val assistancesRepository: AssistancesRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     app: App
 ) : BaseListViewModel(app) {
@@ -38,7 +38,7 @@ class DistributionsViewModel @Inject constructor(
         launch {
             showRetrieving(true)
 
-            distributionsRepository
+            assistancesRepository
                 .getDistributionsOffline(projectId)
                 .map { newDistributions ->
                     newDistributions.map {
