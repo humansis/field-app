@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
@@ -61,6 +62,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         private const val CAMERA_REQUEST_CODE = 0
         const val INVALID_CODE = "Invalid code"
         const val ALREADY_ASSIGNED = "Already assigned"
+        private val TAG = this::class.java.simpleName
     }
 
     @Inject
@@ -71,7 +73,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private var displayedDialog: AlertDialog? = null
     private var disposable: Disposable? = null
 
-    private val TAG = this.javaClass.simpleName
     val args: BeneficiaryDialogArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,6 +135,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             view.apply {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
+                tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
@@ -257,11 +259,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     currency,
                     beneficiary,
                     pin,
-                    showScanCardDialog()
+                    showScanCardDialog(btn_scan_smartcard)
                 )
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
-                btn_scan_smartcard.isEnabled = false
+                btn_scan_smartcard.isEnabled = true
             }
         }
 
@@ -272,11 +274,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 changePinOnCard(
                     beneficiary,
                     pin,
-                    showScanCardDialog()
+                    showScanCardDialog(btn_change_pin)
                 )
             } else {
                 btn_change_pin.text = getString(R.string.no_nfc_available)
-                btn_change_pin.isEnabled = false
+                btn_change_pin.isEnabled = true
             }
         }
 
@@ -351,14 +353,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun showScanCardDialog(): AlertDialog {
+    private fun showScanCardDialog(clickedButton: MaterialButton): AlertDialog {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setMessage(getString(R.string.scan_the_card))
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
-                btn_scan_smartcard?.visibility = View.VISIBLE
-                btn_scan_smartcard?.isEnabled = true
+                clickedButton.visibility = View.VISIBLE
+                clickedButton.isEnabled = true
                 disposable?.dispose()
                 disposable = null
             }
@@ -402,8 +404,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         scanCardDialog: AlertDialog
     ) {
         NfcLogger.d(
-                TAG,
-                "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
+            TAG,
+            "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
         )
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
@@ -432,8 +434,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         )
                     )
                     NfcLogger.d(
-                            TAG,
-                            "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
+                        TAG,
+                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
                     )
                 },
                 {
@@ -608,10 +610,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         get() = args.isQRVoucher && qrBooklets?.firstOrNull().isValidBooklet && !distributed
 
     private fun handleBackPressed() {
-        if (viewModel.beneficiaryLD.value?.hasUnsavedQr == true) {
-            showDismissConfirmDialog()
-        } else {
-            dismiss()
+        when {
+            viewModel.beneficiaryLD.value?.hasUnsavedQr == true -> {
+                showDismissConfirmDialog()
+            }
+            !viewModel.beneficiaryLD.value?.qrBooklets?.firstOrNull().isValidBooklet  -> {
+                viewModel.revertBeneficiary()
+                dismiss()
+            }
+            else -> {
+                dismiss()
+            }
         }
     }
 
@@ -648,7 +657,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setPositiveButton(R.string.confirm_distribution) { _, _ ->
                 viewModel.beneficiaryLD.value?.let { showConfirmBeneficiaryDialog(it) } ?: dismiss()
             }
-            .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
+            .setNegativeButton(R.string.dont_save) { _, _ ->
+                viewModel.revertBeneficiary()
+                dismiss()
+            }
             .show()
     }
 

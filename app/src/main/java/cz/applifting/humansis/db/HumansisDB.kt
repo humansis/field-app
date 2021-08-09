@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import cz.applifting.humansis.db.converters.*
-import cz.applifting.humansis.db.daos.*
+import cz.applifting.humansis.db.dao.*
 import cz.applifting.humansis.model.db.*
 
 /**

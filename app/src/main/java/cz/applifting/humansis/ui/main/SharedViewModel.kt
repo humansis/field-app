@@ -12,7 +12,6 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
-import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -21,6 +20,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 /**
@@ -34,7 +34,6 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
-    private val logger: Logger,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
@@ -146,7 +145,7 @@ class SharedViewModel @Inject constructor(
         if (workInfos.isNullOrEmpty()) {
             return false
         }
-        launch { logger.logToFile(TAG, getApplication(), "Worker state: ${workInfos.first().state}") }
+        launch { Log.d(TAG, "Worker state: ${workInfos.first().state}") }
         return workInfos.first().state == WorkInfo.State.RUNNING
     }
 
