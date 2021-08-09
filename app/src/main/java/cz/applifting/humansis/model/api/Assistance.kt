@@ -1,5 +1,6 @@
 package cz.applifting.humansis.model.api
 
+import com.google.gson.annotations.SerializedName
 import cz.applifting.humansis.model.Target
 
 /**
@@ -8,15 +9,15 @@ import cz.applifting.humansis.model.Target
 data class Assistance (
     val id : Int,
     val name : String,
-    val dateDistribution : String,
-    val projectId : Int,
-    val target : Target,
-    val type: String,
-    val locationId : Int,
-    val commodityIds : List<Int>,
-    val numberOfBeneficiaries: Int,
-    val description: String,
+    @SerializedName("updated_on") val updatedOn : String?,
+    @SerializedName("date_distribution") val dateDistribution : String?,
+    val location : Any?,
+    val project : Project,
+    @SerializedName("selection_criteria") val selection_criteria : List<SelectionCriteria>?,
+    val archived : Boolean,
     val validated : Boolean,
+    val type : Target,
+    val commodities : List<Commodity>,
+    @SerializedName("beneficiaries_count") val beneficiariesCount: Int,
     val completed : Boolean
-
 )
