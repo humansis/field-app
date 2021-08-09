@@ -43,9 +43,6 @@ repositories {
     google()
     jcenter() // needs to be here, because of zxing and material-spinner
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 android {
