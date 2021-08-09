@@ -89,7 +89,7 @@ class BeneficiaryViewModel @Inject constructor(
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
-                    newSmartcard = cardId?.toUpperCase(Locale.US),
+                    newSmartcard = cardId?.uppercase(Locale.US),
                     edited = true,
                     distributed = true,
                     distributedAt = date

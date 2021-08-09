@@ -14,10 +14,7 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
-import cz.applifting.humansis.model.api.Commodity
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.DistributionLocal
-import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -153,7 +150,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     projectsRepository.getProjectsOnline(getCurrentCountry(sp))
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
-                    emptyList<ProjectLocal>()
+                    emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork("Downloading projects")
@@ -162,7 +159,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     assistancesRepository.getCommoditiesOnline()
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, "Commodities"))
-                    emptyList<Commodity>()
+                    emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork("Downloading commodities")
@@ -175,7 +172,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
-                    emptyList<DistributionLocal>()
+                    emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork("Downloading distributions")
@@ -263,7 +260,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return when (e) {
             is HttpException -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error).format(
+                        resourceName.lowercase(Locale.ROOT)
+                    ),
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code()
@@ -271,7 +270,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             }
             else -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error).format(
+                        resourceName.lowercase(Locale.ROOT)
+                    ),
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0
@@ -303,6 +304,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     companion object {
         private val TAG = SyncWorker::class.java.simpleName
-        private val MOBILE_MONEY = "Mobile Money"
+        private const val MOBILE_MONEY = "Mobile Money"
     }
 }

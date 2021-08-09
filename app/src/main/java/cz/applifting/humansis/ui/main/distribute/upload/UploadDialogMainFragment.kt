@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.format
@@ -29,7 +28,7 @@ class UploadDialogMainFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
+        uploadDialogViewModel = ViewModelProviders.of(requireParentFragment(), viewModelFactory)[UploadDialogViewModel::class.java]
 
         val online = context?.isNetworkConnected() ?: false
         btn_sync.isEnabled = online
@@ -37,18 +36,18 @@ class UploadDialogMainFragment : BaseFragment() {
         iv_connection_status.simpleDrawable(if (online) R.drawable.ic_online else R.drawable.ic_offline)
         tv_connectoin_status.text = getString(if (online) R.string.online else R.string.offline)
 
-        sharedViewModel.networkStatus.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner, {
             btn_sync.isEnabled = it
             iv_connection_status.simpleDrawable(if (it) R.drawable.ic_online else R.drawable.ic_offline)
             tv_connectoin_status.text = getString(if (it) R.string.online else R.string.offline)
         })
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             tv_changes.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tv_changes.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
+            tv_changes.setTextColor(ContextCompat.getColor(requireContext(), if (it) R.color.red else R.color.green))
         })
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             btn_sync.visibility = if (it.isLoading) {
                 View.INVISIBLE
             } else {
@@ -64,7 +63,7 @@ class UploadDialogMainFragment : BaseFragment() {
             tv_current_data_date.text = it.lastDownload?.format()
         })
 
-        uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner, Observer {
+        uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner, {
             tv_sync_summary.visible(!it.isNullOrBlank())
             tv_sync_summary.text = it
         })

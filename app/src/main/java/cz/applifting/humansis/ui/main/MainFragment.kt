@@ -111,14 +111,14 @@ class MainFragment : BaseFragment(){
             tvUsername.text = it.username
         })
 
-        sharedViewModel.toastLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
             if (it != null) {
                 showToast(it)
                 sharedViewModel.showToast(null)
             }
         })
 
-        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
             if (it) {
                 sharedViewModel.resetShouldReauthenticate()
                 baseNavController.navigate(R.id.loginFragment)
@@ -182,12 +182,12 @@ class MainFragment : BaseFragment(){
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
         ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
         // show sync in toolbar only on settings screen, because there is no other progress indicator when country is updated
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
 
@@ -215,13 +215,10 @@ class MainFragment : BaseFragment(){
     }
 
     private fun showToast(text: String) {
-        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-        tvMessage.text = text
         val toast = Toast(context)
         toast.setGravity(Gravity.BOTTOM, 0, 50)
         toast.duration = Toast.LENGTH_SHORT
-        toast.view = toastView
+        toast.setText(text)
         toast.show()
     }
 }

@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.upload
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class ErrorListAdapter(
         holder.bind(syncErrors[position])
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun update(list: List<SyncError>) {
         syncErrors.clear()
         syncErrors.addAll(list)
