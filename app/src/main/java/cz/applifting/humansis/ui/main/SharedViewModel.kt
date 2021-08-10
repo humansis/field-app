@@ -39,7 +39,6 @@ class SharedViewModel @Inject constructor(
     private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
     private val connectionObserverProvider: ConnectionObserverProvider,
-    private val logger: Logger,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
