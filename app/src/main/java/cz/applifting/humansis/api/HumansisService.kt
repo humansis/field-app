@@ -23,6 +23,14 @@ interface HumansisService {
         @Header("country") country: String
     ): List<Project>
 
+    @GET("v1/modality-types")
+    suspend fun getModalityTypes(): List<ModalityType>
+
+    @GET("v2/commodities")
+    suspend fun getCommodities(
+        @Query("filter[notModalityTypes][]") notModalityTypes: List<String>?
+    ): List<Commodity>
+
     /**
      *  Leaving filter as null returns assistances unfiltered
      *  Available assistanceTypes: distribution, activity
@@ -31,16 +39,10 @@ interface HumansisService {
     suspend fun getAssistances(
         @Path("projectId") projectId: Int,
         @Header("country") country: String,
-        @Query("filter[type]") assistanceTypes: String?,
-        @Query("filter[completed]") completed: Boolean?,
-        @Query("filter[modalityTypes][]") modalityTypes: List<String>?
+        @Query("filter[type]") assistanceType: String?,
+        @Query("filter[completed]") completed: Int?,
+        @Query("filter[notModalityTypes][]") notModalityTypes: List<String>?
     ): List<Assistance>
-
-    @GET("v2/commodities")
-    suspend fun getCommodities(): List<Commodity>
-
-    @GET("v1/modality-types")
-    suspend fun getModalityTypes(): List<ModalityType>
 
     @GET("v2/distributions/{distributionId}/beneficiaries")
     suspend fun getDistributionBeneficiaries(

@@ -63,6 +63,7 @@ class BeneficiaryViewModel @Inject constructor(
                 val beneficiary = it.copy(
                     qrBooklets = listOfNotNull(code)
                 )
+                beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
                 beneficiaryLD.value = beneficiary
             }
         }
@@ -86,32 +87,36 @@ class BeneficiaryViewModel @Inject constructor(
 
     fun saveCard(cardId: String?, date: String) {
         launch {
-            val beneficiary = beneficiaryLD.value!!.copy(
-                newSmartcard = cardId?.toUpperCase(Locale.US),
-                edited = true,
-                distributed = true,
-                distributedAt = date
-            )
+            beneficiaryLD.value?.let {
+                val beneficiary = it.copy(
+                    newSmartcard = cardId?.uppercase(Locale.US),
+                    edited = true,
+                    distributed = true,
+                    distributedAt = date
+                )
 
-            beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
-            beneficiaryLD.value = beneficiary
-            scannedCardIdLD.value = cardId
+                beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
+                beneficiaryLD.value = beneficiary
+                scannedCardIdLD.value = cardId
+            }
         }
     }
 
     internal fun revertBeneficiary() {
         launch {
-            val beneficiary = beneficiaryLD.value!!
-            val updatedBeneficiary = beneficiary.copy(
-                distributed = false,
-                edited = false,
-                qrBooklets = emptyList(),
-                referralType = beneficiary.originalReferralType,
-                referralNote = beneficiary.originalReferralNote
-            )
+            beneficiaryLD.value?.let {
+                val beneficiary = it
+                val updatedBeneficiary = beneficiary.copy(
+                    distributed = false,
+                    edited = false,
+                    qrBooklets = emptyList(),
+                    referralType = beneficiary.originalReferralType,
+                    referralNote = beneficiary.originalReferralNote
+                )
 
-            beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-            beneficiaryLD.value = updatedBeneficiary
+                beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+                beneficiaryLD.value = updatedBeneficiary
+            }
         }
     }
 
