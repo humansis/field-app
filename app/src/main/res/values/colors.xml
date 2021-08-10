@@ -24,5 +24,4 @@
     <color name="black">#000000</color>
     <color name="yellow">#cefa05</color>
     <color name="screenBackgroundColor">#F3F3F4</color>
-    <color name="toastBackgroundColor">@color/darkBlue</color>
 </resources>

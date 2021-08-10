@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -73,7 +72,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private var displayedDialog: AlertDialog? = null
     private var disposable: Disposable? = null
 
-    val args: BeneficiaryDialogArgs by navArgs()
+    private val args: BeneficiaryDialogArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +84,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return object : Dialog(activity!!, theme) {
+        return object : Dialog(requireActivity(), theme) {
             override fun onBackPressed() {
                 handleBackPressed()
             }
@@ -123,14 +122,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         viewModel.initBeneficiary(args.beneficiaryId)
 
-        sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner, {
             if(it) {
                 leaveWithSuccess()
                 sharedViewModel.shouldDismissBeneficiaryDialog.postValue(false)
             }
         })
 
-        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer { beneficiary ->
+        viewModel.beneficiaryLD.observe(viewLifecycleOwner, { beneficiary ->
             // Views
             view.apply {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
@@ -212,11 +211,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         })
 
-        viewModel.scannedIdLD.observe(viewLifecycleOwner, Observer {
+        viewModel.scannedIdLD.observe(viewLifecycleOwner, {
             viewModel.scanQRBooklet(it)
         })
 
-        viewModel.goBackEventLD.observe(viewLifecycleOwner, Observer {
+        viewModel.goBackEventLD.observe(viewLifecycleOwner, {
             handleBackPressed()
         })
     }
@@ -343,7 +342,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         if (booklet == null) {
             qr_scanner_holder.visibility = View.VISIBLE
-            startScanner(view!!)
+            startScanner(requireView())
         } else {
             qr_scanner_holder.visibility = View.GONE
         }
@@ -416,7 +415,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     val id = tag.id
                     var cardId: String? = null
                     id?.let {
-                        cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
+                        cardId = NfcUtil.toHexString(id).uppercase(Locale.US)
                     }
                     viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()))
                     btn_scan_smartcard.visibility = View.GONE
@@ -558,7 +557,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
-            startScanner(view!!)
+            startScanner(requireView())
         }
     }
 

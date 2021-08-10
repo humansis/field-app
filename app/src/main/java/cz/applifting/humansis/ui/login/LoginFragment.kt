@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
@@ -27,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
 
-    val job = Job()
+    private val job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.Main
 
     @Inject
@@ -58,7 +57,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             viewModel.login(username, et_password.text.toString(), this)
         }
 
-        viewModel.viewStateLD.observe(viewLifecycleOwner, Observer { viewState ->
+        viewModel.viewStateLD.observe(viewLifecycleOwner, { viewState ->
             et_username.isEnabled = viewState.etUsernameIsEnabled
             et_password.isEnabled = viewState.etPasswordIsEnabled
             btn_login.visibility = viewState.btnLoginVisibility
@@ -72,7 +71,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             }
         })
 
-        viewModel.loginLD.observe(viewLifecycleOwner, Observer {
+        viewModel.loginLD.observe(viewLifecycleOwner, {
             if (it != null && !it.invalidPassword) {
                 val action = LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
                 navController.navigate(action)

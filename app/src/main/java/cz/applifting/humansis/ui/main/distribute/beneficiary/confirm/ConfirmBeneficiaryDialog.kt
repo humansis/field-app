@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
@@ -42,16 +41,16 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
         viewModel.initBeneficiary(args.beneficiaryId)
 
-        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
+        viewModel.beneficiaryLD.observe(viewLifecycleOwner, {
             tv_referral_title.text = getString(if (it.hasReferral) R.string.edit_referral else R.string.add_referral)
         })
 
-        viewModel.isReferralVisibleLD.observe(viewLifecycleOwner, Observer {
+        viewModel.isReferralVisibleLD.observe(viewLifecycleOwner, {
             layout_referral.visible(it) // animated by animateLayoutChanges="true"
             referral_header_indicator.animate().rotation(if (it) 90f else 0f).start()
         })
 
-        viewModel.referralTypeLD.observe(viewLifecycleOwner, Observer {
+        viewModel.referralTypeLD.observe(viewLifecycleOwner, {
             spinner_referral_type.apply {
                 val spinnerPos = it.toSpinnerPos()
                 if (selectedItemPosition != spinnerPos) {
@@ -61,7 +60,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
             }
         })
 
-        viewModel.referralNoteLD.observe(viewLifecycleOwner, Observer {
+        viewModel.referralNoteLD.observe(viewLifecycleOwner, {
             tv_referral_note.apply {
                 if (text.toString() != it) {
                     setText(it)
@@ -70,7 +69,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
             }
         })
 
-        viewModel.errorLD.observe(viewLifecycleOwner, Observer {
+        viewModel.errorLD.observe(viewLifecycleOwner, {
             tv_error.visibility = if (it == null) View.GONE else View.VISIBLE
             tv_error.text = it?.let { getString(it) }
         })
@@ -85,7 +84,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
         val spinnerOptions = viewModel.referralTypes
             .map { getString(it) }
-        ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner_referral_type.adapter = adapter
         }

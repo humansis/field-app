@@ -6,8 +6,8 @@ import cz.applifting.humansis.misc.stringLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.SyncError
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.SP_SYNC_SUMMARY
@@ -28,7 +28,7 @@ enum class Screen {
 class UploadDialogViewModel @Inject constructor(
     private val errorsRepository: ErrorsRepository,
     private val projectsRepository: ProjectsRepository,
-    private val distributionsRepository: DistributionsRepository,
+    private val assistancesRepository: AssistancesRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     sp: SharedPreferences,
     app: App
@@ -56,7 +56,7 @@ class UploadDialogViewModel @Inject constructor(
         val beneficiary = beneficiariesRepository.getBeneficiaryOffline(id)
         return Triple(
             beneficiary?.let { projectsRepository.getNameByDistributionId(it.distributionId) },
-            beneficiary?.let { distributionsRepository.getById(it.distributionId) },
+            beneficiary?.let { assistancesRepository.getById(it.distributionId) },
             beneficiary
         )
     }
