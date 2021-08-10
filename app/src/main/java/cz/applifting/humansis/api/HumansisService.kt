@@ -42,7 +42,7 @@ interface HumansisService {
     @GET("v1/modality-types")
     suspend fun getModalityTypes(): List<ModalityType>
 
-    @GET("v1/distributions/{distributionId}/beneficiaries")
+    @GET("v2/distributions/{distributionId}/beneficiaries")
     suspend fun getDistributionBeneficiaries(
         @Path("distributionId") distributionId: Int
     ): List<DistributionBeneficiary>
