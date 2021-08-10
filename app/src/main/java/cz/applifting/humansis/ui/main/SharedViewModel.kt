@@ -14,11 +14,15 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.booleanLiveData
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverProvider
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +38,7 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
+    private val connectionObserverProvider: ConnectionObserverProvider,
     private val logger: Logger,
     private val sp: SharedPreferences,
     app: App
@@ -50,11 +55,11 @@ class SharedViewModel @Inject constructor(
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 
-
-
     private val workInfos: LiveData<List<WorkInfo>>
 
     private val workManager = WorkManager.getInstance(getApplication())
+
+    private var connectionDisposable: Disposable? = null
 
     init {
         workInfos = workManager.getWorkInfosForUniqueWorkLiveData(SYNC_WORKER)
@@ -156,8 +161,22 @@ class SharedViewModel @Inject constructor(
         return networkStatus
     }
 
-    fun setNetworkStatus(it: Boolean?) {
-        networkStatus.value = it
+    fun observeConnection() {
+        connectionDisposable?.dispose()
+        connectionDisposable = connectionObserverProvider.getNetworkAvailability()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    networkStatus.value = it
+                },
+                {
+                }
+            )
+    }
+
+    fun stopObservingConnection() {
+        connectionDisposable?.dispose()
     }
 
     companion object {

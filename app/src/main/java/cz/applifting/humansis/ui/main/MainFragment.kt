@@ -24,13 +24,9 @@ import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.misc.ConnectionObserver
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
@@ -45,9 +41,7 @@ class MainFragment : BaseFragment(){
     private lateinit var baseNavController: NavController
     private lateinit var mainNavController: NavController
     private lateinit var drawer: DrawerLayout
-
-    private var connectionDisposable: Disposable? = null
-    private lateinit var connectionObserver: ConnectionObserver
+    private lateinit var onDestinationChangedListener: NavController.OnDestinationChangedListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,6 +53,8 @@ class MainFragment : BaseFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        sharedViewModel.observeConnection()
 
         view?.hideSoftKeyboard()
 
@@ -75,10 +71,6 @@ class MainFragment : BaseFragment(){
 
         baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
-
-        connectionObserver = ConnectionObserver(requireContext())
-        connectionObserver.registerCallback()
-        observeConnection()
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
@@ -171,7 +163,7 @@ class MainFragment : BaseFragment(){
     }
 
     override fun onDestroy() {
-        connectionObserver.unregisterCallback()
+        sharedViewModel.stopObservingConnection()
         super.onDestroy()
     }
 
@@ -198,8 +190,17 @@ class MainFragment : BaseFragment(){
         sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
+        onDestinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
+        }
+        mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onDestroyOptionsMenu() {
+        mainNavController.removeOnDestinationChangedListener(onDestinationChangedListener)
+        super.onDestroyOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -222,20 +223,5 @@ class MainFragment : BaseFragment(){
         toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
-    }
-
-    private fun observeConnection() {
-        connectionDisposable?.dispose()
-        connectionDisposable = connectionObserver.getNetworkAvailability()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    sharedViewModel.setNetworkStatus(it)
-                },
-                {
-                }
-            )
-
     }
 }

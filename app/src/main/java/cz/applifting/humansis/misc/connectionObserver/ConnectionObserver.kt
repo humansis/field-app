@@ -1,4 +1,4 @@
-package cz.applifting.humansis.misc
+package cz.applifting.humansis.misc.connectionObserver
 
 
 import android.content.Context
@@ -26,28 +26,35 @@ import javax.net.SocketFactory
  * Inspired by:
  * https://github.com/AlexSheva-mason/Rick-Morty-Database/blob/master/app/src/main/java/com/shevaalex/android/rickmortydatabase/utils/networking/ConnectionLiveData.kt
  */
-class ConnectionObserver(context: Context) {
+object ConnectionObserver: ConnectionObserverProvider{
+
+    private val TAG = ConnectionObserver::class.java.simpleName
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+    private lateinit var cm: ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
     private val isNetworkAvailable: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
-    fun getNetworkAvailability(): Observable<Boolean> {
+    fun init (context: Context): ConnectionObserver {
+        cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        registerCallback()
+        return this
+    }
+
+    override fun getNetworkAvailability(): Observable<Boolean> {
         return isNetworkAvailable
     }
 
-    fun registerCallback() {
+    private fun registerCallback() {
+        if (this::networkCallback.isInitialized) {
+            cm.unregisterNetworkCallback(networkCallback)
+        }
         networkCallback = createNetworkCallback()
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NET_CAPABILITY_INTERNET)
             .build()
         cm.registerNetworkCallback(networkRequest, networkCallback)
         checkValidNetworks()
-    }
-
-    fun unregisterCallback() {
-        cm.unregisterNetworkCallback(networkCallback)
     }
 
     private fun checkValidNetworks() {
@@ -68,8 +75,7 @@ class ConnectionObserver(context: Context) {
             if (hasInternetCapability == true) {
                 // check if this network actually has internet
                 CoroutineScope(Dispatchers.IO).launch {
-                    val hasInternet = doesNetworkHaveInternet(network.socketFactory)
-                    if (hasInternet) {
+                    if (doesNetworkHaveInternet(network.socketFactory)) {
                         withContext(Dispatchers.Main) {
                             Log.d(TAG, "onAvailable: adding network. $network")
                             validNetworks.add(network)
@@ -104,9 +110,5 @@ class ConnectionObserver(context: Context) {
             Log.e(TAG, "No internet connection. $e")
             false
         }
-    }
-
-    companion object {
-        private val TAG = ConnectionObserver::class.java.simpleName
     }
 }

@@ -11,6 +11,8 @@ import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverProvider
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.VendorFacade
@@ -161,5 +163,11 @@ class AppModule {
     @SPQualifier(type = SPQualifier.Type.CRYPTO)
     fun spCryptoProvider(context: Context): SharedPreferences {
         return context.getSharedPreferences(SPQualifier.Type.CRYPTO.spName, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectionObserver(context: Context): ConnectionObserverProvider {
+        return ConnectionObserver.init(context)
     }
 }
