@@ -12,7 +12,6 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
-import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverProvider
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -25,6 +24,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 /**
@@ -153,7 +153,7 @@ class SharedViewModel @Inject constructor(
         if (workInfos.isNullOrEmpty()) {
             return false
         }
-        launch { logger.logToFile(TAG, getApplication(), "Worker state: ${workInfos.first().state}") }
+        launch { Log.d(TAG, "Worker state: ${workInfos.first().state}") }
         return workInfos.first().state == WorkInfo.State.RUNNING
     }
 

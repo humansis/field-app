@@ -25,7 +25,7 @@
             android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="@+id/tv_location"
             app:layout_constraintTop_toBottomOf="@+id/tv_location"
-            tools:text="@string/humansis_id" />
+            tools:text="@string/humansis_id_format" />
 
     <TextView
             android:id="@+id/tv_error"
