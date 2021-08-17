@@ -101,8 +101,9 @@ class SettingsFragment : BaseFragment() {
 //                viewModel.test()
 //            }
 //        } else {
-            btn_test.visibility = View.GONE
+        btn_test.visibility = View.GONE
 //        }
+
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
             val message = if (it) {
@@ -119,7 +120,7 @@ class SettingsFragment : BaseFragment() {
     }
 
 
-//    private fun confirmCountryDialog(country: String) {
+//        private fun confirmCountryDialog(country: String) {
 //        val alertDialogBuilder = AlertDialog.Builder(context!!)
 //        alertDialogBuilder.setTitle(getString(R.string.warning))
 //        alertDialogBuilder.setMessage("Changing country will erase all data on next sync, are you sure you want to proceed?")
@@ -135,4 +136,5 @@ class SettingsFragment : BaseFragment() {
         val sdkVersion = Build.VERSION.SDK_INT
         return "Android SDK: $sdkVersion ($release)"
     }
+
 }

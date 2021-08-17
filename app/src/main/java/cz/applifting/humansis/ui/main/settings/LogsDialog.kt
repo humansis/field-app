@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.misc.SendLogDialogFragment
 import kotlinx.android.synthetic.main.dialog_logs.view.*
-import quanti.com.kotlinlog.file.SendLogDialogFragment
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 13, November, 2019
