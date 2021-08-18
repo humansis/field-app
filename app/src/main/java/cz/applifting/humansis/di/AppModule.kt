@@ -12,7 +12,7 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
-import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverProvider
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.VendorFacade
@@ -171,7 +171,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideConnectionObserver(context: Context): ConnectionObserverProvider {
-        return ConnectionObserver(context).init()
+    fun provideConnectionObserver(context: Context): ConnectionObserver {
+        return ConnectionObserverImpl(context)
     }
 }

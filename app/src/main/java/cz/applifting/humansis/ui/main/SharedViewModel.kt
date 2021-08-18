@@ -13,7 +13,7 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.booleanLiveData
-import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverProvider
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
@@ -38,7 +38,7 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
-    private val connectionObserverProvider: ConnectionObserverProvider,
+    private val connectionObserver: ConnectionObserver,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
@@ -162,7 +162,7 @@ class SharedViewModel @Inject constructor(
 
     fun observeConnection() {
         connectionDisposable?.dispose()
-        connectionDisposable = connectionObserverProvider.getNetworkAvailability()
+        connectionDisposable = connectionObserver.getNetworkAvailability()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
