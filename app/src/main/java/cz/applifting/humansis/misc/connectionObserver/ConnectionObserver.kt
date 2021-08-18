@@ -26,17 +26,16 @@ import javax.net.SocketFactory
  * Inspired by:
  * https://github.com/AlexSheva-mason/Rick-Morty-Database/blob/master/app/src/main/java/com/shevaalex/android/rickmortydatabase/utils/networking/ConnectionLiveData.kt
  */
-object ConnectionObserver: ConnectionObserverProvider{
-
-    private val TAG = ConnectionObserver::class.java.simpleName
+class ConnectionObserver(
+    context: Context
+): ConnectionObserverProvider {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private lateinit var cm: ConnectivityManager
+    private var cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
     private val isNetworkAvailable: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
-    fun init (context: Context): ConnectionObserver {
-        cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun init (): ConnectionObserver {
         registerCallback()
         return this
     }
@@ -110,5 +109,9 @@ object ConnectionObserver: ConnectionObserverProvider{
             Log.e(TAG, "No internet connection. $e")
             false
         }
+    }
+
+    companion object {
+        private val TAG = ConnectionObserver::class.java.simpleName
     }
 }
