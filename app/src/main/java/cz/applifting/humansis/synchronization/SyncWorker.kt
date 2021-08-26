@@ -15,7 +15,6 @@ import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -152,7 +151,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     projectsRepository.getProjectsOnline(getCurrentCountry(sp))
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
-                    emptyList<ProjectLocal>()
+                    emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork("Downloading projects")
@@ -165,7 +164,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
-                    emptyList<DistributionLocal>()
+                    emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork("Downloading distributions")
@@ -246,7 +245,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         )
     }
 
-    private suspend fun getDownloadError(e: Exception, resourceName: String): SyncError {
+    private fun getDownloadError(e: Exception, resourceName: String): SyncError {
         Log.d(TAG, "Failed downloading ${resourceName}: ${e.message}}")
 
         return when (e) {

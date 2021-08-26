@@ -81,7 +81,7 @@ class SendLogDialogFragment : DialogFragment() {
         }
     }
 
-    var zipFile: Deferred<File>? = null
+    private var zipFile: Deferred<File>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
