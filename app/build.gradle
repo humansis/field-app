@@ -32,7 +32,7 @@ def VERSION_MAJOR = 2
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
 def VERSION_MINOR = 3
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
-def VERSION_PATCH = 0
+def VERSION_PATCH = 1
 
 String APK_NAME = "user-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
@@ -141,11 +141,11 @@ configurations {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     //firebase
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
@@ -172,7 +172,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
 
     // Navigation
-    def nav_version = "2.2.0-rc02"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 

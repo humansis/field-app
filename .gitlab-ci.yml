@@ -111,7 +111,7 @@ upload_to_artifactory:
 upload_to_artifactory_automatically:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /vendor_app-gradle-local/
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   only:
     - tags

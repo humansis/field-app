@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cz.applifting.humansis.ui.components.listComponent.ListComponent xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/lc_projects"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/screenBackgroundColor" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lc_projects"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/screenBackgroundColor" />

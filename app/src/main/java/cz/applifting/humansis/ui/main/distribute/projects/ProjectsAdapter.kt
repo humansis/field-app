@@ -48,7 +48,7 @@ class ProjectsAdapter(
 
     inner class ProjectViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
         val context: Context = layout.context
-        val tvName: TextView = layout.tv_location
+        private val tvName: TextView = layout.tv_location
         private val tvHouseHolds: TextView = layout.tv_households
 
         fun bind(project: ProjectLocal) {
