@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,10 +45,10 @@ import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import quanti.com.kotlinlog.Log
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -373,6 +372,25 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return scanCardDialog
     }
 
+    private fun showCardInitializedDialog(): AlertDialog {
+        val cardInitializedDialog =
+            AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                .setTitle(getString(R.string.card_initialized))
+                .setMessage(getString(R.string.scan_card_again))
+                .setCancelable(false)
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                    btn_scan_smartcard?.visibility = View.VISIBLE
+                    btn_scan_smartcard?.isEnabled = true
+                    disposable?.dispose()
+                    disposable = null
+                }
+                .create()
+        cardInitializedDialog.show()
+
+        return cardInitializedDialog
+    }
+
     private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
         AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setTitle(getString((R.string.card_updated)))
@@ -446,44 +464,33 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     when (ex) {
                         is PINException -> {
                             NfcLogger.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                            if (ex.pinExceptionEnum == PINExceptionEnum.CARD_INITIALIZED) {
-                                val cardInitializedDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                                    .setTitle(getString(R.string.card_initialized))
-                                    .setMessage(getString(R.string.scan_card_again))
-                                    .setCancelable(false)
-                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                        dialog?.dismiss()
+                            when (ex.pinExceptionEnum) {
+                                PINExceptionEnum.CARD_INITIALIZED -> {
+                                    if (NfcInitializer.initNfc(requireActivity())) {
+                                        writeBalanceOnCard(
+                                            balance,
+                                            currency,
+                                            beneficiary,
+                                            pin,
+                                            showCardInitializedDialog()
+                                        )
                                     }
-                                    .setOnDismissListener {
-                                        btn_scan_smartcard?.visibility = View.VISIBLE
-                                        btn_scan_smartcard?.isEnabled = true
-                                        disposable?.dispose()
-                                        disposable = null
-                                    }
-                                    .create()
-                                cardInitializedDialog.show()
-                                if(NfcInitializer.initNfc(requireActivity())) {
-                                    writeBalanceOnCard(
-                                        balance,
-                                        currency,
-                                        beneficiary,
-                                        pin,
-                                        cardInitializedDialog
-                                    )
                                 }
-                            }else {
-                                Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                                Toast.makeText(
-                                    requireContext(),
-                                    NfcCardErrorMessage.getNfcCardErrorMessage(
-                                        ex.pinExceptionEnum,
-                                        requireActivity()
-                                    ),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                else -> {
+                                    Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                                    Toast.makeText(
+                                        requireContext(),
+                                        NfcCardErrorMessage.getNfcCardErrorMessage(
+                                            ex.pinExceptionEnum,
+                                            requireActivity()
+                                        ),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                         else -> {
+                            Log.e(this.javaClass.simpleName, ex)
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.card_error),
