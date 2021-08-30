@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -24,6 +25,7 @@ import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -77,6 +79,9 @@ class MainFragment : BaseFragment(){
         tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
         nav_view.setupWithNavController(mainNavController)
 
+        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
+
         val metrics: DisplayMetrics = resources.displayMetrics
         val ivAppIcon = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_app_icon)
         ivAppIcon.layoutParams.height = if ((metrics.heightPixels/metrics.density) > 640) {
@@ -102,6 +107,9 @@ class MainFragment : BaseFragment(){
             tvEnvironment.visibility = View.GONE
         }
 
+        tb_toolbar.setBackgroundColor(getBackgroundColor())
+        nav_host_fragment.setBackgroundColor(getBackgroundColor())
+
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
@@ -113,14 +121,14 @@ class MainFragment : BaseFragment(){
             tvUsername.text = it.username
         })
 
-        sharedViewModel.toastLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
             if (it != null) {
                 showToast(it)
                 sharedViewModel.showToast(null)
             }
         })
 
-        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
             if (it) {
                 sharedViewModel.resetShouldReauthenticate()
                 baseNavController.navigate(R.id.loginFragment)
@@ -128,7 +136,6 @@ class MainFragment : BaseFragment(){
         })
 
         btn_logout.setOnClickListener {
-
             val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
             if (!pendingChanges) {
@@ -152,9 +159,6 @@ class MainFragment : BaseFragment(){
         }
 
         sharedViewModel.tryFirstDownload()
-
-        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,19 +179,20 @@ class MainFragment : BaseFragment(){
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
         val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
+        pbSyncProgress.setBackgroundColor(getBackgroundColor())
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
 
-        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner, Observer { available ->
+        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner, { available ->
             val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
             ivStatus.simpleDrawable(drawable)
         })
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
         // show sync in toolbar only on settings screen, because there is no other progress indicator when country is updated
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
         onDestinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -212,6 +217,30 @@ class MainFragment : BaseFragment(){
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun getBackgroundColor(): Int {
+        return if (BuildConfig.DEBUG) {
+            when (viewModel.getHostUrl().id) {
+                ApiEnvironments.DEV.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.dev)
+                }
+                ApiEnvironments.TEST.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.test)
+                }
+                ApiEnvironments.STAGE.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.stage)
+                }
+                ApiEnvironments.DEMO.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.demo)
+                }
+                else -> {
+                    ContextCompat.getColor(requireContext(), R.color.screenBackgroundColor)
+                }
+            }
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.screenBackgroundColor)
+        }
     }
 
     private fun showToast(text: String) {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -68,7 +67,7 @@ class SettingsFragment : BaseFragment() {
             }
         }
 
-        sharedViewModel.networkStatus.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner, {
             spinner_country.isEnabled = it
         })
 
@@ -82,7 +81,7 @@ class SettingsFragment : BaseFragment() {
             ).show(requireActivity().supportFragmentManager, "TAG")
         }
 
-        viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
+        viewModel.savedLD.observe(viewLifecycleOwner, {
             val message = if (it) {
                 sharedViewModel.forceSynchronize()
                 getString(R.string.settings_country_update_success)

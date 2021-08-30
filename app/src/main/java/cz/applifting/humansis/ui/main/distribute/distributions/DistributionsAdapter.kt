@@ -63,13 +63,13 @@ class DistributionsAdapter(
     }
 
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
-        val tvName: TextView = layout.tv_location
-        val tvDate: TextView = layout.tv_date!!
+        private val tvName: TextView = layout.tv_location
+        private val tvDate: TextView = layout.tv_date!!
         private val tvBeneficiariesCnt: TextView = layout.tv_beneficiaries_cnt
         private val ivTarget: ImageView = layout.iv_target
         private val ivStatus: ImageView = layout.iv_status
         private val llComoditiesHolder: LinearLayout = layout.tl_commodities_holder
-        val pbDistributionProgress: ProgressBar = layout.pb_distribution_progress
+        private val pbDistributionProgress: ProgressBar = layout.pb_distribution_progress
         val context: Context = layout.context
 
         fun bind(distributionItemWrapper: DistributionItemWrapper) = with(distributionItemWrapper.distribution) {
