@@ -392,7 +392,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setNegativeButton(getString(R.string.close)){ _, _ ->
                 sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
                 dismiss()
-
             }
             .create()
             .show()
