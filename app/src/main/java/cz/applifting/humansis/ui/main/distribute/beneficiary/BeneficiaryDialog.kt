@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,10 +46,10 @@ import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import quanti.com.kotlinlog.Log
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -491,7 +490,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             }
                         }
                         else -> {
-                            quanti.com.kotlinlog.Log.e(this.javaClass.simpleName, ex)
+                            Log.e(this.javaClass.simpleName, ex)
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.card_error),
