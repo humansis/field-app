@@ -375,27 +375,27 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
-        val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                .setTitle(getString((R.string.card_updated)))
-                .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
-                    this.pin.text = pin
-                    if(message != null){
-                        this.message.text = message
-                    } else {
-                        this.message.visibility = View.GONE
-                    }
-                })
-                .setCancelable(true)
-                .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
-                    showAddReferralInfoDialog(beneficiary)
+        AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+            .setTitle(getString((R.string.card_updated)))
+            .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                this.pin.text = pin
+                if(message != null){
+                    this.message.text = message
+                } else {
+                    this.message.visibility = View.GONE
                 }
-                .setNegativeButton(getString(R.string.close)){ _, _ ->
-                    sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
-                    dismiss()
+            })
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
+                showAddReferralInfoDialog(beneficiary)
+            }
+            .setNegativeButton(getString(R.string.close)){ _, _ ->
+                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                dismiss()
 
-                }
-                .create()
-        cardResultDialog.show()
+            }
+            .create()
+            .show()
     }
 
     private fun writeBalanceOnCard(
@@ -511,7 +511,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     showCardUpdatedDialog(
-
                         beneficiary,
                         getString(
                             R.string.changing_pin_result,
