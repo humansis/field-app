@@ -30,9 +30,9 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 2
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 3
+def VERSION_MINOR = 4
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
-def VERSION_PATCH = 1
+def VERSION_PATCH = 0
 
 String APK_NAME = "user-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
