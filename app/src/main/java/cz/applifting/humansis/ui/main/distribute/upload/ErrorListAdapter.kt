@@ -45,7 +45,7 @@ class ErrorListAdapter(
         fun bind(syncError: SyncError) {
             tvLocation.text = syncError.location
             tvInfo.text = syncError.params
-            tvError.text = syncError.errorMessage
+            tvError.text = syncError.errorMessage // TODO show actual value
             view.setOnClickListener {
                 onItemClick(syncError)
             }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,7 +47,7 @@ class UploadDialogErrorListFragment : BaseFragment() {
         )
         rl_erros.addItemDecoration(dividerItemDecoration)
 
-        uploadDialogViewModel.syncErrorListLD.observe(viewLifecycleOwner, Observer {
+        uploadDialogViewModel.syncErrorListLD.observe(viewLifecycleOwner, {
             adapter.update(it)
         })
 

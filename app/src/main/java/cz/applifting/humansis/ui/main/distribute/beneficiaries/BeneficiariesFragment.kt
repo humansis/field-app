@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 
 class BeneficiariesFragment : BaseFragment() {
 
-    val args: BeneficiariesFragmentArgs by navArgs()
+    private val args: BeneficiariesFragmentArgs by navArgs()
 
     private val viewModel: BeneficiariesViewModel by viewModels {
         viewModelFactory
@@ -50,16 +50,16 @@ class BeneficiariesFragment : BaseFragment() {
 
         lc_beneficiaries.init(viewAdapter)
 
-        viewModel.searchResultsLD.observe(viewLifecycleOwner, Observer {
+        viewModel.searchResultsLD.observe(viewLifecycleOwner, {
             viewAdapter.update(it)
         })
 
-        viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner, Observer {
+        viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner, {
             lc_beneficiaries.setState(it)
             showControls(!it.isRetrieving)
         })
 
-        viewModel.statsLD.observe(viewLifecycleOwner, Observer {
+        viewModel.statsLD.observe(viewLifecycleOwner, {
             val (reachedBeneficiaries, totalBeneficiaries) = it
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
         })
@@ -70,7 +70,7 @@ class BeneficiariesFragment : BaseFragment() {
             lc_beneficiaries.scrollToTop()
         }
 
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, {
             if(it) {
                 cmp_search_beneficiary.clearSearch()
                 sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(false)
@@ -79,14 +79,14 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-        viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
+        viewModel.currentSort.observe(viewLifecycleOwner, {
             viewModel.setSortedBeneficiaries(viewModel.searchResultsLD.value)
             cmp_search_beneficiary.changeSortIcon(it)
         })
 
         viewModel.init(args.distributionId)
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             viewModel.showRefreshing(it.isLoading)
         })
 

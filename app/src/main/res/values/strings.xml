@@ -44,7 +44,8 @@
     <string name="sync">Sync Data</string>
     <string name="revert">Undo Assignment</string>
     <string name="logout_alert_text">Are you sure you want to log out? All application data will be erased.</string>
-    <string name="humansis_id">Humansis ID: %1$d</string>
+    <string name="humansis_id">Humansis ID</string>
+    <string name="humansis_id_format">Humansis ID: %1$d</string>
     <string name="country">Country</string>
     <string name="settings_country_update_success">Country updated</string>
     <string name="settings_country_update_error">Invalid ISO3 code</string>

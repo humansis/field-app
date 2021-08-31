@@ -15,7 +15,7 @@
         android:padding="16dp"
         android:background="?actionBarItemBackground"
         app:srcCompat="@drawable/ic_cross"
-        app:tint="@color/darkGreyColor" />
+        app:tint="@color/darkGrey" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fc_container"

@@ -1,4 +1,4 @@
-package cz.applifting.humansis.db.daos
+package cz.applifting.humansis.db.dao
 
 import androidx.room.*
 import cz.applifting.humansis.model.db.DistributionLocal

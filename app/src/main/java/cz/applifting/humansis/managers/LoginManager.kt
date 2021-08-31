@@ -2,7 +2,6 @@ package cz.applifting.humansis.managers
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
@@ -13,6 +12,7 @@ import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 

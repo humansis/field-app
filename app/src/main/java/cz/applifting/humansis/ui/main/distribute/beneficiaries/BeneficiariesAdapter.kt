@@ -65,17 +65,17 @@ class BeneficiariesAdapter(
 
     inner class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        val tvNationalId: TextView = view.tv_id
-        val tvHumansisId: TextView = view.tv_info
-        val tvName: TextView = view.tv_location
+        private val tvNationalId: TextView = view.tv_id
+        private val tvHumansisId: TextView = view.tv_info
+        private val tvName: TextView = view.tv_location
         private val ivDistributionState: ImageView = view.iv_distribution_state
         private val tlCommoditiesHolder: TableLayout = view.tl_commodities_holder
-        val ivOffline: ImageView = view.iv_offline
+        private val ivOffline: ImageView = view.iv_offline
         val context: Context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvHumansisId.text = view.context.getString(R.string.humansis_id, beneficiaryLocal.beneficiaryId)
+            tvHumansisId.text = view.context.getString(R.string.humansis_id_format, beneficiaryLocal.beneficiaryId)
             tvNationalId.visible(beneficiaryLocal.nationalId != null)
             tvNationalId.text = view.context.getString(R.string.national_id, beneficiaryLocal.nationalId)
 

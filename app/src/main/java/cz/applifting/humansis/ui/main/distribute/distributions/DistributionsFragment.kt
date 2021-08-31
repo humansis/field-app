@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_distributions.*
  */
 class DistributionsFragment : BaseFragment() {
 
-    val args: DistributionsFragmentArgs by navArgs()
+    private val args: DistributionsFragmentArgs by navArgs()
 
     private val viewModel: DistributionsViewModel by viewModels {
         viewModelFactory
@@ -48,14 +48,17 @@ class DistributionsFragment : BaseFragment() {
 
         lc_distributions.init(viewAdapter)
 
-        viewModel.distributionsLD.observe(viewLifecycleOwner, Observer {
+        viewModel.distributionsLD.observe(viewLifecycleOwner, {
             viewAdapter.updateDistributions(it)
         })
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             viewModel.showRefreshing(it.isLoading)
+            if (!it.isLoading) {
+                viewModel.getDistributions(args.projectId)
+            }
         })
 
         viewModel.init(args.projectId)
