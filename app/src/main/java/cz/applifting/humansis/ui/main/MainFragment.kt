@@ -107,8 +107,7 @@ class MainFragment : BaseFragment(){
             tvEnvironment.visibility = View.GONE
         }
 
-        tb_toolbar.setBackgroundColor(getBackgroundColor())
-        nav_host_fragment.setBackgroundColor(getBackgroundColor())
+        setUpBackground()
 
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
@@ -217,6 +216,11 @@ class MainFragment : BaseFragment(){
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setUpBackground() {
+        tb_toolbar.setBackgroundColor(getBackgroundColor())
+        nav_host_fragment.setBackgroundColor(getBackgroundColor())
     }
 
     private fun getBackgroundColor(): Int {

@@ -72,7 +72,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getHostUrl(): ApiEnvironments {
-        return ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.FRONT.name) ?: ApiEnvironments.FRONT.name)
+        return ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
     }
 
     fun logout() {
