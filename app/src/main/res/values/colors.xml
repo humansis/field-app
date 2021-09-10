@@ -2,27 +2,29 @@
 <resources>
     <color name="colorPrimary">@color/green</color>
     <color name="colorPrimaryDark">@color/darkBlue</color>
-    <color name="colorAccent">@color/lightGrey</color>
-    <color name="colorAccentDark">@color/midGreen</color>
-
-    <color name="lightGrey">#C5C5C5</color>
+    <color name="colorAccent">@color/grey</color>
+    <color name="colorAccentDark">@color/darkGreen</color>
 
     <color name="textColor">#161616</color>
-    <color name="darkGreyColor">#888888</color>
+    <color name="black">#000000</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="lightGrey">#f3f3f4</color>
+    <color name="grey">#C5C5C5</color>
+    <color name="darkGrey">#888888</color>
+    <color name="darkBlue">#02617f</color>
+    <color name="green">#51c89e</color>
+    <color name="darkGreen">#47aa96</color>
+    <color name="red">#ed5565</color>
+    <color name="yellow">#cefa05</color>
 
     <color name="error">@color/red</color>
 
-    <color name="white">#FFFFFF</color>
+    <color name="dev">#cfcfe2</color>
+    <color name="test">#e2d9cf</color>
+    <color name="stage">#cfe2e2</color>
+    <color name="demo">#cfe2cf</color>
 
-    <color name="darkGrey">#FF424242</color>
-    <color name="darkBlue">#02617f</color>
-    <color name="midGreen">#47aa96</color>
-    <color name="green">#51c89e</color>
-    <color name="red">#ed5565</color>
-    <color name="grey">#f3f3f4</color>
-
-    <color name="black">#000000</color>
-    <color name="yellow">#cefa05</color>
-    <color name="screenBackgroundColor">#F3F3F4</color>
+    <color name="screenBackgroundColor">@color/lightGrey</color>
     <color name="toastBackgroundColor">@color/darkBlue</color>
 </resources>

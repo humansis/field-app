@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
@@ -48,7 +47,7 @@ class AddReferralInfoDialog : DialogFragment() {
         viewModel.initBeneficiary(args.beneficiaryId)
         viewModel.isReferralVisibleLD.postValue(true)
 
-        viewModel.referralTypeLD.observe(viewLifecycleOwner, Observer {
+        viewModel.referralTypeLD.observe(viewLifecycleOwner, {
             spinner_referral_type_referral?.apply {
                 val spinnerPos = it.toSpinnerPos()
                 if (selectedItemPosition != spinnerPos) {
@@ -58,7 +57,7 @@ class AddReferralInfoDialog : DialogFragment() {
             }
         })
 
-        viewModel.referralNoteLD.observe(viewLifecycleOwner, Observer {
+        viewModel.referralNoteLD.observe(viewLifecycleOwner, {
             tv_referral_note_referral?.apply {
                 if (text.toString() != it) {
                     setText(it)
@@ -68,12 +67,12 @@ class AddReferralInfoDialog : DialogFragment() {
             }
         })
 
-        viewModel.errorLD.observe(viewLifecycleOwner, Observer {
+        viewModel.errorLD.observe(viewLifecycleOwner, {
             tv_error_referral?.visibility = if (it == null) View.GONE else View.VISIBLE
             tv_error_referral?.text = it?.let { getString(it) }
         })
 
-        shouldEnableConfirmLD.observe(viewLifecycleOwner, Observer {
+        shouldEnableConfirmLD.observe(viewLifecycleOwner, {
             btn_confirm_referral.isEnabled = it.first && it.second
         })
 
@@ -83,7 +82,7 @@ class AddReferralInfoDialog : DialogFragment() {
     private fun setupViews() {
         val spinnerOptions = viewModel.referralTypes
             .map { getString(it) }
-        ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner_referral_type_referral?.adapter = adapter
         }
@@ -104,12 +103,12 @@ class AddReferralInfoDialog : DialogFragment() {
         }
 
         btn_cancel_referral?.setOnClickListener {
-            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+            sharedViewModel.shouldDismissBeneficiaryDialog.call()
             dismiss()
         }
         btn_confirm_referral?.setOnClickListener {
             if (viewModel.tryConfirm(true)) {
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
             }
         }

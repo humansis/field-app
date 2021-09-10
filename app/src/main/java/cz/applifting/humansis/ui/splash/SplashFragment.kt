@@ -20,7 +20,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class SplashFragment:  Fragment(), CoroutineScope {
 
-    val job = Job()
+    private val job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.Main
 
     @Inject

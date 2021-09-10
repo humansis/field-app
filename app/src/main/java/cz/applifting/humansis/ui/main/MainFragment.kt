@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -22,9 +23,9 @@ import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
-import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -42,6 +43,7 @@ class MainFragment : BaseFragment(){
     private lateinit var baseNavController: NavController
     private lateinit var mainNavController: NavController
     private lateinit var drawer: DrawerLayout
+    private lateinit var onDestinationChangedListener: NavController.OnDestinationChangedListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +55,8 @@ class MainFragment : BaseFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        sharedViewModel.observeConnection()
 
         view?.hideSoftKeyboard()
 
@@ -74,6 +78,9 @@ class MainFragment : BaseFragment(){
 
         tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
         nav_view.setupWithNavController(mainNavController)
+
+        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
 
         val metrics: DisplayMetrics = resources.displayMetrics
         val ivAppIcon = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_app_icon)
@@ -100,6 +107,8 @@ class MainFragment : BaseFragment(){
             tvEnvironment.visibility = View.GONE
         }
 
+        setUpBackground()
+
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
@@ -111,14 +120,14 @@ class MainFragment : BaseFragment(){
             tvUsername.text = it.username
         })
 
-        sharedViewModel.toastLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
             if (it != null) {
                 showToast(it)
                 sharedViewModel.showToast(null)
             }
         })
 
-        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
             if (it) {
                 sharedViewModel.resetShouldReauthenticate()
                 baseNavController.navigate(R.id.loginFragment)
@@ -126,7 +135,6 @@ class MainFragment : BaseFragment(){
         })
 
         btn_logout.setOnClickListener {
-
             val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
             if (!pendingChanges) {
@@ -150,9 +158,6 @@ class MainFragment : BaseFragment(){
         }
 
         sharedViewModel.tryFirstDownload()
-
-        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,15 +165,9 @@ class MainFragment : BaseFragment(){
         setHasOptionsMenu(true)
     }
 
-    override fun onResume() {
-        super.onResume()
-        val networkFilter = IntentFilter("android.net.conn.CONNECTIVITY_ACTION")
-        activity?.registerReceiver(networkReceiver, networkFilter)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        activity?.unregisterReceiver(networkReceiver)
+    override fun onDestroy() {
+        sharedViewModel.stopObservingConnection()
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -179,19 +178,33 @@ class MainFragment : BaseFragment(){
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
         val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
+        pbSyncProgress.setBackgroundColor(getBackgroundColor())
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
-        ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner, { available ->
+            val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
+            ivStatus.simpleDrawable(drawable)
+        })
+
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
         // show sync in toolbar only on settings screen, because there is no other progress indicator when country is updated
-        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
+        onDestinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
+        }
+        mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onDestroyOptionsMenu() {
+        mainNavController.removeOnDestinationChangedListener(onDestinationChangedListener)
+        super.onDestroyOptionsMenu()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -205,12 +218,32 @@ class MainFragment : BaseFragment(){
         return super.onOptionsItemSelected(item)
     }
 
-    private val networkReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            context?.let {
-                sharedViewModel.networkStatus.value = context.isNetworkConnected()
-                activity?.invalidateOptionsMenu()
+    private fun setUpBackground() {
+        tb_toolbar.setBackgroundColor(getBackgroundColor())
+        nav_host_fragment.setBackgroundColor(getBackgroundColor())
+    }
+
+    private fun getBackgroundColor(): Int {
+        return if (BuildConfig.DEBUG) {
+            when (viewModel.getHostUrl().id) {
+                ApiEnvironments.DEV.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.dev)
+                }
+                ApiEnvironments.TEST.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.test)
+                }
+                ApiEnvironments.STAGE.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.stage)
+                }
+                ApiEnvironments.DEMO.id -> {
+                    ContextCompat.getColor(requireContext(), R.color.demo)
+                }
+                else -> {
+                    ContextCompat.getColor(requireContext(), R.color.screenBackgroundColor)
+                }
             }
+        } else {
+            ContextCompat.getColor(requireContext(), R.color.screenBackgroundColor)
         }
     }
 

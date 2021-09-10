@@ -1,7 +1,10 @@
+---
 include:
   - project: 'humansis/gitlab-ci-templates'
     ref: 'mobile/docker-ci'
     file: 'src/mobile/gradle.template.yml'
+
+image: artifactory.quanti.cz/docker/devel-settings:jdk-11
 
 # todo: versioning
 variables:
@@ -13,6 +16,7 @@ stages:
   - archive
   - upload
   - firebase
+  - publish
 
 .gradle_build:
   before_script:
@@ -26,21 +30,18 @@ stages:
       export GOOGLE_APPLICATION_CREDENTIALS=./app/adc.json;
     - ./gradlew clean
 
-# Just build application 
 build_debug_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleDebug 
-# Just build application 
+    - ./gradlew assembleDebug
 
 build_release_job:
   stage: build
   extends: .gradle_build
   script:
-    - ./gradlew assembleRelease 
+    - ./gradlew assembleRelease
 
-# Build debug and archive apk
 archive_debug_job:
   stage: archive
   extends: .gradle_build
@@ -52,14 +53,46 @@ archive_debug_job:
     expire_in: 4 week
     paths:
       - $ARTIFACT_PATH
+  except:
+    - tags
 
-# Build debug and archive apk
 archive_release_job:
   stage: archive
   extends: .gradle_build
   script:
     - ./gradlew :app:assembleRelease
   when: manual
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+  except:
+    - tags
+
+
+# Build debug and archive apk
+archive_debug_job_automatically:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:assembleDebug
+  only:
+    - tags
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_PATH
+
+# Build debug and archive apk
+archive_release_job_automatically:
+  stage: archive
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:assembleRelease
+  only:
+    - tags
   artifacts:
     when: always
     expire_in: 4 week
@@ -72,6 +105,16 @@ upload_to_artifactory:
     ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   when: manual
+  except:
+    - tags
+
+upload_to_artifactory_automatically:
+  stage: upload
+  variables:
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
+  extends: .upload_gradle
+  only:
+    - tags
 
 upload_to_firebase:
   stage: firebase
@@ -80,3 +123,19 @@ upload_to_firebase:
     - ./gradlew --build-cache clean
         app:assembleDebug app:appDistributionUploadDebug
   when: manual
+
+publish_to_playstore:
+  stage: publish
+  extends: .gradle_build
+  script:
+    - echo $BASE64_PLAYSTORE_API_KEY | base64 -d > $PLAYSTORE_API_KEY_PATH;
+    - export PATH=$PATH:/root/.local/share/gem/ruby/2.7.0/bin;
+      gem install bundler;
+      bundle update --bundler;
+      bundle install;
+    - bundle exec fastlane deploy json_key:$PLAYSTORE_API_KEY_PATH
+  after_script:
+    - rm -rf $PLAYSTORE_API_KEY_PATH
+  when: manual
+  only:
+    - tags
