@@ -20,6 +20,7 @@ import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.main.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_confirm_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_confirm_beneficiary.view.*
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 
@@ -79,6 +80,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
     private fun View.setupViews() {
         header_referral.setOnClickListener {
+            Log.d(TAG, "Header referral clicked")
             viewModel.toggleReferral()
         }
 
@@ -103,9 +105,11 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         }
 
         btn_cancel.setOnClickListener {
+            Log.d(TAG, "Cancel butotn clicked")
             dismiss()
         }
         btn_confirm.setOnClickListener {
+            Log.d(TAG, "Confirm button clicked")
             if (viewModel.tryConfirm(false)) {
                 dismiss()
             }
@@ -115,4 +119,8 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
     // +-1 for the "none" value which is not in the enum
     private fun ReferralType?.toSpinnerPos() = this?.let { it.ordinal + 1 } ?: 0
     private fun Int.toReferralType() = if (this == 0) null else ReferralType.values()[this - 1]
+
+    companion object {
+        private val TAG = ConfirmBeneficiaryDialog::class.java.simpleName
+    }
 }

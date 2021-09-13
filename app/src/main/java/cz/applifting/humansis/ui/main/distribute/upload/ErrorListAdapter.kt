@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.model.db.SyncError
 import kotlinx.android.synthetic.main.item_error.view.*
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
@@ -49,9 +50,13 @@ class ErrorListAdapter(
             tvInfo.text = syncError.params
             tvError.text = syncError.errorMessage // TODO show actual value
             view.setOnClickListener {
+                Log.d(TAG, "Error $syncError clicked")
                 onItemClick(syncError)
             }
         }
     }
 
+    companion object {
+        private val TAG = ErrorListAdapter::class.java.simpleName
+    }
 }

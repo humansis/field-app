@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 
 
 /**
@@ -52,6 +53,7 @@ class UploadDialogErrorListFragment : BaseFragment() {
         })
 
         btn_back.setOnClickListener {
+            Log.d(TAG, "Back button clicked")
             uploadDialogViewModel.changeScreen(Screen.MAIN)
         }
     }
@@ -76,5 +78,9 @@ class UploadDialogErrorListFragment : BaseFragment() {
         }.invokeOnCompletion {
             isOpeningBeneficiary = false
         }
+    }
+
+    companion object {
+        private val TAG = UploadDialogErrorListFragment::class.java.simpleName
     }
 }

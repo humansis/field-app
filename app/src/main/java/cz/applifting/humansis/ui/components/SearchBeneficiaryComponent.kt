@@ -13,6 +13,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesViewModel
 import kotlinx.android.synthetic.main.component_search_beneficiary.view.*
+import quanti.com.kotlinlog.Log
 
 class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
 
@@ -50,7 +51,10 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
     }
 
     internal fun onSort(sort: () -> Unit) {
-        btn_sort.setOnClickListener { sort() }
+        btn_sort.setOnClickListener {
+            Log.d(TAG,"Sort button clicked")
+            sort()
+        }
     }
 
     internal fun changeSortIcon(sort: BeneficiariesViewModel.Sort) {
@@ -65,6 +69,10 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
 
     internal fun clearSearch() {
         et_search.text.clear()
+    }
+
+    companion object {
+        private val TAG = SearchBeneficiaryComponent::class.java.simpleName
     }
 
 }

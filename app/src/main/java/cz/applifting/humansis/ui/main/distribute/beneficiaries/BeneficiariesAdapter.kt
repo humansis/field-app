@@ -17,6 +17,7 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
+import quanti.com.kotlinlog.Log
 
 
 /**
@@ -123,7 +124,14 @@ class BeneficiariesAdapter(
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
-            view.setOnClickListener { if (clickable) onItemClick(beneficiaryLocal) }
+            view.setOnClickListener {
+                Log.d(TAG, "Beneficiary $beneficiaryLocal clicked")
+                if (clickable) onItemClick(beneficiaryLocal)
+            }
         }
+    }
+
+    companion object {
+        private val TAG = BeneficiariesAdapter::class.java.simpleName
     }
 }
