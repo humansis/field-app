@@ -11,6 +11,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_project.view.*
+import quanti.com.kotlinlog.Log
 
 
 /**
@@ -55,8 +56,13 @@ class ProjectsAdapter(
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
             layout.setOnClickListener {
+                Log.d(TAG, "Project $project clicked")
                 if (clickable) onItemClick(project)
             }
         }
+    }
+
+    companion object {
+        private val TAG = ProjectsAdapter::class.java.simpleName
     }
 }

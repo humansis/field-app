@@ -16,6 +16,7 @@ import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 
 
 /**
@@ -72,6 +73,7 @@ class SettingsFragment : BaseFragment() {
         })
 
         btn_export_logs.setOnClickListener {
+            Log.d(TAG, "Export logs button clicked")
             SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
                 title = getString(R.string.logs_dialog_title),
@@ -93,5 +95,9 @@ class SettingsFragment : BaseFragment() {
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
             }
         })
+    }
+
+    companion object {
+        private val TAG = SettingsFragment::class.java.simpleName
     }
 }

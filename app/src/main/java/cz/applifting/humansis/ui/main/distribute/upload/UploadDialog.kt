@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status.view.*
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 
@@ -26,7 +27,10 @@ class UploadDialog : DialogFragment() {
         val rootView = inflater.inflate(R.layout.fragment_dialog_upload_status, container)
         (rootView as ViewGroup).layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-        rootView.iv_cross.setOnClickListener { dismiss() }
+        rootView.iv_cross.setOnClickListener {
+            Log.d(TAG,"Cross clicked")
+            dismiss()
+        }
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val fragmentManager = childFragmentManager
@@ -44,5 +48,9 @@ class UploadDialog : DialogFragment() {
         })
 
         return rootView
+    }
+
+    companion object {
+        private val TAG = UploadDialog::class.java.simpleName
     }
 }

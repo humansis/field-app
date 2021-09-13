@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.activity_humansis.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
+import quanti.com.kotlinlog.Log
 
 
 /**
@@ -135,6 +136,7 @@ class MainFragment : BaseFragment(){
         })
 
         btn_logout.setOnClickListener {
+            Log.d(TAG, "Logout button clicked")
             val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
             if (!pendingChanges) {
@@ -175,7 +177,10 @@ class MainFragment : BaseFragment(){
         // A fix for action with custom layout
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)
-        item.actionView.setOnClickListener { onOptionsItemSelected(item) }
+        item.actionView.setOnClickListener {
+            Log.d(TAG, "Menu item $item clicked")
+            onOptionsItemSelected(item)
+        }
 
         val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
         pbSyncProgress.setBackgroundColor(getBackgroundColor())
@@ -253,5 +258,9 @@ class MainFragment : BaseFragment(){
         toast.duration = Toast.LENGTH_SHORT
         toast.setText(text)
         toast.show()
+    }
+
+    companion object {
+        private val TAG = MainFragment::class.java.simpleName
     }
 }

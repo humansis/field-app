@@ -10,6 +10,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import kotlinx.android.synthetic.main.titled_text_view.view.*
+import quanti.com.kotlinlog.Log
 
 class TitledTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
@@ -65,6 +66,13 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
     fun setRescanActionListener(rescanAction: () -> Unit) {
         isBookled = true
         tv_value.typeface = Typeface.DEFAULT_BOLD
-        btn_action.setOnClickListener { rescanAction() }
+        btn_action.setOnClickListener {
+            Log.d(TAG, "Action button clicked")
+            rescanAction()
+        }
+    }
+
+    companion object {
+        private val TAG = TitledTextView::class.java.simpleName
     }
 }

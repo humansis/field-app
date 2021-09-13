@@ -13,6 +13,7 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_main.*
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
@@ -69,12 +70,18 @@ class UploadDialogMainFragment : BaseFragment() {
         })
 
         btn_sync.setOnClickListener {
+            Log.d(TAG, "Sync button clicked")
             sharedViewModel.forceSynchronize()
             // TODO disable button unless the work was stuck for long time
         }
 
         btn_show_error_info.setOnClickListener {
+            Log.d(TAG, "Show error button clicked")
             uploadDialogViewModel.changeScreen(Screen.ERROR_INFO)
         }
+    }
+
+    companion object {
+        private val TAG = UploadDialogMainFragment::class.java.simpleName
     }
 }
