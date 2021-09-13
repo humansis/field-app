@@ -47,14 +47,14 @@ repositories {
 
 android {
 
-    compileSdkVersion 31
+    compileSdkVersion 30
 
     ndkVersion "21.3.6528147"
 
     defaultConfig {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode gitVersionCode(false)
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
@@ -183,7 +183,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 
     // Worker
-    def work_version = "2.7.0-beta01"
+    def work_version = "2.6.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.work:work-rxjava2:$work_version"
 

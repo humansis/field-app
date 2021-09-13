@@ -11,7 +11,7 @@ import cz.applifting.humansis.R
 
 object NfcInitializer {
 
-    fun initNfc(activity: Activity): Boolean {
+        fun initNfc(activity: Activity): Boolean {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
 
         if (nfcAdapter == null) {
@@ -24,10 +24,13 @@ object NfcInitializer {
         }
 
         val pendingIntent = PendingIntent.getActivity(
-            activity, 0,
+            activity,
+            0,
             Intent(activity, activity.javaClass)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            0
         )
+
 
         nfcAdapter.let {
             return if (!it.isEnabled) {

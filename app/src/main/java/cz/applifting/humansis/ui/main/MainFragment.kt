@@ -2,6 +2,7 @@ package cz.applifting.humansis.ui.main
 
 import android.app.AlertDialog
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
@@ -14,7 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -29,6 +30,7 @@ import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import kotlinx.android.synthetic.main.activity_humansis.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
@@ -71,7 +73,7 @@ class MainFragment : BaseFragment(){
         )
 
         baseNavController = findNavController()
-        mainNavController = Navigation.findNavController(fragmentContainer)
+        mainNavController = fragmentContainer.findNavController()
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
@@ -209,7 +211,7 @@ class MainFragment : BaseFragment(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(R.id.uploadDialog)
+                mainNavController.navigate(R.id.action_global_uploadDialogFragment)
                 return true
             }
         }
@@ -246,14 +248,18 @@ class MainFragment : BaseFragment(){
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun showToast(text: String) {
-        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-        tvMessage.text = text
         val toast = Toast(context)
-        toast.setGravity(Gravity.BOTTOM, 0, 50)
         toast.duration = Toast.LENGTH_SHORT
-        toast.view = toastView
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+            val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+            val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+            tvMessage.text = text
+            toast.view = toastView
+        } else {
+            toast.setText(text)
+        }
         toast.show()
     }
 }

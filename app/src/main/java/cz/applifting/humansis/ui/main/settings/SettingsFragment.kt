@@ -89,7 +89,7 @@ class SettingsFragment : BaseFragment() {
                 getString(R.string.settings_country_update_error)
             }
 
-            view?.let { view ->
+            view.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
             }
         })
