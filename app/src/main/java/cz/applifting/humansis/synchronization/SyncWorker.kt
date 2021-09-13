@@ -251,7 +251,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return when (e) {
             is HttpException -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error).format(
+                        resourceName.lowercase(Locale.ROOT)
+                    ),
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code()
@@ -259,7 +261,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             }
             else -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error).format(
+                        resourceName.lowercase(Locale.ROOT)
+                    ),
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0

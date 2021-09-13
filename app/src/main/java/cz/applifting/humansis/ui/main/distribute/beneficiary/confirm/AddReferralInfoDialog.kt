@@ -10,7 +10,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.model.ReferralType
@@ -24,7 +23,7 @@ class AddReferralInfoDialog : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: ConfirmBeneficiaryViewModel by lazy{ ViewModelProviders.of(this, viewModelFactory)[ConfirmBeneficiaryViewModel::class.java] }
+    private val viewModel: ConfirmBeneficiaryViewModel by lazy{ ViewModelProvider(this, viewModelFactory).get(ConfirmBeneficiaryViewModel::class.java) }
     private lateinit var sharedViewModel: SharedViewModel
     private val args: AddReferralInfoDialogArgs by navArgs()
 
@@ -33,7 +32,7 @@ class AddReferralInfoDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (requireActivity().application as App).appComponent.inject(this)
         val view = inflater.inflate(R.layout.fragment_add_referral_info, container, false)
-        sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
+        sharedViewModel = ViewModelProvider(activity as HumansisActivity, viewModelFactory).get(SharedViewModel::class.java)
 
         return view
     }

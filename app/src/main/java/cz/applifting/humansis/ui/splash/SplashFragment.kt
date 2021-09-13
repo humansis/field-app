@@ -27,17 +27,13 @@ class SplashFragment:  Fragment(), CoroutineScope {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (activity?.application as App).appComponent.inject(this)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_splash, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity?.application as App).appComponent.inject(this)
 
         if (!viewModel.initDB()) {
             goToLoginScreen()

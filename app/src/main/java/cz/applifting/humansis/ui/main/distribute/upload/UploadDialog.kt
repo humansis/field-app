@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status.view.*
@@ -22,7 +21,7 @@ class UploadDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         (activity?.application as App).appComponent.inject(this)
-        uploadDialogViewModel = ViewModelProviders.of(this, viewModelFactory)[UploadDialogViewModel::class.java]
+        uploadDialogViewModel = ViewModelProvider(this, viewModelFactory).get(UploadDialogViewModel::class.java)
 
         val rootView = inflater.inflate(R.layout.fragment_dialog_upload_status, container)
         (rootView as ViewGroup).layoutTransition.enableTransitionType(LayoutTransition.CHANGING)

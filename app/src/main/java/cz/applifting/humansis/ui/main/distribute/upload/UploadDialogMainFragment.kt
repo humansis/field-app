@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.format
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -25,10 +25,9 @@ class UploadDialogMainFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_dialog_upload_status_main, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        uploadDialogViewModel = ViewModelProvider(requireParentFragment(), viewModelFactory).get(UploadDialogViewModel::class.java)
 
         val online = context?.isNetworkConnected() ?: false
         btn_sync.isEnabled = online
@@ -44,7 +43,7 @@ class UploadDialogMainFragment : BaseFragment() {
 
         sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             tv_changes.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tv_changes.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
+            tv_changes.setTextColor(ContextCompat.getColor(requireContext(), if (it) R.color.red else R.color.green))
         })
 
         sharedViewModel.syncState.observe(viewLifecycleOwner, {

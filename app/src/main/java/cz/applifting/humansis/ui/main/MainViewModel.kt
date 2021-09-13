@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     @Inject
     lateinit var pinFacade: PINFacade
 
-    val userLD = MutableLiveData<User>()
+    val userLD = MutableLiveData<User?>()
     val environmentLD = MutableLiveData<String>()
 
     val readBalanceResult = SingleLiveEvent<UserBalance>()
