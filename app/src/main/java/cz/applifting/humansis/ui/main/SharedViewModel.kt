@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -49,8 +50,8 @@ class SharedViewModel @Inject constructor(
     val syncNeededLD = MediatorLiveData<Boolean>()
     val networkStatus = MutableLiveData<Boolean>()
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
-    val shouldDismissBeneficiaryDialog = MutableLiveData<Boolean>()
-    val beneficiaryDialogDissmissedOnSuccess = MutableLiveData<Boolean>()
+    val shouldDismissBeneficiaryDialog = SingleLiveEvent<Unit>()
+    val beneficiaryDialogDissmissedOnSuccess = SingleLiveEvent<Unit>()
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 

@@ -83,7 +83,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return object : Dialog(activity!!, theme) {
+        return object : Dialog(requireActivity(), theme) {
             override fun onBackPressed() {
                 handleBackPressed()
             }
@@ -122,10 +122,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.initBeneficiary(args.beneficiaryId)
 
         sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner, {
-            if(it) {
-                leaveWithSuccess()
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(false)
-            }
+            leaveWithSuccess()
         })
 
         viewModel.beneficiaryLD.observe(viewLifecycleOwner, { beneficiary ->
@@ -220,7 +217,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun leaveWithSuccess() {
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(true)
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.call()
         sharedViewModel.showToast(getString(R.string.success))
         dismiss()
     }
@@ -341,7 +338,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         if (booklet == null) {
             qr_scanner_holder.visibility = View.VISIBLE
-            startScanner(view!!)
+            startScanner(requireView())
         } else {
             qr_scanner_holder.visibility = View.GONE
         }
@@ -407,7 +404,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 showAddReferralInfoDialog(beneficiary)
             }
             .setNegativeButton(getString(R.string.close)){ _, _ ->
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
             }
             .create()
@@ -565,7 +562,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
-            startScanner(view!!)
+            startScanner(requireView())
         }
     }
 
@@ -616,12 +613,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private val BeneficiaryLocal.hasUnsavedQr
         get() = args.isQRVoucher && qrBooklets?.firstOrNull().isValidBooklet && !distributed
 
+    private val BeneficiaryLocal.hasInvalidQR
+        get() = args.isQRVoucher && !qrBooklets.isNullOrEmpty() && !qrBooklets.firstOrNull().isValidBooklet
+
     private fun handleBackPressed() {
         when {
             viewModel.beneficiaryLD.value?.hasUnsavedQr == true -> {
                 showDismissConfirmDialog()
             }
-            !viewModel.beneficiaryLD.value?.qrBooklets?.firstOrNull().isValidBooklet  -> {
+            viewModel.beneficiaryLD.value?.hasInvalidQR == true -> {
                 viewModel.revertBeneficiary()
                 dismiss()
             }

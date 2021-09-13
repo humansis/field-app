@@ -131,13 +131,10 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                 }
             }
 
-            var value = 1.0
-            beneficiaryLocal.commodities?.forEach {
-                if (it.type == CommodityType.SMARTCARD) {
-                    value = it.value
-                }
-            }
-            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, time, value)
+            val value = beneficiaryLocal.commodities
+                ?.findLast { it.type == CommodityType.SMARTCARD }
+                ?.value ?: 1.0
+            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, value, time, beneficiaryLocal.beneficiaryId)
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
@@ -171,8 +168,13 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, date: String, value: Double) {
-        service.distributeSmartcard(code, DistributeSmartcardRequest(distributionId = distributionId, createdAt = date, value = value))
+    private suspend fun distributeSmartcard(code: String, distributionId: Int, value: Double, date: String, beneficiaryId: Int) {
+        service.distributeSmartcard(code, DistributeSmartcardRequest(
+            distributionId = distributionId,
+            value = value,
+            createdAt = date,
+            beneficiaryId = beneficiaryId
+        ))
     }
 
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {

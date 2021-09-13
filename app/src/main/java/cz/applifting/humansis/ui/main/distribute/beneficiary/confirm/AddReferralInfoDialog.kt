@@ -82,7 +82,7 @@ class AddReferralInfoDialog : DialogFragment() {
     private fun setupViews() {
         val spinnerOptions = viewModel.referralTypes
             .map { getString(it) }
-        ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner_referral_type_referral?.adapter = adapter
         }
@@ -103,12 +103,12 @@ class AddReferralInfoDialog : DialogFragment() {
         }
 
         btn_cancel_referral?.setOnClickListener {
-            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+            sharedViewModel.shouldDismissBeneficiaryDialog.call()
             dismiss()
         }
         btn_confirm_referral?.setOnClickListener {
             if (viewModel.tryConfirm(true)) {
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
             }
         }
