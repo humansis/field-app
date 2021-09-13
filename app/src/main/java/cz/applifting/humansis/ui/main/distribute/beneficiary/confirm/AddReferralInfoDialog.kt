@@ -18,6 +18,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.main.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_add_referral_info.*
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 class AddReferralInfoDialog : DialogFragment() {
@@ -103,10 +104,12 @@ class AddReferralInfoDialog : DialogFragment() {
         }
 
         btn_cancel_referral?.setOnClickListener {
+            Log.d(TAG, "Cancel button clicked")
             sharedViewModel.shouldDismissBeneficiaryDialog.call()
             dismiss()
         }
         btn_confirm_referral?.setOnClickListener {
+            Log.d(TAG, "Confirm button clicked")
             if (viewModel.tryConfirm(true)) {
                 sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
@@ -127,4 +130,8 @@ class AddReferralInfoDialog : DialogFragment() {
     // +-1 for the "none" value which is not in the enum
     private fun ReferralType?.toSpinnerPos() = this?.let { it.ordinal + 1 } ?: 0
     private fun Int.toReferralType() = if (this == 0) null else ReferralType.values()[this - 1]
+
+    companion object {
+        private val TAG = AddReferralInfoDialog::class.java.simpleName
+    }
 }
