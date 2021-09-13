@@ -39,7 +39,6 @@ class BeneficiariesFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_beneficiaries, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = args.distributionName

@@ -304,6 +304,5 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     companion object {
         private val TAG = SyncWorker::class.java.simpleName
-        private const val MOBILE_MONEY = "Mobile Money"
     }
 }
