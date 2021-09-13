@@ -11,7 +11,7 @@ import cz.applifting.humansis.R
 
 object NfcInitializer {
 
-        fun initNfc(activity: Activity): Boolean {
+    fun initNfc(activity: Activity): Boolean {
         val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
 
         if (nfcAdapter == null) {

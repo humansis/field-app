@@ -55,11 +55,11 @@ class MainFragment : BaseFragment(){
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) { // TODO fix deprecation (onViewCreated breaks navigation)
+        super.onActivityCreated(savedInstanceState)
         sharedViewModel.observeConnection()
 
-        view.hideSoftKeyboard()
+        requireView().hideSoftKeyboard()
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.projectsFragment, R.id.settingsFragment),
@@ -68,7 +68,7 @@ class MainFragment : BaseFragment(){
 
         drawer = requireActivity().findViewById(R.id.drawer_layout)
 
-        val fragmentContainer = view.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
+        val fragmentContainer = requireView().findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
             "Cannot find nav host in main"
         )
 
