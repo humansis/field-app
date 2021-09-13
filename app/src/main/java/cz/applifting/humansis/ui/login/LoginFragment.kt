@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -49,6 +50,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
 
         btn_login.isEnabled = true
         btn_login.setOnClickListener {
+            Log.d(TAG, "Login button clicked")
             val username = et_username.text.toString()
             btn_login.isEnabled = false
             if(username.equals(BuildConfig.DEMO_ACCOUNT, true)) {
@@ -95,6 +97,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             envTextView.text = host.name
 
             settingsImageView.setOnClickListener {
+                Log.d(TAG, "Settings button clicked")
                 val contextThemeWrapper =
                         ContextThemeWrapper(requireContext(), R.style.PopupMenuTheme)
                 val popup = PopupMenu(contextThemeWrapper, settingsImageView)
@@ -130,5 +133,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
 
     override fun finishLogin(enableButton: Boolean) {
         btn_login?.isEnabled = enableButton
+    }
+
+    companion object {
+        private val TAG = LoginFragment::class.java.simpleName
     }
 }

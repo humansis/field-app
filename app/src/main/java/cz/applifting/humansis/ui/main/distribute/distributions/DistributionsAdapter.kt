@@ -20,6 +20,7 @@ import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_distribution.view.*
 import kotlinx.android.synthetic.main.item_project.view.tv_location
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -108,7 +109,10 @@ class DistributionsAdapter(
                 }
             ivTarget.setImageDrawable(targetImage)
 
-            layout.setOnClickListener { if (clickable) onItemClick(distributions[layoutPosition]) }
+            layout.setOnClickListener {
+                Log.d(TAG, "Distribution ${distributions[layoutPosition].distribution} clicked")
+                if (clickable) onItemClick(distributions[layoutPosition])
+            }
 
             val statusColor = when {
                 completed -> R.color.green
@@ -123,5 +127,9 @@ class DistributionsAdapter(
                 pbDistributionProgress.progress = distributionItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
         }
+    }
+
+    companion object {
+        private val TAG = DistributionsAdapter::class.java.simpleName
     }
 }

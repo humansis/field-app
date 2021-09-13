@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.*
+import quanti.com.kotlinlog.Log
 import quanti.com.kotlinlog.R
 import quanti.com.kotlinlog.utils.*
 import java.io.File
@@ -30,6 +31,7 @@ class SendLogDialogFragment : DialogFragment() {
         const val SEND_EMAIL_ADDRESSES = "send_address"
         const val EXTRA_FILES = "extra_files"
         const val DIALOG_THEME = "dialog_theme"
+        private val TAG = SendLogDialogFragment::class.java.simpleName
 
         @JvmOverloads
         @JvmStatic
@@ -120,6 +122,8 @@ class SendLogDialogFragment : DialogFragment() {
     @Suppress("UNUSED_PARAMETER")
     private fun positiveButtonClick(dialog: DialogInterface, which: Int) = runBlocking {
 
+        Log.d(TAG, "Positive Button Clicked")
+
         val appContext = this@SendLogDialogFragment.requireContext().applicationContext
 
         val addresses = requireArguments().getStringArray(SEND_EMAIL_ADDRESSES)
@@ -156,6 +160,8 @@ class SendLogDialogFragment : DialogFragment() {
      */
     @Suppress("UNUSED_PARAMETER")
     private fun neutralButtonClick(dialog: DialogInterface, which: Int) {
+
+        Log.d(TAG, "Neutral button clicked")
 
         val appContext = this@SendLogDialogFragment.requireContext().applicationContext
 

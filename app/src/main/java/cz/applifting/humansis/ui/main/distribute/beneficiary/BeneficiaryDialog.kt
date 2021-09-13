@@ -112,6 +112,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         view.apply {
             btn_close.setImageResource(if (args.isFromList) R.drawable.ic_arrow_back else R.drawable.ic_close_black_24dp)
             btn_close.setOnClickListener {
+                Log.d(TAG, "Close button clicked")
                 handleBackPressed()
             }
             tv_booklet.visible(args.isQRVoucher)
@@ -171,6 +172,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     view.btn_action?.isEnabled = true
 
                     btn_action.setOnClickListener {
+                        Log.d(TAG, "Action button clicked")
                         if (beneficiary.edited) {
                             if (viewModel.isAssignedInOtherDistribution) {
                                 showConfirmBeneficiaryDialog(beneficiary)
@@ -246,6 +248,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         tv_old_smartcard.setValue(beneficiary.smartcard ?: getString(R.string.none))
 
         btn_scan_smartcard.setOnClickListener {
+            Log.d(TAG, "Scan smartcard button clicked")
             btn_scan_smartcard.isEnabled = false
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
@@ -263,6 +266,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         btn_change_pin.setOnClickListener {
+            Log.d(TAG, "Change pin button clicked")
             btn_change_pin.isEnabled = false
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
