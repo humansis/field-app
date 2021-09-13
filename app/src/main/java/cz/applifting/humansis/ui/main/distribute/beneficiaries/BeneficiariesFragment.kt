@@ -71,10 +71,7 @@ class BeneficiariesFragment : BaseFragment() {
         }
 
         sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, {
-            if(it) {
-                cmp_search_beneficiary.clearSearch()
-                sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(false)
-            }
+            cmp_search_beneficiary.clearSearch()
         })
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
