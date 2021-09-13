@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui.main
 
 import android.app.AlertDialog
 import android.content.*
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
@@ -252,14 +251,7 @@ class MainFragment : BaseFragment(){
     private fun showToast(text: String) {
         val toast = Toast(context)
         toast.duration = Toast.LENGTH_SHORT
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
-            val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-            val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-            tvMessage.text = text
-            toast.view = toastView
-        } else {
-            toast.setText(text)
-        }
+        toast.setText(text)
         toast.show()
     }
 }
