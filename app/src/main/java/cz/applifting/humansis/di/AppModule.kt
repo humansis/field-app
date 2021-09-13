@@ -11,13 +11,17 @@ import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
+import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.VendorFacade
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import quanti.com.kotlinlog.Log
@@ -81,7 +85,9 @@ class AppModule {
                             }
 
                             val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
-                            chain.proceed(request)
+                            withContext(Dispatchers.IO) {
+                                chain.proceed(request)
+                            }
                         }
                     } catch (e: Exception) {
                         buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "Service unavailable")
@@ -165,5 +171,11 @@ class AppModule {
     @SPQualifier(type = SPQualifier.Type.CRYPTO)
     fun spCryptoProvider(context: Context): SharedPreferences {
         return context.getSharedPreferences(SPQualifier.Type.CRYPTO.spName, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectionObserver(context: Context): ConnectionObserver {
+        return ConnectionObserverImpl(context)
     }
 }

@@ -9,13 +9,13 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
+import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.launch
-import quanti.com.kotlinlog.file.SendLogDialogFragment
 
 
 /**

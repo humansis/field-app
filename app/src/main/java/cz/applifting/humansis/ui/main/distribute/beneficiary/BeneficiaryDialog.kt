@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,10 +45,10 @@ import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import quanti.com.kotlinlog.Log
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -69,7 +68,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private val viewModel: BeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
 
-    private var displayedDialog: AlertDialog? = null
+    private var displayedScanCardDialog: AlertDialog? = null
     private var disposable: Disposable? = null
 
     private val args: BeneficiaryDialogArgs by navArgs()
@@ -123,10 +122,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.initBeneficiary(args.beneficiaryId)
 
         sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner, {
-            if(it) {
-                leaveWithSuccess()
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(false)
-            }
+            leaveWithSuccess()
         })
 
         viewModel.beneficiaryLD.observe(viewLifecycleOwner, { beneficiary ->
@@ -221,7 +217,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun leaveWithSuccess() {
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.postValue(true)
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.call()
         sharedViewModel.showToast(getString(R.string.success))
         dismiss()
     }
@@ -358,6 +354,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
+            }
+            .setOnDismissListener {
                 clickedButton.visibility = View.VISIBLE
                 clickedButton.isEnabled = true
                 disposable?.dispose()
@@ -366,33 +364,51 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .create()
 
         scanCardDialog.show()
-        displayedDialog = scanCardDialog
+        displayedScanCardDialog = scanCardDialog
 
         return scanCardDialog
     }
 
-    private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
-        val cardResultDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                .setTitle(getString((R.string.card_updated)))
-                .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
-                    this.pin.text = pin
-                    if(message != null){
-                        this.message.text = message
-                    } else {
-                        this.message.visibility = View.GONE
-                    }
-                })
-                .setCancelable(true)
-                .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
-                    showAddReferralInfoDialog(beneficiary)
-                }
-                .setNegativeButton(getString(R.string.close)){ _, _ ->
-                    sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
-                    dismiss()
+    private fun showCardInitializedDialog(): AlertDialog {
+        val cardInitializedDialog =
+            AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                .setTitle(getString(R.string.card_initialized))
+                .setMessage(getString(R.string.scan_card_again))
+                .setCancelable(false)
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                    btn_scan_smartcard?.visibility = View.VISIBLE
+                    btn_scan_smartcard?.isEnabled = true
+                    disposable?.dispose()
+                    disposable = null
                 }
                 .create()
-        cardResultDialog.show()
-        displayedDialog = cardResultDialog
+        cardInitializedDialog.show()
+
+        return cardInitializedDialog
+    }
+
+    private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
+        AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+            .setTitle(getString((R.string.card_updated)))
+            .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
+                this.pin.text = pin
+                if(message != null){
+                    this.message.text = message
+                } else {
+                    this.message.visibility = View.GONE
+                }
+            })
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
+                showAddReferralInfoDialog(beneficiary)
+            }
+            .setNegativeButton(getString(R.string.close)){ _, _ ->
+                sharedViewModel.shouldDismissBeneficiaryDialog.call()
+                dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun writeBalanceOnCard(
@@ -445,43 +461,33 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     when (ex) {
                         is PINException -> {
                             NfcLogger.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                            if (ex.pinExceptionEnum == PINExceptionEnum.CARD_INITIALIZED) {
-                                val cardInitializedDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                                    .setTitle(getString(R.string.card_initialized))
-                                    .setMessage(getString(R.string.scan_card_again))
-                                    .setCancelable(false)
-                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                        dialog?.dismiss()
-                                        btn_scan_smartcard?.visibility = View.VISIBLE
-                                        btn_scan_smartcard?.isEnabled = true
-                                        disposable?.dispose()
-                                        disposable = null
+                            when (ex.pinExceptionEnum) {
+                                PINExceptionEnum.CARD_INITIALIZED -> {
+                                    if (NfcInitializer.initNfc(requireActivity())) {
+                                        writeBalanceOnCard(
+                                            balance,
+                                            currency,
+                                            beneficiary,
+                                            pin,
+                                            showCardInitializedDialog()
+                                        )
                                     }
-                                    .create()
-                                cardInitializedDialog.show()
-                                displayedDialog = cardInitializedDialog
-                                if(NfcInitializer.initNfc(requireActivity())) {
-                                    writeBalanceOnCard(
-                                        balance,
-                                        currency,
-                                        beneficiary,
-                                        pin,
-                                        cardInitializedDialog
-                                    )
                                 }
-                            }else {
-                                Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
-                                Toast.makeText(
-                                    requireContext(),
-                                    NfcCardErrorMessage.getNfcCardErrorMessage(
-                                        ex.pinExceptionEnum,
-                                        requireActivity()
-                                    ),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                else -> {
+                                    Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                                    Toast.makeText(
+                                        requireContext(),
+                                        NfcCardErrorMessage.getNfcCardErrorMessage(
+                                            ex.pinExceptionEnum,
+                                            requireActivity()
+                                        ),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                         else -> {
+                            Log.e(this.javaClass.simpleName, ex)
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.card_error),
@@ -507,7 +513,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     showCardUpdatedDialog(
-
                         beneficiary,
                         getString(
                             R.string.changing_pin_result,
@@ -573,7 +578,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun onStop() {
-        displayedDialog?.dismiss()
+        displayedScanCardDialog?.dismiss()
         disposable?.dispose()
         enableButtons()
         super.onStop()
@@ -608,12 +613,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private val BeneficiaryLocal.hasUnsavedQr
         get() = args.isQRVoucher && qrBooklets?.firstOrNull().isValidBooklet && !distributed
 
+    private val BeneficiaryLocal.hasInvalidQR
+        get() = args.isQRVoucher && !qrBooklets.isNullOrEmpty() && !qrBooklets.firstOrNull().isValidBooklet
+
     private fun handleBackPressed() {
         when {
             viewModel.beneficiaryLD.value?.hasUnsavedQr == true -> {
                 showDismissConfirmDialog()
             }
-            !viewModel.beneficiaryLD.value?.qrBooklets?.firstOrNull().isValidBooklet  -> {
+            viewModel.beneficiaryLD.value?.hasInvalidQR == true -> {
                 viewModel.revertBeneficiary()
                 dismiss()
             }

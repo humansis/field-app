@@ -9,6 +9,7 @@ import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc.dto.UserBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +47,7 @@ class MainViewModel @Inject constructor(
             userLD.value = user
         }
         launch {
-            environmentLD.value = sp.getString(cz.applifting.humansis.ui.login.SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
+            environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
         }
     }
 
@@ -68,6 +69,10 @@ class MainViewModel @Inject constructor(
         },{
             initializeCardError.postValue(it)
         })
+    }
+
+    fun getHostUrl(): ApiEnvironments {
+        return ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
     }
 
     fun logout() {

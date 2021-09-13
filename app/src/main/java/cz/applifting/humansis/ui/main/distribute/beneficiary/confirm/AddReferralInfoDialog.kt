@@ -103,12 +103,12 @@ class AddReferralInfoDialog : DialogFragment() {
         }
 
         btn_cancel_referral?.setOnClickListener {
-            sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+            sharedViewModel.shouldDismissBeneficiaryDialog.call()
             dismiss()
         }
         btn_confirm_referral?.setOnClickListener {
             if (viewModel.tryConfirm(true)) {
-                sharedViewModel.shouldDismissBeneficiaryDialog.postValue(true)
+                sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
             }
         }
