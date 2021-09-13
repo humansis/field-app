@@ -34,7 +34,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     distributionId = distributionId,
                     distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
                     distributedAt = it.smartcardDistributedAt,
-                    vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
                     reliefIDs = parseReliefs(it.reliefs),
                     qrBooklets = parseQRBooklets(it.booklets),
                     smartcard = it.beneficiary.smartcard?.uppercase(Locale.US),
@@ -157,7 +156,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+        service.assignBooklet(beneficiaryId, distributionId, AssignBookletRequest(code))
     }
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {

@@ -17,12 +17,4 @@ class ParamsModule {
         //todo poresit v2
         return "https://" + BuildConfig.RELEASE_API_URL + "/api/wsse/offline-app/"
     }
-
-    @Provides
-    @Named(LOGFILE_PATH)
-    fun logFilePath(): String {
-        //todo cesta k kotlinloggerfile
-        return "log.txt"
-    }
-
 }

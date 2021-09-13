@@ -15,10 +15,9 @@ import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
@@ -47,7 +46,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     @Inject
     lateinit var projectsRepository: ProjectsRepository
     @Inject
-    lateinit var distributionsRepository: DistributionsRepository
+    lateinit var assistancesRepository: AssistancesRepository
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
     @Inject
@@ -97,7 +96,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
                 // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.distributionId)
+                val distributionName = assistancesRepository.getNameById(it.distributionId)
                 val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
                 val beneficiaryName = "${it.givenName} ${it.familyName}"
 
@@ -156,9 +155,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 if (isStopped) return@supervisorScope stopWork("Downloading projects")
 
+                val commodities = try {
+                    assistancesRepository.getCommoditiesOnline()
+                } catch (e: Exception) {
+                    syncErrors.add(getDownloadError(e, "Commodities"))
+                    emptyList()
+                }
+
+                if (isStopped) return@supervisorScope stopWork("Downloading commodities")
+
                 val distributions = try {
                     projects.map {
-                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                        async { assistancesRepository.getDistributionsOnline(it.id, getCurrentCountry(sp), commodities) }
                     }.flatMap {
                         it.await().toList()
                     }
@@ -177,7 +185,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
-                    emptyList<ProjectLocal>()
+                    emptyList<BeneficiaryLocal>()
                 }
             }
 
@@ -247,6 +255,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     private fun getDownloadError(e: Exception, resourceName: String): SyncError {
         Log.d(TAG, "Failed downloading ${resourceName}: ${e.message}}")
+        Log.e(TAG, e)
 
         return when (e) {
             is HttpException -> {
@@ -295,5 +304,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     companion object {
         private val TAG = SyncWorker::class.java.simpleName
+        private const val MOBILE_MONEY = "Mobile Money"
     }
 }

@@ -27,6 +27,7 @@ class UploadDialogMainFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         uploadDialogViewModel = ViewModelProvider(requireParentFragment(), viewModelFactory).get(UploadDialogViewModel::class.java)
 
         val online = context?.isNetworkConnected() ?: false
