@@ -55,116 +55,20 @@ class MainFragment : BaseFragment(){
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) { // TODO fix deprecation (onViewCreated breaks navigation)
-        super.onActivityCreated(savedInstanceState)
-        sharedViewModel.observeConnection()
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         requireView().hideSoftKeyboard()
-
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.projectsFragment, R.id.settingsFragment),
-            drawer_layout
-        )
-
-        drawer = requireActivity().findViewById(R.id.drawer_layout)
-
-        val fragmentContainer = requireView().findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
-            "Cannot find nav host in main"
-        )
-
-        baseNavController = findNavController()
-        mainNavController = fragmentContainer.findNavController()
-
-        (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
-
-        tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
-        nav_view.setupWithNavController(mainNavController)
-
-        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
-
-        val metrics: DisplayMetrics = resources.displayMetrics
-        val ivAppIcon = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_app_icon)
-        ivAppIcon.layoutParams.height = if ((metrics.heightPixels/metrics.density) > 640) {
-            resources.getDimensionPixelSize(R.dimen.nav_header_image_height_tall)
-        } else {
-            resources.getDimensionPixelSize(R.dimen.nav_header_image_height_regular)
-        }
-
-        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
-        var appVersion = getString(R.string.app_name) + " " + getString(R.string.version, BuildConfig.VERSION_NAME)
-        if (BuildConfig.DEBUG) {
-            appVersion += (" (" + BuildConfig.BUILD_NUMBER + ")")
-        }
-        tvAppVersion.text = appVersion
-
-        val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
-        if(BuildConfig.DEBUG) {
-            tvEnvironment.text = getString(
-                R.string.environment,
-                viewModel.environmentLD.value
-            )
-        } else {
-            tvEnvironment.visibility = View.GONE
-        }
-
-        setUpBackground()
-
-        // Define Observers
-        viewModel.userLD.observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                findNavController().navigate(R.id.logout)
-                return@Observer
-            }
-
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
-            tvUsername.text = it.username
-        })
-
-        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
-            if (it != null) {
-                showToast(it)
-                sharedViewModel.showToast(null)
-            }
-        })
-
-        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
-            if (it) {
-                sharedViewModel.resetShouldReauthenticate()
-                baseNavController.navigate(R.id.loginFragment)
-            }
-        })
-
-        btn_logout.setOnClickListener {
-            Log.d(TAG, "Logout button clicked")
-            val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
-
-            if (!pendingChanges) {
-                 AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                    .setTitle(R.string.logout_alert_title)
-                    .setMessage(getString(R.string.logout_alert_text))
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        viewModel.logout()
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setIcon(R.drawable.ic_warning)
-                    .show()
-            } else {
-                AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                    .setTitle(R.string.logout_alert_pending_changes_title)
-                    .setMessage(getString(R.string.logout_alert_pending_changes_text))
-                    .setNegativeButton(R.string.close, null)
-                    .setIcon(R.drawable.ic_warning)
-                    .show()
-            }
-        }
-
+        setHasOptionsMenu(true)
+        sharedViewModel.observeConnection()
         sharedViewModel.tryFirstDownload()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    override fun onStart() {
+        super.onStart()
+        setUpNavigation()
+        setUpBackground()
+        setUpObservers()
+        setUpOnClickListeners()
     }
 
     override fun onDestroy() {
@@ -223,9 +127,110 @@ class MainFragment : BaseFragment(){
         return super.onOptionsItemSelected(item)
     }
 
+    private fun setUpNavigation() {
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.projectsFragment, R.id.settingsFragment),
+            drawer_layout
+        )
+
+        drawer = requireActivity().findViewById(R.id.drawer_layout)
+
+        val fragmentContainer = requireView().findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
+            "Cannot find nav host in main"
+        )
+
+        baseNavController = findNavController()
+        mainNavController = fragmentContainer.findNavController()
+
+        (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
+
+        tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
+        nav_view.setupWithNavController(mainNavController)
+
+        val navigationView = requireActivity().findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(requireActivity() as HumansisActivity)
+
+        val metrics: DisplayMetrics = resources.displayMetrics
+        val ivAppIcon = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_app_icon)
+        ivAppIcon.layoutParams.height = if ((metrics.heightPixels/metrics.density) > 640) {
+            resources.getDimensionPixelSize(R.dimen.nav_header_image_height_tall)
+        } else {
+            resources.getDimensionPixelSize(R.dimen.nav_header_image_height_regular)
+        }
+
+        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
+        var appVersion = getString(R.string.app_name) + " " + getString(R.string.version, BuildConfig.VERSION_NAME)
+        if (BuildConfig.DEBUG) {
+            appVersion += (" (" + BuildConfig.BUILD_NUMBER + ")")
+        }
+        tvAppVersion.text = appVersion
+
+        val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
+        if(BuildConfig.DEBUG) {
+            tvEnvironment.text = getString(
+                R.string.environment,
+                viewModel.environmentLD.value
+            )
+        } else {
+            tvEnvironment.visibility = View.GONE
+        }
+    }
+
     private fun setUpBackground() {
         tb_toolbar.setBackgroundColor(getBackgroundColor())
         nav_host_fragment.setBackgroundColor(getBackgroundColor())
+    }
+
+    private fun setUpObservers() {
+        viewModel.userLD.observe(viewLifecycleOwner, Observer {
+            if (it == null) {
+                findNavController().navigate(R.id.logout)
+                return@Observer
+            }
+
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+            tvUsername.text = it.username
+        })
+
+        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
+            if (it != null) {
+                showToast(it)
+                sharedViewModel.showToast(null)
+            }
+        })
+
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
+            if (it) {
+                sharedViewModel.resetShouldReauthenticate()
+                baseNavController.navigate(R.id.loginFragment)
+            }
+        })
+    }
+
+    private fun setUpOnClickListeners() {
+        btn_logout.setOnClickListener {
+            Log.d(TAG, "Logout button clicked")
+            val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
+
+            if (!pendingChanges) {
+                AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                    .setTitle(R.string.logout_alert_title)
+                    .setMessage(getString(R.string.logout_alert_text))
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        viewModel.logout()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setIcon(R.drawable.ic_warning)
+                    .show()
+            } else {
+                AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                    .setTitle(R.string.logout_alert_pending_changes_title)
+                    .setMessage(getString(R.string.logout_alert_pending_changes_text))
+                    .setNegativeButton(R.string.close, null)
+                    .setIcon(R.drawable.ic_warning)
+                    .show()
+            }
+        }
     }
 
     private fun getBackgroundColor(): Int {
