@@ -3,6 +3,9 @@ include:
   - project: 'humansis/gitlab-ci-templates'
     ref: 'mobile/docker-ci'
     file: 'src/mobile/gradle.template.yml'
+  - project: 'humansis/gitlab-ci-templates'
+    ref: 'mobile/docker-ci'
+    file: 'src/mobile/aws-upload.template.yml'
 
 image: artifactory.quanti.cz/docker/devel-settings:jdk-11
 
@@ -17,6 +20,8 @@ stages:
   - upload
   - firebase
   - publish
+  - upload_aws_rc
+  - upload_aws_stable
 
 .gradle_build:
   before_script:
@@ -138,4 +143,28 @@ publish_to_playstore:
     - rm -rf $PLAYSTORE_API_KEY_PATH
   when: manual
   only:
+    - tags
+
+upload_release_candidate:
+  stage: upload_aws_rc
+  variables:
+    APP_NAME: user-app
+    APK: $ARTIFACT_PATH
+  extends: .release_rc
+  when: manual
+  environment:
+    name: aws-rc
+  except:
+    - tags
+
+upload_stable:
+  stage: upload_aws_stable
+  variables:
+    APP_NAME: user-app
+    APK: $ARTIFACT_PATH
+  extends: .release_stable
+  when: manual
+  environment:
+    name: aws-stable
+  except:
     - tags
