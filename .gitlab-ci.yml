@@ -12,6 +12,8 @@ image: artifactory.quanti.cz/docker/devel-settings:jdk-11
 # todo: versioning
 variables:
   ARTIFACT_PATH: ./app/build/outputs/apk/*/user-app-*.apk
+  ARTIFACT_DEBUG_PATH: ./app/build/outputs/apk/*/user-app-*debug.apk
+  ARTIFACT_RELEASE_PATH: ./app/build/outputs/apk/*/user-app-*release.apk
   EMULATOR_TIMEOUT: "60"
 
 stages:
@@ -20,8 +22,8 @@ stages:
   - upload
   - firebase
   - publish
-  - upload_aws_rc
-  - upload_aws_stable
+  - upload_aws
+  - upload_aws
 
 .gradle_build:
   before_script:
@@ -146,10 +148,10 @@ publish_to_playstore:
     - tags
 
 upload_release_candidate:
-  stage: upload_aws_rc
+  stage: upload_aws
   variables:
     APP_NAME: user-app
-    APK: $ARTIFACT_PATH
+    APK: $ARTIFACT_DEBUG_PATH
   extends: .release_rc
   when: manual
   environment:
@@ -158,10 +160,10 @@ upload_release_candidate:
     - tags
 
 upload_stable:
-  stage: upload_aws_stable
+  stage: upload_aws
   variables:
     APP_NAME: user-app
-    APK: $ARTIFACT_PATH
+    APK: $ARTIFACT_RELEASE_PATH
   extends: .release_stable
   when: manual
   environment:
