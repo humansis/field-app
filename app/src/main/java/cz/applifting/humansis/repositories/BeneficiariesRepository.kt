@@ -19,36 +19,42 @@ import javax.inject.Singleton
 @Singleton
 class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
-        val distribution = dbProvider.get().distributionsDao().getById(distributionId)
+        val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getDistributionBeneficiaries(distributionId)
-            .map {
-                BeneficiaryLocal(
-                    id = it.id,
-                    beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.givenName,
-                    familyName = it.beneficiary.familyName,
-                    distributionId = distributionId,
-                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
-                    distributedAt = it.smartcardDistributedAt,
-                    reliefIDs = parseReliefs(it.reliefs),
-                    qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.beneficiary.smartcard?.uppercase(Locale.US),
-                    newSmartcard = null,
-                    edited = false,
-                    commodities = parseCommodities(it.booklets, distribution?.commodities),
-                    nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    originalReferralType = it.beneficiary.referral?.type,
-                    originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
-                    referralType = it.beneficiary.referral?.type,
-                    referralNote = it.beneficiary.referral?.note.orNullIfEmpty()
-                )
+            .getAssistanceBeneficiaries(assistanceId)
+            .map { assistanceBeneficiary ->
+                val deposits = service.getSmartcardDeposits(assistanceBeneficiary.smartcardDepositIds)
+                val deposit = deposits.last() // TODO overit jestli je tohle spravna logika
+                val reliefs = service.getReliefs(assistanceBeneficiary.reliefIds)
+                val booklets = service.getBooklets(assistanceBeneficiary.bookletIds)
+                service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
+                    BeneficiaryLocal(
+                        id = assistanceBeneficiary.id,
+                        beneficiaryId = assistanceBeneficiary.beneficiaryId,
+                        givenName = beneficiary.givenName,
+                        familyName = beneficiary.familyName,
+                        distributionId = assistanceId,
+                        distributed = isReliefDistributed(reliefs) || isBookletDistributed(booklets) || (deposit.distributed),
+                        distributedAt = deposit.dateOfDistribution,
+                        reliefIDs = assistanceBeneficiary.reliefIds,
+                        qrBooklets = parseQRBooklets(booklets),
+                        smartcard = deposit.smartcard.uppercase(Locale.US),
+                        newSmartcard = null,
+                        edited = false,
+                        commodities = parseCommodities(booklets, distribution?.commodities),
+                        nationalId = beneficiary.nationalIdCards?.getOrNull(0)?.number,
+                        originalReferralType = beneficiary.referralType,
+                        originalReferralNote = beneficiary.referralComment.orNullIfEmpty(),
+                        referralType = beneficiary.referralType,
+                        referralNote = beneficiary.referralComment.orNullIfEmpty()
+                    )
+                }
             }
 
-        dbProvider.get().beneficiariesDao().deleteByDistribution(distributionId)
+        dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
@@ -180,10 +186,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return vulnerability.map { it.vulnerabilityName }
     }
 
-    private fun parseReliefs(reliefs: List<Relief>): List<Int> {
-        return reliefs.map { it.id }
-    }
-
     private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
         return booklets.map { it.code }
     }
@@ -207,7 +209,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         reliefs.forEach {
-            if (it.distributedAt == null) {
+            if (it.dateOfDistribution == null) {
                 return false
             }
         }

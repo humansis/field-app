@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.api
 
 import com.google.gson.annotations.SerializedName
+import cz.applifting.humansis.model.ReferralType
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -10,9 +11,11 @@ import com.google.gson.annotations.SerializedName
 //todo finish model
 data class Beneficiary(
     @SerializedName("id") val id: Int,
-    @SerializedName("smartcard") val smartcard: String?,
-    @SerializedName("local_given_name") val givenName: String?,
-    @SerializedName("local_family_name") val familyName: String?,
-    @SerializedName("national_ids") val nationalIds: List<IdNumber>?,
-    @SerializedName("referral") val referral: Referral?
+    @SerializedName("localFamilyName") val familyName: String?,
+    @SerializedName("localGivenName") val givenName: String?,
+    @SerializedName("nationalIdCards") val nationalIdCards: List<NationalIdCard>?,
+    @SerializedName("referralType") val referralType: ReferralType?,
+    @SerializedName("referralComment") val referralComment: String
+    // TODO upravit aby swagger nic krom těchhle parametrů nevracel
+    // TODO upravit swagger aby se beneficiary nezískával pomocí filteru ale pomocí id v path, zároveň pak vrací jen jednoho bnf místo listu
 )

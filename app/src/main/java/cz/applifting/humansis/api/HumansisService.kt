@@ -23,9 +23,6 @@ interface HumansisService {
         @Header("country") country: String
     ): List<Project>
 
-    @GET("v1/modality-types")
-    suspend fun getModalityTypes(): List<ModalityType>
-
     @GET("v2/commodities")
     suspend fun getCommodities(
         @Query("filter[notModalityTypes][]") notModalityTypes: List<String>?
@@ -44,10 +41,30 @@ interface HumansisService {
         @Query("filter[notModalityTypes][]") notModalityTypes: List<String>?
     ): List<Assistance>
 
-    @GET("v2/distributions/{distributionId}/beneficiaries")
-    suspend fun getDistributionBeneficiaries(
-        @Path("distributionId") distributionId: Int
-    ): List<DistributionBeneficiary>
+    @GET("v2/assistances/{assistanceId}/assistances-beneficiaries")
+    suspend fun getAssistanceBeneficiaries(
+        @Path("assistanceId") assistanceId: Int
+    ): List<AssistanceBeneficiary>
+
+    @GET("v2/beneficiaries")
+    suspend fun getBeneficiary(
+        @Query("filter[id]") id: Int
+    ): Beneficiary
+
+    @GET("v1/booklets")
+    suspend fun getBooklets(
+        @Query("filter[ids][]") ids: List<Int>
+    ): List<Booklet>
+
+    @GET("v1/general-relief-items")
+    suspend fun getReliefs(
+        @Query("filter[ids][]") ids: List<Int>
+    ): List<Relief>
+
+    @GET("v1/smartcard-deposits")
+    suspend fun getSmartcardDeposits(
+        @Query("filter[ids][]") ids: List<Int>
+    ): List<SmartcardDeposit>
 
     @POST("v1/distributions/generalrelief/distributed")
     suspend fun setDistributedRelief(
