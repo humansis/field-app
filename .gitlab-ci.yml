@@ -23,7 +23,6 @@ stages:
   - firebase
   - publish
   - upload_aws
-  - upload_aws
 
 .gradle_build:
   before_script:
