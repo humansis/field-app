@@ -42,9 +42,6 @@ String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(tr
 repositories {
     google()
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 android {
