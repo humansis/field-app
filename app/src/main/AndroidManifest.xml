@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:allowBackup="false"
+        android:testOnly="false"
         tools:replace="android:allowBackup"
         tools:ignore="GoogleAppIndexingWarning">
 
