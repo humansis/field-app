@@ -3,7 +3,6 @@
     <string name="nav_header_desc">Заголовок навигации.</string>
     <string name="action_settings">Настройки</string>
     <string name="menu_home">Проекты</string>
-    <string name="username">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="login">Логин</string>
     <string name="log_out">Выход</string>
@@ -163,5 +162,6 @@
     <string name="logs_dialog_email_button">Поделиться</string>
     <string name="version">Версия %1$s</string>
     <string name="humansis_id">Humansis ID</string>
+    <string name="email">Электронная почта</string>
 
 </resources>

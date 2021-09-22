@@ -5,7 +5,6 @@
     <string name="nav_header_desc">የአሰሳ ራስጌ</string>
     <string name="action_settings">ቅንብሮች</string>
     <string name="menu_home">ፕሮጀክቶች</string>
-    <string name="username">የተጠቃሚ ስም</string>
     <string name="password">የይለፍ ቃል</string>
     <string name="login">ግባ</string>
     <string name="log_out">ውጣ</string>
@@ -146,5 +145,6 @@
     <string name="card_updated">ካርድ ዘምኗል</string>
     <string name="version">v%1$s</string>
     <string name="humansis_id">የሰው ልጅ መታወቂያ</string>
+    <string name="email">ኢሜል</string>
 
 </resources>
