@@ -2,7 +2,6 @@
     <string name="nav_header_desc">عنوان التنقل الرئيسي</string>
     <string name="action_settings">الاعدادات</string>
     <string name="menu_home">المشاريع</string>
-    <string name="username">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
     <string name="login">تسجيل دخول</string>
     <string name="log_out">تسجيل خروج</string>
@@ -162,4 +161,5 @@
     <string name="read_balance">قراءة الرصيد</string>
     <string name="version">الإصدار \\u200f%1$s\\u200f</string>
     <string name="humansis_id">رقم الهوية الخاص بالتطبيق</string>
+    <string name="email">البريد الالكتروني</string>
 </resources>
