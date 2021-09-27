@@ -23,7 +23,7 @@
         android:testOnly="false"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
             android:name=".ui.HumansisActivity"
