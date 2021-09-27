@@ -60,7 +60,7 @@ class AppModule {
 
         logging.level = HttpLoggingInterceptor.Level.BASIC
 
-        val cacheSize: Long = 50 * 1024 * 1024
+        val cacheSize: Long = (50 * 1024 * 1024).toLong()
         val cache = Cache(context.cacheDir, cacheSize)
 
         val client: OkHttpClient = OkHttpClient.Builder()
