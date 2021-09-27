@@ -30,7 +30,7 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 2
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 3
+def VERSION_MINOR = 4
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
 def VERSION_PATCH = 1
 
@@ -41,7 +41,6 @@ String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(tr
 
 repositories {
     google()
-    jcenter() // needs to be here, because of zxing and material-spinner
     mavenCentral()
 }
 
@@ -180,7 +179,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
 
     // Bar code scanner
-    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.8' //use older version until newer are available on mavenCentral
 
     // Worker
     def work_version = "2.6.0"
@@ -211,6 +210,6 @@ dependencies {
     androidTestImplementation "androidx.test:core-ktx:$test_version"
     androidTestImplementation "androidx.work:work-testing:$work_version"
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.1'
-    androidTestImplementation "io.mockk:mockk-android:1.9.3"
+    androidTestImplementation "io.mockk:mockk-android:1.12.0"
 
 }
