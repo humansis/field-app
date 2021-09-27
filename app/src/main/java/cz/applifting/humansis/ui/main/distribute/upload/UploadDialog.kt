@@ -50,6 +50,11 @@ class UploadDialog : DialogFragment() {
         return rootView
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout( ViewGroup.LayoutParams.WRAP_CONTENT, resources.displayMetrics.heightPixels.times(0.6).toInt())
+    }
+
     companion object {
         private val TAG = UploadDialog::class.java.simpleName
     }
