@@ -29,7 +29,7 @@ class UploadDialogMainFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
+        uploadDialogViewModel = ViewModelProviders.of(requireParentFragment(), viewModelFactory)[UploadDialogViewModel::class.java]
 
         val online = context?.isNetworkConnected() ?: false
         btn_sync.isEnabled = online
@@ -45,7 +45,7 @@ class UploadDialogMainFragment : BaseFragment() {
 
         sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
             tv_changes.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tv_changes.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
+            tv_changes.setTextColor(ContextCompat.getColor(requireContext(), if (it) R.color.red else R.color.green))
         })
 
         sharedViewModel.syncState.observe(viewLifecycleOwner, {

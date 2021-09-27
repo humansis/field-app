@@ -30,7 +30,7 @@ class UploadDialogErrorListFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
+        uploadDialogViewModel = ViewModelProviders.of(requireParentFragment(), viewModelFactory)[UploadDialogViewModel::class.java]
 
         val adapter = ErrorListAdapter {
             it.beneficiaryId?.let { beneficiaryId ->
