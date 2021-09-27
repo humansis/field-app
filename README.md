@@ -60,4 +60,6 @@ It's very important to use properly versioning in user app in file `app/build.gr
 - **Direct file download**
 	- https://artifactory.quanti.cz:443/artifactory/user_app-gradle-local/
 
-Name and password are LDAP (so same as JIRA / Gitlab / Nextclous)
+Name and password are LDAP (so same as JIRA / Gitlab / Nextcloud)
+- **AWS**
+	- http://apks.humansis.org.s3-website.eu-central-1.amazonaws.com/user-app/
