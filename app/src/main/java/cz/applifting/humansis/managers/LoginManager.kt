@@ -79,6 +79,7 @@ class LoginManager @Inject constructor(
 
     suspend fun logout() {
         db.clearAllTables()
+        context.cacheDir.deleteRecursively()
         sp.edit().clear().suspendCommit()
         spCrypto.edit().clear().suspendCommit()
 
