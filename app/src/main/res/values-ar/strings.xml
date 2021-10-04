@@ -11,7 +11,7 @@
     <string name="commodities">السلع: </string>
     <string name="households">العائلات: %1$d</string>
     <string name="beneficiaries_title">المستفيدين</string>
-    <string name="national_id">رقم الهوية الشخصية: %1$s</string>
+    <string name="national_id_format">رقم الهوية الشخصية: %1$s</string>
     <string name="beneficiaries_reached">تم الوصول إلى %1$d من %2$d من المستفيدين</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">ابحث في الأسماء</string>
@@ -162,4 +162,5 @@
     <string name="version">الإصدار \\u200f%1$s\\u200f</string>
     <string name="humansis_id">رقم الهوية الخاص بالتطبيق</string>
     <string name="email">البريد الالكتروني</string>
+    <string name="national_id">رقم الهوية الشخصية</string>
 </resources>
