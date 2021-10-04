@@ -23,6 +23,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "onCreate")
 
         initLogger()
 
@@ -72,5 +73,9 @@ class App : Application() {
             Log.e(tag, message)
         }
 
+    }
+
+    companion object {
+        private val TAG = App::class.java.simpleName
     }
 }
