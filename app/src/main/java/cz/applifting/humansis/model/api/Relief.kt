@@ -8,5 +8,4 @@ import com.google.gson.annotations.SerializedName
 data class Relief(
     val id: Int,
     @SerializedName("dateOfDistribution") val dateOfDistribution: String?
-    // TODO dat pryc note a distributed (za predpokladu ze pokud neni distrubuted tak date bude null)
 )
