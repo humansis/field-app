@@ -5,6 +5,5 @@ data class Booklet(
     val code: String,
     val currency: String,
     val status: Int,
-    val vouchers: List<Voucher> // TODO tohle potrebuju
-    // TODO dát z endpointu pryč totalValue, individualValues, quantityOf..., distributed
+    val voucherValues: List<Int>
 )

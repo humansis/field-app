@@ -26,8 +26,9 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         val result = service
             .getAssistanceBeneficiaries(assistanceId)
             .map { assistanceBeneficiary ->
-                val deposits = service.getSmartcardDeposits(assistanceBeneficiary.smartcardDepositIds)
-                val deposit = deposits.last() // TODO overit jestli je tohle spravna logika
+                val deposit = assistanceBeneficiary.lastSmartcardDepositId?.let {
+                    service.getSmartcardDeposit(it)
+                }
                 val reliefs = service.getReliefs(assistanceBeneficiary.reliefIds)
                 val booklets = service.getBooklets(assistanceBeneficiary.bookletIds)
                 service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
@@ -37,11 +38,11 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                         givenName = beneficiary.givenName,
                         familyName = beneficiary.familyName,
                         distributionId = assistanceId,
-                        distributed = isReliefDistributed(reliefs) || isBookletDistributed(booklets) || (deposit.distributed),
-                        distributedAt = deposit.dateOfDistribution,
+                        distributed = isReliefDistributed(reliefs) || isBookletDistributed(booklets) || (deposit?.distributed == true),
+                        distributedAt = deposit?.dateOfDistribution,
                         reliefIDs = assistanceBeneficiary.reliefIds,
                         qrBooklets = parseQRBooklets(booklets),
-                        smartcard = deposit.smartcard.uppercase(Locale.US),
+                        smartcard = deposit?.smartcard?.uppercase(Locale.US),
                         newSmartcard = null,
                         edited = false,
                         commodities = parseCommodities(booklets, distribution?.commodities),
@@ -194,7 +195,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
-                val bookletValue = booklet.vouchers.sumOf { it.value }.toDouble()
+                val bookletValue = booklet.voucherValues.sumOf { it }.toDouble()
                 CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }

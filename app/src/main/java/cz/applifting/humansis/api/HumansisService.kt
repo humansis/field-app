@@ -46,9 +46,9 @@ interface HumansisService {
         @Path("assistanceId") assistanceId: Int
     ): List<AssistanceBeneficiary>
 
-    @GET("v2/beneficiaries")
+    @GET("v2/beneficiary/{id}")
     suspend fun getBeneficiary(
-        @Query("filter[id]") id: Int
+        @Path("id") id: Int
     ): Beneficiary
 
     @GET("v1/booklets")
@@ -61,10 +61,10 @@ interface HumansisService {
         @Query("filter[ids][]") ids: List<Int>
     ): List<Relief>
 
-    @GET("v1/smartcard-deposits")
-    suspend fun getSmartcardDeposits(
-        @Query("filter[ids][]") ids: List<Int>
-    ): List<SmartcardDeposit>
+    @GET("v1/last-smartcard-deposit/{id}")
+    suspend fun getSmartcardDeposit(
+        @Path("id") id: Int
+    ): SmartcardDeposit
 
     @POST("v1/distributions/generalrelief/distributed")
     suspend fun setDistributedRelief(
