@@ -71,8 +71,14 @@ class BeneficiaryViewModel @Inject constructor(
 
     fun depositMoneyToCard(value: Double, currency: String, pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
-                Pair(tag, it)
+            if (remote == true) { // TODO sehnat remote: Boolean
+                nfcFacade.writeProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+                    Pair(tag, it) // TODO nfc knihovna musí vrace single a balanceBefore
+                }
+            } else {
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+                    Pair(tag, it)
+                }
             }
         }
     }
@@ -93,6 +99,7 @@ class BeneficiaryViewModel @Inject constructor(
                     edited = true,
                     distributed = true,
                     distributedAt = date
+                // TODO doplnit balanceBefore a balanceAfter
                 )
 
                 beneficiariesRepository.updateBeneficiaryOffline(beneficiary)

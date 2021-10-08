@@ -35,7 +35,8 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                     it.dateDistribution,
                     projectId,
                     it.type,
-                    it.completed
+                    it.completed,
+                    it.remote
                 )
             }
 

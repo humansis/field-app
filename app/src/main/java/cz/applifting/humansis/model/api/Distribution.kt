@@ -19,5 +19,6 @@ data class Distribution (
     val type : Target,
     val commodities : List<Commodity>,
     @SerializedName("beneficiaries_count") val beneficiariesCount: Int,
-    val completed : Boolean
+    val completed : Boolean,
+    val remote: Boolean
 )
