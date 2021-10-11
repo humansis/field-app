@@ -98,15 +98,16 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun saveCard(cardId: String?, date: String) {
+    fun saveCard(cardId: String?, date: String, originalBalance: Double?, balance: Double) {
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
                     newSmartcard = cardId?.toUpperCase(Locale.US),
                     edited = true,
                     distributed = true,
-                    distributedAt = date
-                // TODO doplnit balanceBefore a balanceAfter
+                    distributedAt = date,
+                    originalBalance = originalBalance,
+                    balance = balance
                 )
 
                 beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
