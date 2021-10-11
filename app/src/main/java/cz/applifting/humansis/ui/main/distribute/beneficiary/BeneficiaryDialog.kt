@@ -427,7 +427,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
         )
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
+        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId, beneficiary.remote)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 {   info ->
                     val tag = info.first

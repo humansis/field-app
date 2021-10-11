@@ -25,6 +25,9 @@ class DbProvider(val context: Context) {
                 HumansisDB::class.java, DB_NAME
             )
                 .openHelperFactory(factory)
+                .addMigrations(
+                    HumansisDB.MIGRATION_20_21
+                )
                 .fallbackToDestructiveMigration()
                 .build()
         }

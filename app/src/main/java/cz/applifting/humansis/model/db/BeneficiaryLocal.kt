@@ -37,6 +37,7 @@ data class BeneficiaryLocal(
     val newSmartcard: String?,
     val edited: Boolean,
     val commodities: List<CommodityLocal>?,
+    val remote: Boolean,
     val nationalId: String?,
     val originalReferralType: ReferralType?,
     val originalReferralNote: String?,
