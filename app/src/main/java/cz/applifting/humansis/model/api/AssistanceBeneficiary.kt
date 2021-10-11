@@ -9,3 +9,8 @@ data class AssistanceBeneficiary(
     @SerializedName("lastSmartcardDepositId") val lastSmartcardDepositId: Int?,
     @SerializedName("bookletIds") val bookletIds: List<Int>
 )
+
+data class AssistanceBeneficiariesEntity(
+    val totalCount: Int,
+    val data: List<AssistanceBeneficiary>
+)

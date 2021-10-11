@@ -44,7 +44,7 @@ interface HumansisService {
     @GET("v2/assistances/{assistanceId}/assistances-beneficiaries")
     suspend fun getAssistanceBeneficiaries(
         @Path("assistanceId") assistanceId: Int
-    ): List<AssistanceBeneficiary>
+    ): AssistanceBeneficiariesEntity
 
     @GET("v2/beneficiary/{id}")
     suspend fun getBeneficiary(

@@ -24,13 +24,24 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getAssistanceBeneficiaries(assistanceId)
-            .map { assistanceBeneficiary ->
+            .getAssistanceBeneficiaries(assistanceId).data.map { assistanceBeneficiary ->
                 val deposit = assistanceBeneficiary.lastSmartcardDepositId?.let {
                     service.getSmartcardDeposit(it)
                 }
-                val reliefs = service.getReliefs(assistanceBeneficiary.reliefIds)
-                val booklets = service.getBooklets(assistanceBeneficiary.bookletIds)
+                val reliefs = assistanceBeneficiary.reliefIds.let { reliefIds ->
+                    if (reliefIds.isNotEmpty()) {
+                        service.getReliefs(reliefIds)
+                    } else {
+                        listOf()
+                    }
+                }
+                val booklets = assistanceBeneficiary.bookletIds.let { bookletIds ->
+                    if (bookletIds.isNotEmpty()) {
+                        service.getBooklets(bookletIds)
+                    } else {
+                        listOf()
+                    }
+                }
                 service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
                     BeneficiaryLocal(
                         id = assistanceBeneficiary.id,
