@@ -20,7 +20,7 @@ import cz.applifting.humansis.model.db.*
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 @TypeConverters(
@@ -43,6 +43,7 @@ abstract class HumansisDB : RoomDatabase() {
         val MIGRATION_20_21 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE distributions ADD remote INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE beneficiaries ADD originalBalance REAL DEFAULT 0.0")
                 database.execSQL("ALTER TABLE beneficiaries ADD remote INTEGER NOT NULL DEFAULT 0")
             }
         }
