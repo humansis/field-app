@@ -28,20 +28,12 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                 val deposit = assistanceBeneficiary.lastSmartcardDepositId?.let {
                     service.getSmartcardDeposit(it)
                 }
-                val reliefs = assistanceBeneficiary.reliefIds.let { reliefIds ->
-                    if (reliefIds.isNotEmpty()) {
-                        service.getReliefs(reliefIds)
-                    } else {
-                        listOf()
-                    }
-                }
-                val booklets = assistanceBeneficiary.bookletIds.let { bookletIds ->
-                    if (bookletIds.isNotEmpty()) {
-                        service.getBooklets(bookletIds)
-                    } else {
-                        listOf()
-                    }
-                }
+                val reliefs = assistanceBeneficiary.reliefIds.takeIf { it.isNotEmpty() }
+                    ?.let { service.getReliefs(it) }
+                    .orEmpty()
+                val booklets = assistanceBeneficiary.bookletIds.takeIf { it.isNotEmpty() }
+                    ?.let{ service.getBooklets(it) }
+                    .orEmpty()
                 service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
                     BeneficiaryLocal(
                         id = assistanceBeneficiary.id,
