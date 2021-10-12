@@ -10,7 +10,7 @@ data class AssistanceBeneficiary(
     @SerializedName("bookletIds") val bookletIds: List<Int>
 )
 
-data class AssistanceBeneficiariesEntity(
+data class AssistanceBeneficiariesApiEntity(
     val totalCount: Int,
     val data: List<AssistanceBeneficiary>
 )

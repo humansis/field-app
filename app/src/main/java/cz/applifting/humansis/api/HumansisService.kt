@@ -44,7 +44,7 @@ interface HumansisService {
     @GET("v2/assistances/{assistanceId}/assistances-beneficiaries")
     suspend fun getAssistanceBeneficiaries(
         @Path("assistanceId") assistanceId: Int
-    ): AssistanceBeneficiariesEntity
+    ): AssistanceBeneficiariesApiEntity
 
     @GET("v2/beneficiary/{id}")
     suspend fun getBeneficiary(
@@ -58,8 +58,8 @@ interface HumansisService {
 
     @GET("v1/general-relief-items")
     suspend fun getReliefs(
-        @Query("filter[ids][]") ids: List<Int>
-    ): List<Relief>
+        @Query("filter[id][]") ids: List<Int>
+    ): ReliefsApiEntity
 
     @GET("v1/last-smartcard-deposit/{id}")
     suspend fun getSmartcardDeposit(

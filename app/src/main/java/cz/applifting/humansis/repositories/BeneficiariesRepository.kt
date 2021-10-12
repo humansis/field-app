@@ -29,7 +29,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     service.getSmartcardDeposit(it)
                 }
                 val reliefs = assistanceBeneficiary.reliefIds.takeIf { it.isNotEmpty() }
-                    ?.let { service.getReliefs(it) }
+                    ?.let { service.getReliefs(it).data }
                     .orEmpty()
                 val booklets = assistanceBeneficiary.bookletIds.takeIf { it.isNotEmpty() }
                     ?.let{ service.getBooklets(it) }

@@ -9,3 +9,8 @@ data class Relief(
     val id: Int,
     @SerializedName("dateOfDistribution") val dateOfDistribution: String?
 )
+
+data class ReliefsApiEntity(
+    val totalCount: Int,
+    val data: List<Relief>
+)
