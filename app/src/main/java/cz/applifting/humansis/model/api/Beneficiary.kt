@@ -12,7 +12,7 @@ data class Beneficiary(
     @SerializedName("id") val id: Int,
     @SerializedName("localFamilyName") val familyName: String?,
     @SerializedName("localGivenName") val givenName: String?,
-    @SerializedName("nationalIdCards") val nationalIdCards: List<NationalIdCard>?,
+    @SerializedName("nationalIdCards") val nationalIdCards: List<Long>?,
     @SerializedName("referralType") val referralType: ReferralType?,
     @SerializedName("referralComment") val referralComment: String
 )

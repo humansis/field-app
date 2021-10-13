@@ -53,8 +53,8 @@ interface HumansisService {
 
     @GET("v1/booklets")
     suspend fun getBooklets(
-        @Query("filter[ids][]") ids: List<Int>
-    ): List<Booklet>
+        @Query("filter[id][]") ids: List<Int>
+    ): BookletsApiEntity
 
     @GET("v1/general-relief-items")
     suspend fun getReliefs(

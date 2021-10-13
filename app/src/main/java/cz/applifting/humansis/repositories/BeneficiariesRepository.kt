@@ -32,7 +32,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     ?.let { service.getReliefs(it).data }
                     .orEmpty()
                 val booklets = assistanceBeneficiary.bookletIds.takeIf { it.isNotEmpty() }
-                    ?.let{ service.getBooklets(it) }
+                    ?.let{ service.getBooklets(it).data }
                     .orEmpty()
                 service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
                     BeneficiaryLocal(
@@ -49,7 +49,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                         newSmartcard = null,
                         edited = false,
                         commodities = parseCommodities(booklets, distribution?.commodities),
-                        nationalId = beneficiary.nationalIdCards?.getOrNull(0)?.number,
+                        nationalId = beneficiary.nationalIdCards?.getOrNull(0).toString(),
                         originalReferralType = beneficiary.referralType,
                         originalReferralNote = beneficiary.referralComment.orNullIfEmpty(),
                         referralType = beneficiary.referralType,

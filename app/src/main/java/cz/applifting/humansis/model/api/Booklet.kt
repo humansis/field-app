@@ -7,3 +7,8 @@ data class Booklet(
     val status: Int,
     val voucherValues: List<Int>
 )
+
+data class BookletsApiEntity(
+    val totalCount: Int,
+    val data: List<Booklet>
+)
