@@ -454,7 +454,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     )
                     NfcLogger.d(
                         TAG,
-                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
+                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${cardContent.userId}, currencyCode: ${cardContent.currencyCode}"
                     )
                 },
                 {
