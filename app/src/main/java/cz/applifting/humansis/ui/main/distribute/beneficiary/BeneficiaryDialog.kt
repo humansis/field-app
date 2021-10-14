@@ -14,7 +14,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButton
@@ -102,7 +101,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_beneficiary, container, false)
         (activity?.application as App).appComponent.inject(this)
-        sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
+        sharedViewModel = ViewModelProvider(activity as HumansisActivity, viewModelFactory).get(SharedViewModel::class.java)
         return view
     }
 
@@ -219,7 +218,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun leaveWithSuccess() {
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.call()
+        sharedViewModel.beneficiaryDialogDismissedOnSuccess.call()
         sharedViewModel.showToast(getString(R.string.success))
         dismiss()
     }
@@ -435,7 +434,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     val id = tag.id
                     var cardId: String? = null
                     id?.let {
-                        cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
+                        cardId = NfcUtil.toHexString(id).uppercase(Locale.US)
                     }
                     viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()))
                     btn_scan_smartcard.visibility = View.GONE
@@ -454,7 +453,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     )
                     NfcLogger.d(
                         TAG,
-                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
+                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${cardContent.userId}, currencyCode: ${cardContent.currencyCode}"
                     )
                 },
                 {

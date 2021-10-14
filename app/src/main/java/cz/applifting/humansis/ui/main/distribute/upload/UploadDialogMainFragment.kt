@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.format
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -26,10 +26,10 @@ class UploadDialogMainFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_dialog_upload_status_main, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        uploadDialogViewModel = ViewModelProviders.of(requireParentFragment(), viewModelFactory)[UploadDialogViewModel::class.java]
+        uploadDialogViewModel = ViewModelProvider(requireParentFragment(), viewModelFactory).get(UploadDialogViewModel::class.java)
 
         val online = context?.isNetworkConnected() ?: false
         btn_sync.isEnabled = online

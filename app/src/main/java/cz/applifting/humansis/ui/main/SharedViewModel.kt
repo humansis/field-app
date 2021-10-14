@@ -44,14 +44,14 @@ class SharedViewModel @Inject constructor(
     app: App
 ) : BaseViewModel(app) {
 
-    val toastLD = MediatorLiveData<String>()
+    val toastLD = MediatorLiveData<String?>()
     private val pendingChangesLD = MutableLiveData<Boolean>()
     private val uploadIncompleteLD = sp.booleanLiveData(SP_SYNC_UPLOAD_INCOMPLETE, false)
     val syncNeededLD = MediatorLiveData<Boolean>()
     val networkStatus = MutableLiveData<Boolean>()
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
     val shouldDismissBeneficiaryDialog = SingleLiveEvent<Unit>()
-    val beneficiaryDialogDissmissedOnSuccess = SingleLiveEvent<Unit>()
+    val beneficiaryDialogDismissedOnSuccess = SingleLiveEvent<Unit>()
 
     val syncState: MediatorLiveData<SyncWorkerState> = MediatorLiveData()
 

@@ -39,8 +39,8 @@ class BeneficiariesFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_beneficiaries, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = args.distributionName
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
@@ -70,7 +70,7 @@ class BeneficiariesFragment : BaseFragment() {
             lc_beneficiaries.scrollToTop()
         }
 
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, {
+        sharedViewModel.beneficiaryDialogDismissedOnSuccess.observe(viewLifecycleOwner, {
             cmp_search_beneficiary.clearSearch()
         })
 

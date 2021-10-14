@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
@@ -28,9 +28,9 @@ class UploadDialogErrorListFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_dialog_upload_status_error_info, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        uploadDialogViewModel = ViewModelProviders.of(requireParentFragment(), viewModelFactory)[UploadDialogViewModel::class.java]
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        uploadDialogViewModel = ViewModelProvider(requireParentFragment(), viewModelFactory).get(UploadDialogViewModel::class.java)
 
         val adapter = ErrorListAdapter {
             it.beneficiaryId?.let { beneficiaryId ->

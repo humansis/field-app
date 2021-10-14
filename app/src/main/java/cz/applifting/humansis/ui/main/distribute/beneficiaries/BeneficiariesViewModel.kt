@@ -132,6 +132,6 @@ class BeneficiariesViewModel @Inject constructor(
     }
 
     private fun String.normalize(): String {
-        return this.toLowerCase(Locale.getDefault()).trim().replace("\\s+".toRegex(), " ")
+        return this.lowercase(Locale.getDefault()).trim().replace("\\s+".toRegex(), " ")
     }
 }

@@ -42,8 +42,8 @@ class SettingsFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = getString(R.string.action_settings)
         (activity as HumansisActivity).supportActionBar?.subtitle = ""
 
@@ -91,7 +91,7 @@ class SettingsFragment : BaseFragment() {
                 getString(R.string.settings_country_update_error)
             }
 
-            view?.let { view ->
+            view.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
             }
         })

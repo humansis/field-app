@@ -12,8 +12,8 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
@@ -43,7 +43,7 @@ class SyncWorkerTest {
     @MockK
     private lateinit var projectsRepository: ProjectsRepository
     @MockK
-    private lateinit var distributionsRepository: DistributionsRepository
+    private lateinit var assistancesRepository: AssistancesRepository
     @MockK
     private lateinit var beneficiariesRepository: BeneficiariesRepository
     @MockK
@@ -63,7 +63,7 @@ class SyncWorkerTest {
             it.projectsRepository = projectsRepository.apply {
                 coEvery { getNameByDistributionId(any()) } returns ""
             }
-            it.distributionsRepository = distributionsRepository.apply {
+            it.assistancesRepository = assistancesRepository.apply {
                 coEvery { getNameById(any()) } returns ""
             }
             it.beneficiariesRepository = beneficiariesRepository.apply {
@@ -102,14 +102,14 @@ class SyncWorkerTest {
         val projectsCount = 2
         coEvery { projectsRepository.getProjectsOnline() } returns List(projectsCount) { anyProject() }
         val distributionCount = 3
-        coEvery { distributionsRepository.getDistributionsOnline(any()) } returns List(distributionCount) { anyDistribution() }
+        coEvery { assistancesRepository.getDistributionsOnline(any()) } returns List(distributionCount) { anyDistribution() }
         coEvery { beneficiariesRepository.getBeneficiariesOnline(any()) } returns List(5) { anyBeneficiary() }
 
         val result = runBlocking { worker.doWork() }
 
         assertSuccess(result)
         coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
-        coVerify(exactly = projectsCount) { distributionsRepository.getDistributionsOnline(any()) }
+        coVerify(exactly = projectsCount) { assistancesRepository.getDistributionsOnline(any()) }
         coVerify(exactly = projectsCount * distributionCount) { beneficiariesRepository.getBeneficiariesOnline(any()) }
     }
 
@@ -176,26 +176,26 @@ class SyncWorkerTest {
     @Test
     fun errorOnDistributions() {
         coEvery { projectsRepository.getProjectsOnline() } returns listOf(anyProject())
-        coEvery { distributionsRepository.getDistributionsOnline(any()) } throws anyHttpException()
+        coEvery { assistancesRepository.getDistributionsOnline(any()) } throws anyHttpException()
 
         val result = runBlocking { worker.doWork() }
 
         assertFailure(result)
         coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
-        coVerify(exactly = 1) { distributionsRepository.getDistributionsOnline(any()) }
+        coVerify(exactly = 1) { assistancesRepository.getDistributionsOnline(any()) }
     }
 
     @Test
     fun errorOnBeneficiaries() {
         coEvery { projectsRepository.getProjectsOnline() } returns listOf(anyProject())
-        coEvery { distributionsRepository.getDistributionsOnline(any()) } returns listOf(anyDistribution())
+        coEvery { assistancesRepository.getDistributionsOnline(any()) } returns listOf(anyDistribution())
         coEvery { beneficiariesRepository.getBeneficiariesOnline(any()) } throws anyHttpException()
 
         val result = runBlocking { worker.doWork() }
 
         assertFailure(result)
         coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
-        coVerify(exactly = 1) { distributionsRepository.getDistributionsOnline(any()) }
+        coVerify(exactly = 1) { assistancesRepository.getDistributionsOnline(any()) }
         coVerify(exactly = 1) { beneficiariesRepository.getBeneficiariesOnline(any()) }
     }
 
@@ -225,7 +225,7 @@ class SyncWorkerTest {
         commodities = emptyList(),
         dateOfDistribution = "",
         projectId = 0,
-        target = Target.FAMILY,
+        target = Target.HOUSEHOLD,
         completed = false
     )
 

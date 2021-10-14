@@ -15,7 +15,6 @@ import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.VendorFacade
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
@@ -60,7 +59,11 @@ class AppModule {
 
         logging.level = HttpLoggingInterceptor.Level.BASIC
 
+        val cacheSize: Long = (50 * 1024 * 1024).toLong()
+        val cache = Cache(context.cacheDir, cacheSize)
+
         val client: OkHttpClient = OkHttpClient.Builder()
+            .cache(cache)
             .connectTimeout(5, TimeUnit.MINUTES)
             .callTimeout(5, TimeUnit.MINUTES)
             .readTimeout(5, TimeUnit.MINUTES)
@@ -121,27 +124,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providePINFacade(): PINFacade {
-        return PINFacade(
-                BuildConfig.APP_VESION,
-                NfcUtil.hexStringToByteArray(BuildConfig.MASTER_KEY),
-                NfcUtil.hexStringToByteArray(BuildConfig.APP_ID)
-        )
-    }
-
-    @Provides
-    @Singleton
     fun provideOfflineFacade(): OfflineFacade {
-        return PINFacade(
-            BuildConfig.APP_VESION,
-            NfcUtil.hexStringToByteArray(BuildConfig.MASTER_KEY),
-            NfcUtil.hexStringToByteArray(BuildConfig.APP_ID)
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideVendorFacade(): VendorFacade {
         return PINFacade(
             BuildConfig.APP_VESION,
             NfcUtil.hexStringToByteArray(BuildConfig.MASTER_KEY),

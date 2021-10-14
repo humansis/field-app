@@ -10,8 +10,8 @@ import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
-import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.UserBalance
+import cz.quanti.android.nfc.OfflineFacade
+import cz.quanti.android.nfc.dto.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -31,14 +31,14 @@ class MainViewModel @Inject constructor(
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
     @Inject
-    lateinit var pinFacade: PINFacade
+    lateinit var offlineFacade: OfflineFacade
 
-    val userLD = MutableLiveData<User>()
+    val userLD = MutableLiveData<User?>()
     val environmentLD = MutableLiveData<String>()
 
-    val readBalanceResult = SingleLiveEvent<UserBalance>()
+    val readBalanceResult = SingleLiveEvent<UserPinBalance>()
     val readBalanceError = SingleLiveEvent<Throwable>()
-    val initializeCardResult = SingleLiveEvent<UserBalance>()
+    val initializeCardResult = SingleLiveEvent<UserPinBalance>()
     val initializeCardError = SingleLiveEvent<Throwable>()
 
     init {
@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
 
     fun readBalance(): Disposable {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            pinFacade.readUserBalance(tag)
+            offlineFacade.readProtectedBalanceForUser(tag)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
             readBalanceResult.postValue(it)
         },{
@@ -63,7 +63,7 @@ class MainViewModel @Inject constructor(
 
     fun initializeCard(): Disposable {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            pinFacade.readUserBalance(tag)
+            offlineFacade.readProtectedBalanceForUser(tag)
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
             initializeCardResult.postValue(it)
         },{

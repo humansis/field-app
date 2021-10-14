@@ -32,7 +32,7 @@ class LoginViewModel @Inject constructor(
 ) : BaseViewModel(app) {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
-    val loginLD = MutableLiveData<User>()
+    val loginLD = MutableLiveData<User?>()
 
     init {
         loginLD.value = null

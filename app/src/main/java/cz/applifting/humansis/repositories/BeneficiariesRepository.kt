@@ -19,37 +19,46 @@ import javax.inject.Singleton
 @Singleton
 class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
-        val distribution = dbProvider.get().distributionsDao().getById(distributionId)
+        val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getDistributionBeneficiaries(distributionId)
-            .map {
-                BeneficiaryLocal(
-                    id = it.id,
-                    beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.givenName,
-                    familyName = it.beneficiary.familyName,
-                    distributionId = distributionId,
-                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
-                    distributedAt = it.smartcardDistributedAt,
-                    vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
-                    reliefIDs = parseReliefs(it.reliefs),
-                    qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.beneficiary.smartcard?.toUpperCase(Locale.US),
-                    newSmartcard = null,
-                    edited = false,
-                    commodities = parseCommodities(it.booklets, distribution?.commodities),
-                    nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    originalReferralType = it.beneficiary.referral?.type,
-                    originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
-                    referralType = it.beneficiary.referral?.type,
-                    referralNote = it.beneficiary.referral?.note.orNullIfEmpty()
-                )
+            .getAssistanceBeneficiaries(assistanceId).data.map { assistanceBeneficiary ->
+                val deposit = assistanceBeneficiary.lastSmartcardDepositId?.let {
+                    service.getSmartcardDeposit(it)
+                }
+                val reliefs = assistanceBeneficiary.reliefIds.takeIf { it.isNotEmpty() }
+                    ?.let { service.getReliefs(it).data }
+                    .orEmpty()
+                val booklets = assistanceBeneficiary.bookletIds.takeIf { it.isNotEmpty() }
+                    ?.let{ service.getBooklets(it).data }
+                    .orEmpty()
+                service.getBeneficiary(assistanceBeneficiary.beneficiaryId).let { beneficiary ->
+                    BeneficiaryLocal(
+                        id = assistanceBeneficiary.id,
+                        beneficiaryId = assistanceBeneficiary.beneficiaryId,
+                        givenName = beneficiary.givenName,
+                        familyName = beneficiary.familyName,
+                        distributionId = assistanceId,
+                        distributed = isReliefDistributed(reliefs) || isBookletDistributed(booklets) || (deposit?.distributed == true),
+                        distributedAt = deposit?.dateOfDistribution,
+                        reliefIDs = assistanceBeneficiary.reliefIds,
+                        qrBooklets = parseQRBooklets(booklets),
+                        smartcard = deposit?.smartcard?.uppercase(Locale.US),
+                        newSmartcard = null,
+                        edited = false,
+                        commodities = parseCommodities(booklets, distribution?.commodities),
+                        nationalId = beneficiary.nationalIdCards?.getOrNull(0).toString(),
+                        originalReferralType = beneficiary.referralType,
+                        originalReferralNote = beneficiary.referralComment.orNullIfEmpty(),
+                        referralType = beneficiary.referralType,
+                        referralNote = beneficiary.referralComment.orNullIfEmpty()
+                    )
+                }
             }
 
-        dbProvider.get().beneficiariesDao().deleteByDistribution(distributionId)
+        dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
@@ -157,7 +166,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+        service.assignBooklet(beneficiaryId, distributionId, AssignBookletRequest(code))
     }
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
@@ -181,10 +190,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return vulnerability.map { it.vulnerabilityName }
     }
 
-    private fun parseReliefs(reliefs: List<Relief>): List<Int> {
-        return reliefs.map { it.id }
-    }
-
     private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
         return booklets.map { it.code }
     }
@@ -193,7 +198,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
-                val bookletValue = booklet.vouchers.sumBy { it.value }.toDouble()
+                val bookletValue = booklet.voucherValues.sumOf { it }.toDouble()
                 CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }
@@ -208,7 +213,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         reliefs.forEach {
-            if (it.distributedAt == null) {
+            if (it.dateOfDistribution == null) {
                 return false
             }
         }
