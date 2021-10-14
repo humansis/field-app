@@ -79,8 +79,7 @@ class BeneficiaryViewModel @Inject constructor(
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
             if (remote) {
                 nfcFacade.rewriteBalanceForUser(tag, value, ownerId.toString(), currency).map{
-                    Pair(tag, it) // TODO nfc knihovna musí vracet balanceBefore unitr UserPinBalance. Potom zapracovat a poslat
-                    // TODO osetrit inconsistent write
+                    Pair(tag, it)
                 }
             } else {
                 nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
