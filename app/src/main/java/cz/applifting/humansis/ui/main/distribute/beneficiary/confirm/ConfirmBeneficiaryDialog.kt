@@ -10,7 +10,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
@@ -35,7 +34,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_confirm_beneficiary, container, false)
         (activity?.application as App).appComponent.inject(this)
-        sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
+        sharedViewModel = ViewModelProvider(activity as HumansisActivity, viewModelFactory).get(SharedViewModel::class.java)
 
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         view.setupViews()

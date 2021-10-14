@@ -29,7 +29,7 @@ class BeneficiaryViewModel @Inject constructor(
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
-    private val scannedCardIdLD = MutableLiveData<String>()
+    private val scannedCardIdLD = MutableLiveData<String?>()
     val goBackEventLD = MutableLiveData<Unit>()
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
@@ -39,9 +39,6 @@ class BeneficiaryViewModel @Inject constructor(
     var previousEditState: Boolean? = null
     var isAssignedInOtherDistribution: Boolean = false
     private set
-
-    private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
-    private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
 
     fun initBeneficiary(id: Int) {
         launch {
@@ -135,6 +132,11 @@ class BeneficiaryViewModel @Inject constructor(
 
     private fun isValidBookletCode(code: String): Boolean {
         return (BOOKLET_REGEX.matches(code) || NEW_BOOKLET_REGEX.matches(code))
+    }
+
+    companion object {
+        private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
+        private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
     }
 
 }

@@ -18,8 +18,8 @@ class ConfirmBeneficiaryViewModel @Inject constructor(
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val isReferralVisibleLD = MutableLiveData<Boolean>()
-    val referralTypeLD = MutableLiveData<ReferralType>()
-    val referralNoteLD = MutableLiveData<String>()
+    val referralTypeLD = MutableLiveData<ReferralType?>()
+    val referralNoteLD = MutableLiveData<String?>()
     val errorLD = MutableLiveData<Int>()
 
     val referralTypes

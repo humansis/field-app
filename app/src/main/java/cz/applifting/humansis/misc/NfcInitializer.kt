@@ -24,10 +24,13 @@ object NfcInitializer {
         }
 
         val pendingIntent = PendingIntent.getActivity(
-            activity, 0,
+            activity,
+            0,
             Intent(activity, activity.javaClass)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            0
         )
+
 
         nfcAdapter.let {
             return if (!it.isEnabled) {

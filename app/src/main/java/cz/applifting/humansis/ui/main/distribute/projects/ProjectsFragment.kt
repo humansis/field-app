@@ -26,8 +26,9 @@ class ProjectsFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_projects, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = getString(R.string.app_name)
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.projects)
 

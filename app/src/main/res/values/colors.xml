@@ -25,6 +25,8 @@
     <color name="stage">#cfe2e2</color>
     <color name="demo">#cfe2cf</color>
 
+    <color name="ic_launcher_background">#074F60</color>
+
     <color name="screenBackgroundColor">@color/lightGrey</color>
     <color name="toastBackgroundColor">@color/darkBlue</color>
 </resources>
