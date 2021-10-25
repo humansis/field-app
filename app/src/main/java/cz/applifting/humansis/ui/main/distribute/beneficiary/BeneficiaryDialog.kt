@@ -427,7 +427,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
         )
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId)
+        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId, beneficiary.remote)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 {   info ->
                     val tag = info.first
@@ -437,7 +437,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()))
+                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), null /** nahradit cardContent.originalBalance**/, cardContent.balance) //TODO zaridit at tam je po zvednuti verze
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 

@@ -69,10 +69,22 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun depositMoneyToCard(value: Double, currency: String, pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+    fun depositMoneyToCard(
+        value: Double,
+        currency: String,
+        pin: String,
+        ownerId: Int,
+        remote: Boolean
+    ): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
-                Pair(tag, it)
+            if (remote) {
+                nfcFacade.rewriteBalanceForUser(tag, value, ownerId.toString(), currency).map{
+                    Pair(tag, it)
+                }
+            } else {
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+                    Pair(tag, it)
+                }
             }
         }
     }
@@ -85,14 +97,16 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun saveCard(cardId: String?, date: String) {
+    fun saveCard(cardId: String?, date: String, originalBalance: Double?, balance: Double) {
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
                     newSmartcard = cardId?.toUpperCase(Locale.US),
                     edited = true,
                     distributed = true,
-                    distributedAt = date
+                    distributedAt = date,
+                    originalBalance = originalBalance,
+                    balance = balance
                 )
 
                 beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
