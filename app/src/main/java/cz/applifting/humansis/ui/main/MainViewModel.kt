@@ -11,7 +11,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.UserBalance
+import cz.quanti.android.nfc.dto.v2.UserBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers

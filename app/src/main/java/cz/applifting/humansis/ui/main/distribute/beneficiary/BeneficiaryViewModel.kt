@@ -10,7 +10,8 @@ import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import cz.quanti.android.nfc.OfflineFacade
-import cz.quanti.android.nfc.dto.UserPinBalance
+import cz.quanti.android.nfc.dto.v2.Deposit
+import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.Single
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -70,26 +71,24 @@ class BeneficiaryViewModel @Inject constructor(
     }
 
     fun depositMoneyToCard(
-        value: Double,
-        currency: String,
-        pin: String,
-        ownerId: Int,
-        remote: Boolean
-    ): Single<Pair<Tag,UserPinBalance>> {
+        pin: Short,
+        remote: Boolean,
+        deposit: Deposit
+    ): Single<Pair<Tag, UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
             if (remote) {
-                nfcFacade.rewriteBalanceForUser(tag, value, ownerId.toString(), currency).map{
+                nfcFacade.rewriteBalanceForUser(tag, deposit).map{
                     Pair(tag, it)
                 }
             } else {
-                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map{
                     Pair(tag, it)
                 }
             }
         }
     }
 
-    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+    fun changePinForCard(pin: Short, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
             nfcFacade.changePinForCard(tag, ownerId.toString(), pin).map{
                 Pair(tag, it)
