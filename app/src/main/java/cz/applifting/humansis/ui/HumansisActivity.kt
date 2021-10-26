@@ -22,6 +22,7 @@ import cz.applifting.humansis.extensions.isWifiConnected
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.model.db.CategoryType
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
@@ -223,14 +224,18 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun showReadBalanceResult(userBalance: UserBalance) {
+    private fun showReadBalanceResult(cardContent: UserBalance) {
         displayedDialog?.dismiss()
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
                 getString(
                     R.string.scanning_card_balance,
-                    "${userBalance.balance} ${userBalance.currencyCode}"
+                    if (cardContent.expirationDate >= Date()) {
+                        "${cardContent.balance} ${cardContent.currencyCode}\n${cardContent.expirationDate}\n${getLimitsAsText(cardContent)}"
+                    } else {
+                        "0.0 ${cardContent.currencyCode}"
+                    }
                 )
             )
             .setCancelable(true)
@@ -242,6 +247,14 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             .create()
         cardResultDialog.show()
         displayedDialog = cardResultDialog
+    }
+
+    private fun getLimitsAsText(cardContent: UserBalance): String {
+        var limits = ""
+        cardContent.limits.map {
+            limits += "${CategoryType.getById(it.key).backendName}: ${it.value} ${cardContent.currencyCode} remaining" // TODO preklad? nebo dat pryc?
+        }
+        return limits
     }
 
     private fun showInitializeCardsDialog() {
