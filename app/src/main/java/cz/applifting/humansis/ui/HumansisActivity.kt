@@ -27,7 +27,7 @@ import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.UserBalance
+import cz.quanti.android.nfc.dto.v2.UserBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
 import quanti.com.kotlinlog.Log
