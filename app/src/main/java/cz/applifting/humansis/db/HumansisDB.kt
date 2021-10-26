@@ -40,10 +40,14 @@ abstract class HumansisDB : RoomDatabase() {
     abstract fun errorsDao(): ErrorDao
 
     companion object {
-        val MIGRATION_20_21 = object : Migration(2, 3) {
+        val MIGRATION_20_21 = object : Migration(20, 21) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE distributions ADD remote INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE beneficiaries ADD originalBalance REAL DEFAULT 0.0")
+                database.execSQL("ALTER TABLE beneficiaries ADD dateExpiration TEXT")
+                database.execSQL("ALTER TABLE beneficiaries ADD foodLimit REAL")
+                database.execSQL("ALTER TABLE beneficiaries ADD nonfoodLimit REAL")
+                database.execSQL("ALTER TABLE beneficiaries ADD cashbackLimit REAL")
+                database.execSQL("ALTER TABLE beneficiaries ADD originalBalance REAL")
                 database.execSQL("ALTER TABLE beneficiaries ADD remote INTEGER NOT NULL DEFAULT 0")
             }
         }
