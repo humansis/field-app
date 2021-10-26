@@ -27,6 +27,7 @@ import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.UserPinBalance
+import cz.quanti.android.nfc.dto.v2.UserBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
 import quanti.com.kotlinlog.Log
@@ -220,14 +221,18 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun showReadBalanceResult(userBalance: UserPinBalance) {
+    private fun showReadBalanceResult(cardContent: UserPinBalance) {
         displayedDialog?.dismiss()
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
                 getString(
                     R.string.scanning_card_balance,
-                    "${userBalance.balance} ${userBalance.currencyCode}"
+                    if (cardContent.expirationDate >= Date()) {
+                        "${cardContent.balance} ${cardContent.currencyCode}\n${cardContent.expirationDate}\n${getLimitsAsText(cardContent)}"
+                    } else {
+                        "0.0 ${cardContent.currencyCode}"
+                    }
                 )
             )
             .setCancelable(true)
@@ -239,6 +244,14 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             .create()
         cardResultDialog.show()
         displayedDialog = cardResultDialog
+    }
+
+    private fun getLimitsAsText(cardContent: UserBalance): String {
+        var limits = ""
+        cardContent.limits.map {
+            limits += "${CategoryType.getById(it.key).backendName}: ${it.value} ${cardContent.currencyCode} remaining" // TODO preklad? nebo dat pryc?
+        }
+        return limits
     }
 
     private fun showInitializeCardsDialog() {
