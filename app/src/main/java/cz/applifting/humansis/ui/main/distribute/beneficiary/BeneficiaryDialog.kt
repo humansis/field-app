@@ -31,6 +31,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.components.TitledTextView
 import cz.applifting.humansis.ui.main.SharedViewModel
+import cz.quanti.android.nfc.dto.v2.Deposit
 import cz.quanti.android.nfc.exception.PINException
 import cz.quanti.android.nfc.exception.PINExceptionEnum
 import cz.quanti.android.nfc.logger.NfcLogger
@@ -253,10 +254,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(
-                    value,
-                    currency,
-                    beneficiary,
                     pin,
+                    beneficiary.remote,
+                    beneficiary.id,
+                    Deposit(
+                        amount = value,
+                        beneficiaryId = beneficiary.beneficiaryId.toString(),
+                        currency = currency,
+                        depositId = beneficiary.distributionId.toLong(),
+                        expirationDate = beneficiary.expirationDate,
+                        limits = beneficiary.limits
+                    ),
                     showScanCardDialog(btn_scan_smartcard)
                 )
             } else {
@@ -309,13 +317,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun generateRandomPin(): String {
-        val first = (0..9).random().toString()
-        val second = (0..9).random().toString()
-        val third = (0..9).random().toString()
-        val fourth = (0..9).random().toString()
+    private fun generateRandomPin(): Short {
+        val first = (0..9).random()
+        val second = (0..9).random()
+        val third = (0..9).random()
+        val fourth = (0..9).random()
 
-        return "${first}${second}${third}${fourth}"
+        return "${first}${second}${third}${fourth}".toShort()
     }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
@@ -392,7 +400,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return cardInitializedDialog
     }
 
-    private fun showCardUpdatedDialog(beneficiary: BeneficiaryLocal, pin: String, message: String?) {
+    private fun showCardUpdatedDialog(beneficiaryLocalId: Int, pin: String, message: String?) {
         AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setTitle(getString((R.string.card_updated)))
             .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
@@ -405,7 +413,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             })
             .setCancelable(true)
             .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
-                showAddReferralInfoDialog(beneficiary)
+                showAddReferralInfoDialog(beneficiaryLocalId)
             }
             .setNegativeButton(getString(R.string.close)){ _, _ ->
                 sharedViewModel.shouldDismissBeneficiaryDialog.call()
@@ -416,18 +424,18 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun writeBalanceOnCard(
-        balance: Double,
-        currency: String,
-        beneficiary: BeneficiaryLocal,
-        pin: String,
+        pin: Short,
+        remote: Boolean,
+        beneficiaryLocalId: Int,
+        deposit: Deposit,
         scanCardDialog: AlertDialog
     ) {
         NfcLogger.d(
             TAG,
-            "writeBalanceOnCard: pin: ${pin}, balance: ${balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: $currency"
+            "writeBalanceOnCard: pin: $pin, remote: $remote, deposit: $deposit"
         )
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(balance, currency, pin, beneficiary.beneficiaryId, beneficiary.remote)
+        disposable = viewModel.depositMoneyToCard(pin, remote, deposit)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 {   info ->
                     val tag = info.first
@@ -442,10 +450,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     showCardUpdatedDialog(
-                        beneficiary,
+                        beneficiaryLocalId,
                         getString(
                             R.string.scanning_card_pin,
-                            cardContent.pin
+                            cardContent.pin.toString()
                         ),
                         getString(
                             R.string.scanning_card_balance,
@@ -454,7 +462,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     )
                     NfcLogger.d(
                         TAG,
-                        "writtenBalanceOnCard: pin: ${cardContent.pin}, balance: ${cardContent.balance}, beneficiaryId: ${beneficiary.beneficiaryId}, currencyCode: ${cardContent.currencyCode}"
+                        "writtenBalanceOnCard: cardContent: $cardContent"
                     )
                 },
                 {
@@ -469,10 +477,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                 PINExceptionEnum.CARD_INITIALIZED -> {
                                     if (NfcInitializer.initNfc(requireActivity())) {
                                         writeBalanceOnCard(
-                                            balance,
-                                            currency,
-                                            beneficiary,
                                             pin,
+                                            remote,
+                                            beneficiaryLocalId,
+                                            deposit,
                                             showCardInitializedDialog()
                                         )
                                     }
@@ -506,7 +514,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             )
     }
 
-    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: String, scanCardDialog: AlertDialog) {
+    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: Short, scanCardDialog: AlertDialog) {
         disposable?.dispose()
         disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -517,10 +525,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     scanCardDialog.dismiss()
 
                     showCardUpdatedDialog(
-                        beneficiary,
+                        beneficiary.id,
                         getString(
                             R.string.changing_pin_result,
-                            cardContent.pin
+                            cardContent.pin.toString()
                         ),
                 null
                     )
@@ -652,11 +660,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         )
     }
 
-    private fun showAddReferralInfoDialog(beneficiaryLocal: BeneficiaryLocal) {
+    private fun showAddReferralInfoDialog(beneficiaryLocalId: Int) {
         tryNavigate(
             R.id.beneficiaryDialog,
             BeneficiaryDialogDirections.actionBeneficiaryDialogToAddReferralInfoDialog(
-                beneficiaryLocal.id
+                beneficiaryLocalId
             )
         )
     }
