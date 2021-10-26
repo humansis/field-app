@@ -475,7 +475,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            NfcLogger.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
+                            NfcLogger.e(this.javaClass.simpleName, "${ex.pinExceptionEnum.name} tagId: ${ex.tagId}")
                             when (ex.pinExceptionEnum) {
                                 PINExceptionEnum.CARD_INITIALIZED -> {
                                     if (NfcInitializer.initNfc(requireActivity())) {
@@ -489,7 +489,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     }
                                 }
                                 else -> {
-                                    Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                                     Toast.makeText(
                                         requireContext(),
                                         NfcCardErrorMessage.getNfcCardErrorMessage(
