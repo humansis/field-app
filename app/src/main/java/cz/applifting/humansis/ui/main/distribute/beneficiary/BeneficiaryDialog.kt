@@ -23,6 +23,7 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.misc.DateUtil
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.model.CommodityType
@@ -252,13 +253,22 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             btn_scan_smartcard.isEnabled = false
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
-                writeBalanceOnCard(
-                    value,
-                    currency,
-                    beneficiary,
-                    pin,
-                    showScanCardDialog(btn_scan_smartcard)
-                )
+                DateUtil.stringToDate(beneficiary.dateExpiration)?.let { date ->
+                    writeBalanceOnCard(
+                        pin,
+                        beneficiary.remote,
+                        beneficiary.id,
+                        Deposit(
+                            amount = value,
+                            beneficiaryId = beneficiary.beneficiaryId.toString(),
+                            currency = currency,
+                            depositId = beneficiary.distributionId.toLong(),
+                            expirationDate = date,
+                            limits = beneficiary.getLimits()
+                        ),
+                        showScanCardDialog(btn_scan_smartcard)
+                    )
+                }
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
                 btn_scan_smartcard.isEnabled = true
