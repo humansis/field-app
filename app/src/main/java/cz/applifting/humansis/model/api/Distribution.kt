@@ -1,5 +1,6 @@
 package cz.applifting.humansis.model.api
 
+import com.google.gson.annotations.SerializedName
 import cz.applifting.humansis.model.Target
 
 /**
@@ -14,7 +15,7 @@ data class Distribution (
     val validated : Boolean,
     val type : Target,
     val commodities : List<Commodity>,
-    val numberOfBeneficiaries: Int,
+    @SerializedName("beneficiaries_count") val numberOfBeneficiaries: Int,
     val completed : Boolean,
     val remoteDistributionAllowed: Boolean,
     val foodLimit: Double?,
