@@ -37,22 +37,25 @@
     </fragment>
 
     <fragment
-            android:id="@+id/beneficiariesFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment">
+        android:id="@+id/beneficiariesFragment"
+        android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment">
         <argument
-                android:name="distributionId"
-                app:argType="integer" />
+            android:name="distributionId"
+            app:argType="integer" />
         <argument
-                android:name="distributionName"
-                app:argType="string" />
+            android:name="distributionName"
+            app:argType="string" />
         <argument
-                android:name="projectName"
-                app:argType="string" />
+            android:name="projectName"
+            app:argType="string" />
         <argument
-                android:name="isQRVoucherDistribution"
-                app:argType="boolean" />
+            android:name="isQRVoucherDistribution"
+            app:argType="boolean" />
         <argument
             android:name="isSmartcardDistribution"
+            app:argType="boolean" />
+        <argument
+            android:name="isRemoteDistribution"
             app:argType="boolean" />
         <action
                 android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"

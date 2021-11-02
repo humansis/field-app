@@ -76,7 +76,7 @@ class DistributionsAdapter(
         fun bind(distributionItemWrapper: DistributionItemWrapper) = with(distributionItemWrapper.distribution) {
 
             // Set text fields
-            tvName.text = name
+            tvName.text = if (remote) { context.getString(R.string.remote, name ) } else { name }
             tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution ?: context.getString(R.string.unknown))
             tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llComoditiesHolder.removeAllViews()

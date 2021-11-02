@@ -165,4 +165,5 @@
     <string name="environment">Environment: %1$s</string>
     <string name="error_expired_password">You must login to web app and change password</string>
     <string name="email">Email</string>
+    <string name="remote">REMOTE: %1$s</string>
 </resources>

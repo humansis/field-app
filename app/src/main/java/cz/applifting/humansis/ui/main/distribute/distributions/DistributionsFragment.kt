@@ -40,7 +40,8 @@ class DistributionsFragment : BaseFragment() {
                     distribution.name,
                     args.projectName,
                     isQRVoucherDistribution = distribution.isQRVoucherDistribution,
-                    isSmartcardDistribution = distribution.isSmartcardDistribution
+                    isSmartcardDistribution = distribution.isSmartcardDistribution,
+                    isRemoteDistribution = distribution.remote
                 )
                 this.findNavController().navigate(action)
             }
