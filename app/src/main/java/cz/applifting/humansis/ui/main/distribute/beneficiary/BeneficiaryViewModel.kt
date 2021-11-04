@@ -90,7 +90,7 @@ class BeneficiaryViewModel @Inject constructor(
 
     fun changePinForCard(pin: Short, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.changePinForCard(tag, ownerId.toString(), pin).map{
+            nfcFacade.changePinForCard(tag, ownerId, pin).map{
                 Pair(tag, it)
             }
         }

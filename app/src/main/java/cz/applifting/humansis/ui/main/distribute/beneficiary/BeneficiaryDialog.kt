@@ -254,22 +254,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             btn_scan_smartcard.isEnabled = false
             if(NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
-                DateUtil.stringToDate(beneficiary.dateExpiration)?.let { date ->
-                    writeBalanceOnCard(
-                        pin,
-                        beneficiary.remote,
-                        beneficiary.id,
-                        Deposit(
-                            amount = value,
-                            beneficiaryId = beneficiary.beneficiaryId.toString(),
-                            currency = currency,
-                            depositId = beneficiary.distributionId.toLong(),
-                            expirationDate = date,
-                            limits = beneficiary.getLimits()
-                        ),
-                        showScanCardDialog(btn_scan_smartcard)
-                    )
-                }
+                writeBalanceOnCard(
+                    pin,
+                    beneficiary.remote,
+                    beneficiary.id,
+                    Deposit(
+                        amount = value,
+                        beneficiaryId = beneficiary.beneficiaryId,
+                        currency = currency,
+                        depositId = beneficiary.distributionId,
+                        expirationDate = DateUtil.stringToDate(beneficiary.dateExpiration),
+                        limits = beneficiary.getLimits()
+                    ),
+                    showScanCardDialog(btn_scan_smartcard)
+                )
             } else {
                 btn_scan_smartcard.text = getString(R.string.no_nfc_available)
                 btn_scan_smartcard.isEnabled = true
@@ -448,7 +446,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), null /** nahradit cardContent.originalBalance**/, cardContent.balance) //TODO zaridit at tam je po zvednuti verze
+                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), null /** nahradit cardContent.originalBalance**/, cardContent.balance) //TODO zaridit at tam je originalBalance po zvednuti verze
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 

@@ -42,7 +42,7 @@
     <string name="sync">ውሂብን አመሳስል</string>
     <string name="revert">ምደባን ቀልብስ</string>
     <string name="logout_alert_text">እርግጠኛ ነዎት ዘግተው መውጣት ይፈልጋሉ? ሁሉም የትግበራ መረጃዎች ይሰረዛሉ</string>
-    <string name="humansis_id_format">የሰው ልጅ መታወቂያ%1$d</string>
+    <string name="humansis_id_formatted">የሰው ልጅ መታወቂያ%1$d</string>
     <string name="country">ሀገር</string>
     <string name="settings_country_update_success">ሀገር ተሸሽልል</string>
     <string name="settings_country_update_error">ልክ ያልሆነ የ ISO3 ኮድ</string>

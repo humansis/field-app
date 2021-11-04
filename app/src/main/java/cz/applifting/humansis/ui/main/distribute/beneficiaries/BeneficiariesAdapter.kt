@@ -76,7 +76,7 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvHumansisId.text = view.context.getString(R.string.humansis_id_format, beneficiaryLocal.beneficiaryId)
+            tvHumansisId.text = view.context.getString(R.string.humansis_id_formatted, beneficiaryLocal.beneficiaryId)
             tvNationalId.visible(beneficiaryLocal.nationalId != null)
             tvNationalId.text = view.context.getString(R.string.national_id, beneficiaryLocal.nationalId)
 

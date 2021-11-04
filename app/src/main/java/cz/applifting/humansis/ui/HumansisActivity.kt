@@ -19,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.isWifiConnected
+import cz.applifting.humansis.misc.DateUtil
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
@@ -226,15 +227,18 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
     private fun showReadBalanceResult(cardContent: UserBalance) {
         displayedDialog?.dismiss()
+        val expirationDate = cardContent.expirationDate
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
                 getString(
                     R.string.scanning_card_balance,
-                    if (cardContent.expirationDate >= Date()) {
-                        "${cardContent.balance} ${cardContent.currencyCode}\n${cardContent.expirationDate}\n${getLimitsAsText(cardContent)}"
-                    } else {
+                    if (expirationDate != null && expirationDate < Date()) {
                         "0.0 ${cardContent.currencyCode}"
+                    } else {
+                        "${cardContent.balance} ${cardContent.currencyCode}" +
+                        getExpirationDateAsString(expirationDate) +
+                        getLimitsAsText(cardContent)
                     }
                 )
             )
@@ -249,10 +253,21 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         displayedDialog = cardResultDialog
     }
 
+    private fun getExpirationDateAsString(expirationDate: Date?): String {
+        return if (expirationDate != null) {
+            getString(
+                R.string.expiration_date_formatted,
+                DateUtil.dateToString(expirationDate, this)
+            )
+        } else {
+            ""
+        }
+    }
+
     private fun getLimitsAsText(cardContent: UserBalance): String {
         var limits = ""
         cardContent.limits.map {
-            limits += "${CategoryType.getById(it.key).backendName}: ${it.value} ${cardContent.currencyCode} remaining" // TODO preklad? nebo dat pryc?
+            limits += getString(R.string.product_type_limit_formatted, CategoryType.getById(it.key).backendName, it.value, cardContent.currencyCode)
         }
         return limits
     }
