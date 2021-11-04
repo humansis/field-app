@@ -446,7 +446,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), null /** nahradit cardContent.originalBalance**/, cardContent.balance) //TODO zaridit at tam je originalBalance po zvednuti verze
+                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), cardContent.originalBalance, cardContent.balance)
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
 
