@@ -449,12 +449,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), cardContent.originalBalance, cardContent.balance)
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
-
                     showCardUpdatedDialog(
                         beneficiaryLocalId,
                         getString(
                             R.string.scanning_card_pin,
-                            cardContent.pin.toString()
+                            cardContent.pin.toString().padStart(4, '0')
                         ),
                         getString(
                             R.string.scanning_card_balance,
