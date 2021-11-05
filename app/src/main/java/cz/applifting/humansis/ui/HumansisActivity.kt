@@ -234,7 +234,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
                 getString(
                     R.string.scanning_card_balance,
                     if (expirationDate != null && expirationDate < Date()) {
-                        "0.0 ${cardContent.currencyCode}"
+                        "${0.0} ${cardContent.currencyCode}"
                     } else {
                         "${cardContent.balance} ${cardContent.currencyCode}" +
                         getExpirationDateAsString(expirationDate) +
@@ -267,7 +267,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     private fun getLimitsAsText(cardContent: UserBalance): String {
         var limits = ""
         cardContent.limits.map {
-            limits += getString(R.string.product_type_limit_formatted, CategoryType.getById(it.key).backendName, it.value, cardContent.currencyCode)
+            limits += getString(R.string.product_type_limit_formatted, CategoryType.getById(it.key).backendName, "${it.value} ${cardContent.currencyCode}")
         }
         return limits
     }

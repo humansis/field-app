@@ -165,7 +165,7 @@
     <string name="error_expired_password">You must login to web app and change password</string>
     <string name="email">Email</string>
     <string name="remote">REMOTE: %1$s</string>
-    <string name="scanning_card_balance">Total Balance: %1$s</string> <!-- do not forget this changed-->
-    <string name="expiration_date_formatted">\nExpiration Date: %1$s</string>
-    <string name="product_type_limit_formatted">\n%1$s: %2$.2f %3$s remaining</string>
+    <string name="scanning_card_balance">Total balance: %1$s</string> <!-- do not forget this changed-->
+    <string name="expiration_date_formatted">\nExpiration date: %1$s</string>
+    <string name="product_type_limit_formatted">\n%1$s: %2$s remaining</string>
 </resources>
