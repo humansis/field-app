@@ -26,6 +26,8 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
+import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
+import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
@@ -457,7 +459,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         ),
                         getString(
                             R.string.scanning_card_balance,
-                            "${cardContent.balance} ${cardContent.currencyCode}"
+                            "${cardContent.balance} ${cardContent.currencyCode}" +
+                                if(cardContent.balance != 0.0) {
+                                    getExpirationDateAsString(cardContent.expirationDate, requireContext()) +
+                                        getLimitsAsText(cardContent.limits, cardContent.currencyCode, requireContext())
+                                } else {
+                                    String()
+                                }
                         )
                     )
                     NfcLogger.d(
@@ -527,7 +535,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         beneficiary.id,
                         getString(
                             R.string.changing_pin_result,
-                            cardContent.pin.toString()
+                            cardContent.pin.toString().padStart(4, '0')
                         ),
                 null
                     )
