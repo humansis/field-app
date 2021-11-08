@@ -43,12 +43,17 @@ abstract class HumansisDB : RoomDatabase() {
         val MIGRATION_20_21 = object : Migration(20, 21) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE distributions ADD remote INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE distributions ADD dateOfExpiration TEXT")
+                database.execSQL("ALTER TABLE distributions ADD foodLimit REAL")
+                database.execSQL("ALTER TABLE distributions ADD nonfoodLimit REAL")
+                database.execSQL("ALTER TABLE distributions ADD cashbackLimit REAL")
+                database.execSQL("ALTER TABLE beneficiaries ADD remote INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE beneficiaries ADD dateExpiration TEXT")
                 database.execSQL("ALTER TABLE beneficiaries ADD foodLimit REAL")
                 database.execSQL("ALTER TABLE beneficiaries ADD nonfoodLimit REAL")
                 database.execSQL("ALTER TABLE beneficiaries ADD cashbackLimit REAL")
                 database.execSQL("ALTER TABLE beneficiaries ADD originalBalance REAL")
-                database.execSQL("ALTER TABLE beneficiaries ADD remote INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE beneficiaries ADD balance REAL")
             }
         }
     }
