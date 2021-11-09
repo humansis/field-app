@@ -168,4 +168,7 @@
     <string name="scanning_card_balance">Total balance: %1$s</string>
     <string name="expiration_date_formatted">\nExpiration date: %1$s</string>
     <string name="product_type_limit_formatted">\n%1$s: %2$s remaining</string>
+    <string name="food">Food</string>
+    <string name="nonfood">Non-food</string>
+    <string name="cashback">Cashback</string>
 </resources>

@@ -20,8 +20,14 @@ object SmartcardUtilities {
 
     fun getLimitsAsText(mapOfLimits: Map<Int, Double>, currencyCode: String, context: Context): String {
         var limits = String()
-        mapOfLimits.map {
-            limits += context.getString(R.string.product_type_limit_formatted, CategoryType.getById(it.key).backendName, "${it.value} $currencyCode")
+        mapOfLimits.map { entry ->
+            CategoryType.getById(entry.key).stringRes?.let { stringRes ->
+                limits += context.getString(
+                    R.string.product_type_limit_formatted,
+                    context.getString(stringRes),
+                    "${entry.value} $currencyCode"
+                )
+            }
         }
         return limits
     }

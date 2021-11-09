@@ -142,7 +142,7 @@
     <string name="ETH">أثيوبيا</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="scanning_card_pin">ارقم التعريف الشخصي: %1$s</string>
-    <string name="scanning_card_balance">رصيد البطاقة: %1$s</string>
+    <string name="scanning_card_balance">إجمالي الرصيد:%1$s</string>
     <string name="change_pin">تغيير رقم التعريف</string>
     <string name="changing_pin_result">رقم التعريف الشخصي الجديد: %1$s</string>
     <string name="card_updated">تم تحديث البطاقة</string>
@@ -159,7 +159,15 @@
     <string name="card_initialized">تمت تهيئة البطاقة بنجاح</string>
     <string name="scan_card_again">يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="read_balance">قراءة الرصيد</string>
-    <string name="version">الإصدار \\u200f%1$s\\u200f</string>
+    <string name="version">الاصدار%1$s</string>
     <string name="humansis_id">رقم الهوية الخاص بالتطبيق</string>
     <string name="email">البريد الالكتروني</string>
+    <string name="error_expired_password">يجب عليك تسجيل الدخول إلى تطبيق الويب وتغيير كلمة المرور</string>
+    <string name="environment">البيئة:%1$s</string>
+    <string name="remote">عن بعد:%1$s</string>
+    <string name="expiration_date_formatted">\nتاريخ انتهاء الصلاحية:%1$s</string>
+    <string name="food">مواد غذائية</string>
+    <string name="nonfood">مواد غيرغذائية</string>
+    <string name="cashback">مبلغ مالي</string>
+    <string name="product_type_limit_formatted">\n%1$s: %2$s متبقي</string>
 </resources>
