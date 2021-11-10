@@ -28,8 +28,7 @@ import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
-import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.v2.UserBalance
+import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
 import quanti.com.kotlinlog.Log
@@ -48,8 +47,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     lateinit var sp: SharedPreferences
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var pinFacade: PINFacade
 
     private val vm: MainViewModel by viewModels { viewModelFactory }
 
@@ -225,7 +222,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun showReadBalanceResult(cardContent: UserBalance) {
+    private fun showReadBalanceResult(cardContent: UserPinBalance) {
         displayedDialog?.dismiss()
         val expirationDate = cardContent.expirationDate
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
