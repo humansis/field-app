@@ -321,7 +321,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun generateRandomPin(): Short {
-        val first = (1..9).random()
+        val first = (0..9).random()
         val second = (0..9).random()
         val third = (0..9).random()
         val fourth = (0..9).random()
