@@ -68,7 +68,7 @@ class BeneficiaryViewModel @Inject constructor(
     }
 
     fun depositMoneyToCard(
-        pin: Short,
+        pin: String,
         remote: Boolean,
         deposit: Deposit
     ): Single<Pair<Tag, UserPinBalance>> {
@@ -85,7 +85,7 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun changePinForCard(pin: Short, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
             nfcFacade.changePinForCard(tag, ownerId, pin).map{
                 Pair(tag, it)

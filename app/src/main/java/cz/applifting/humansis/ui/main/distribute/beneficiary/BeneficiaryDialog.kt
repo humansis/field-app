@@ -324,13 +324,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun generateRandomPin(): Short {
+    private fun generateRandomPin(): String {
         val first = (0..9).random()
         val second = (0..9).random()
         val third = (0..9).random()
         val fourth = (0..9).random()
 
-        return "${first}${second}${third}${fourth}".toShort()
+        return "${first}${second}${third}${fourth}"
     }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
@@ -431,7 +431,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun writeBalanceOnCard(
-        pin: Short,
+        pin: String,
         remote: Boolean,
         beneficiaryLocalId: Int,
         deposit: Deposit,
@@ -459,7 +459,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         beneficiaryLocalId,
                         getString(
                             R.string.scanning_card_pin,
-                            cardContent.pin.toString().padStart(4, '0')
+                            cardContent.pin
                         ),
                         getString(
                             R.string.scanning_card_balance,
@@ -525,7 +525,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             )
     }
 
-    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: Short, scanCardDialog: AlertDialog) {
+    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: String, scanCardDialog: AlertDialog) {
         disposable?.dispose()
         disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -539,7 +539,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         beneficiary.id,
                         getString(
                             R.string.changing_pin_result,
-                            cardContent.pin.toString().padStart(4, '0')
+                            cardContent.pin
                         ),
                 null
                     )
