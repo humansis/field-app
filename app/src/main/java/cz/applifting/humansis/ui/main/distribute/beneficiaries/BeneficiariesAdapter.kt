@@ -78,7 +78,7 @@ class BeneficiariesAdapter(
 
             tvHumansisId.text = view.context.getString(R.string.humansis_id_format, beneficiaryLocal.beneficiaryId)
             tvNationalId.visible(beneficiaryLocal.nationalId != null)
-            tvNationalId.text = view.context.getString(R.string.national_id, beneficiaryLocal.nationalId)
+            tvNationalId.text = view.context.getString(R.string.national_id_format, beneficiaryLocal.nationalId)
 
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
