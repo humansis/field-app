@@ -60,6 +60,8 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+
         setContentView(R.layout.activity_humansis)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -71,8 +73,15 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         setUpObservers()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart")
+    }
+
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume")
+
         enqueueSynchronization()
 
         val filter = IntentFilter()
@@ -83,20 +92,24 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
     override fun onPause() {
         NfcInitializer.disableForegroundDispatch(this)
+        Log.d(TAG, "onPause")
         super.onPause()
     }
 
     override fun onStop() {
         dispose()
+        Log.d(TAG, "onStop")
         super.onStop()
     }
 
     override fun onDestroy() {
         unregisterReceiver(networkChangeReceiver)
+        Log.d(TAG, "onDestroy")
         super.onDestroy()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onNavigationItemSelected $item")
         val mainNavController = Navigation.findNavController(this, R.id.nav_host_fragment)
         when (item.itemId) {
             R.id.action_read_balance -> {
@@ -117,6 +130,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     }
 
     override fun onBackPressed() {
+        Log.d(TAG, "onBackPressed")
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment_base)
         if (navController.currentDestination?.id == R.id.mainFragment && drawer.isDrawerOpen(GravityCompat.START)) {
@@ -218,8 +232,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             readBalanceDisposable = null
             readBalanceDisposable = vm.readBalance()
 
-        } else {
-            noNfcAvailable()
         }
     }
 
@@ -259,9 +271,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
             scanCardDialog?.show()
             displayedDialog = scanCardDialog
             initializeCard()
-
-        } else {
-            noNfcAvailable()
         }
     }
 
@@ -290,20 +299,15 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun noNfcAvailable() {
-        getString(R.string.no_nfc_available)
-        Toast.makeText(
-            this,
-            getString(R.string.no_nfc_available),
-            Toast.LENGTH_LONG
-        ).show()
-    }
-
     private fun dispose() {
         displayedDialog?.dismiss()
         initializeCardDisposable?.dispose()
         initializeCardDisposable = null
         readBalanceDisposable?.dispose()
         readBalanceDisposable = null
+    }
+
+    companion object {
+        private val TAG = HumansisActivity::class.java.simpleName
     }
 }
