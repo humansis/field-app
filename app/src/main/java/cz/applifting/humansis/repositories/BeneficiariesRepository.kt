@@ -41,6 +41,11 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
+                    remote = distribution?.remote ?: false,
+                    dateExpiration = distribution?.dateOfExpiration,
+                    foodLimit = distribution?.foodLimit,
+                    nonfoodLimit = distribution?.nonfoodLimit,
+                    cashbackLimit = distribution?.cashbackLimit,
                     nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
                     originalReferralType = it.beneficiary.referral?.type,
                     originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
@@ -134,7 +139,17 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             val value = beneficiaryLocal.commodities
                 ?.findLast { it.type == CommodityType.SMARTCARD }
                 ?.value ?: 1.0
-            distributeSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.distributionId, value, time, beneficiaryLocal.beneficiaryId)
+            beneficiaryLocal.balance?.let { balance ->
+                distributeSmartcard(
+                    beneficiaryLocal.newSmartcard,
+                    beneficiaryLocal.distributionId,
+                    value,
+                    time,
+                    beneficiaryLocal.beneficiaryId,
+                    beneficiaryLocal.originalBalance,
+                    balance
+                )
+            } ?: throw Exception("Beneficiary ${beneficiaryLocal.id} has empty balance after distribution")
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
@@ -168,12 +183,14 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, value: Double, date: String, beneficiaryId: Int) {
+    private suspend fun distributeSmartcard(code: String, distributionId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
         service.distributeSmartcard(code, DistributeSmartcardRequest(
             distributionId = distributionId,
             value = value,
             createdAt = date,
-            beneficiaryId = beneficiaryId
+            beneficiaryId = beneficiaryId,
+            balanceBefore = balanceBefore,
+            balanceAfter = balanceAfter
         ))
     }
 

@@ -41,7 +41,11 @@ class BeneficiariesFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as HumansisActivity).supportActionBar?.title = args.distributionName
+        (activity as HumansisActivity).supportActionBar?.title = if (args.isRemoteDistribution) {
+            getString(R.string.remote, args.distributionName )
+        } else {
+            args.distributionName
+        }
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewAdapter = BeneficiariesAdapter { beneficiary ->

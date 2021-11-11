@@ -22,12 +22,13 @@ import cz.applifting.humansis.extensions.isWifiConnected
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
+import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
-import cz.quanti.android.nfc.PINFacade
-import cz.quanti.android.nfc.dto.UserBalance
+import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
 import quanti.com.kotlinlog.Log
@@ -46,8 +47,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
     lateinit var sp: SharedPreferences
     @Inject
     lateinit var nfcTagPublisher: NfcTagPublisher
-    @Inject
-    lateinit var pinFacade: PINFacade
 
     private val vm: MainViewModel by viewModels { viewModelFactory }
 
@@ -235,14 +234,21 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun showReadBalanceResult(userBalance: UserBalance) {
+    private fun showReadBalanceResult(cardContent: UserPinBalance) {
         displayedDialog?.dismiss()
+        val expirationDate = cardContent.expirationDate
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
                 getString(
                     R.string.scanning_card_balance,
-                    "${userBalance.balance} ${userBalance.currencyCode}"
+                    if ((expirationDate != null && expirationDate < Date()) || cardContent.balance == 0.0) {
+                        "${0.0} ${cardContent.currencyCode}"
+                    } else {
+                        "${cardContent.balance} ${cardContent.currencyCode}" +
+                        getExpirationDateAsString(expirationDate, this) +
+                        getLimitsAsText(cardContent.limits, cardContent.currencyCode, this)
+                    }
                 )
             )
             .setCancelable(true)

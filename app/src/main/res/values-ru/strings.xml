@@ -41,7 +41,7 @@
     <string name="sync">Синхронизировать данные</string>
     <string name="revert">Отменить задачу.</string>
     <string name="logout_alert_text">Вы уверены, что хотите выйти? Все данные приложений будут удалены.</string>
-    <string name="humansis_id_format">Humansis ID: %1$d</string>
+    <string name="humansis_id_formatted">Humansis ID: %1$d</string>
     <string name="country">Страна</string>
     <string name="settings_country_update_success">Информация о стране обновлена</string>
     <string name="settings_country_update_error">Неверный  ISO3 код.</string>
@@ -149,7 +149,6 @@
     <string name="ETH">ETH</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="scanning_card_pin">пин-код : %1$s</string>
-    <string name="scanning_card_balance">баланс по карте: %1$s</string>
     <string name="change_pin">изменить пин-код</string>
     <string name="changing_pin_result">новый пин-код: %1$s</string>
     <string name="card_updated">карта обновлена</string>

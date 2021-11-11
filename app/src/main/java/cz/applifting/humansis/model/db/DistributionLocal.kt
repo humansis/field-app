@@ -25,9 +25,14 @@ data class DistributionLocal(
     val numberOfBeneficiaries: Int,
     val commodities: List<CommodityLocal>,
     val dateOfDistribution: String?,
+    val dateOfExpiration: String?,
     val projectId: Int,
     val target: Target,
-    var completed: Boolean
+    var completed: Boolean,
+    val remote: Boolean,
+    val foodLimit: Double?,
+    val nonfoodLimit: Double?,
+    val cashbackLimit: Double?
 ) {
     val isQRVoucherDistribution: Boolean
         get() = commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER }

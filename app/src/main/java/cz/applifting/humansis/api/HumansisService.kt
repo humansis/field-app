@@ -38,6 +38,6 @@ interface HumansisService {
     @PATCH("v1/smartcards/{serialNumber}")
     suspend fun deactivateSmartcard(@Path("serialNumber") serialNumber: String, @Body deactivateSmartcardRequest: DeactivateSmartcardRequest)
 
-    @PATCH("v3/smartcards/{serialNumber}/deposit")
+    @POST("v4/smartcards/{serialNumber}/deposit")
     suspend fun distributeSmartcard(@Path("serialNumber") serialNumber: String, @Body distributeSmartcardRequest: DistributeSmartcardRequest)
 }

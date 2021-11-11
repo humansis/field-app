@@ -45,7 +45,7 @@
     <string name="revert">Undo Assignment</string>
     <string name="logout_alert_text">Are you sure you want to log out? All application data will be erased.</string>
     <string name="humansis_id">Humansis ID</string>
-    <string name="humansis_id_format">Humansis ID: %1$d</string>
+    <string name="humansis_id_formatted">Humansis ID: %1$d</string>
     <string name="country">Country</string>
     <string name="settings_country_update_success">Country updated</string>
     <string name="settings_country_update_error">Invalid ISO3 code</string>
@@ -150,7 +150,6 @@
     <string name="logs_dialog_message">Would you like to share logs?</string>
     <string name="logs_dialog_email_button">Share</string>
     <string name="scanning_card_pin">PIN: %1$s</string>
-    <string name="scanning_card_balance">Card Balance: %1$s</string>
     <string name="change_pin">Change Pin</string>
     <string name="changing_pin_result">New PIN: %1$s</string>
     <string name="menu">menu</string>
@@ -162,8 +161,15 @@
     <string name="scan_another_card">Scan another card</string>
     <string name="card_initialized">Card was successfully initialized</string>
     <string name="scan_card_again">Please scan the card again.</string>
-    <string name="version">v%1$s</string>
-    <string name="environment">Environment: %1$s</string>
-    <string name="error_expired_password">You must login to web app and change password</string>
     <string name="email">Email</string>
+    <string name="version">v%1$s</string>
+    <string name="error_expired_password">You must login to web app and change password</string>
+    <string name="environment">Environment: %1$s</string>
+    <string name="remote">REMOTE: %1$s</string>
+    <string name="scanning_card_balance">Total balance: %1$s</string>
+    <string name="expiration_date_formatted">\nExpiration date: %1$s</string>
+    <string name="product_type_limit_formatted">\n%1$s: %2$s remaining</string>
+    <string name="food">Food</string>
+    <string name="nonfood">Non-food</string>
+    <string name="cashback">Cashback</string>
 </resources>

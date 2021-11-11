@@ -3,6 +3,7 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.equalsIgnoreEmpty
 import cz.applifting.humansis.model.ReferralType
 
@@ -37,11 +38,18 @@ data class BeneficiaryLocal(
     val newSmartcard: String?,
     val edited: Boolean,
     val commodities: List<CommodityLocal>?,
+    val remote: Boolean,
+    val dateExpiration: String?,
+    val foodLimit: Double?,
+    val nonfoodLimit: Double?,
+    val cashbackLimit: Double?,
     val nationalId: String?,
     val originalReferralType: ReferralType?,
     val originalReferralNote: String?,
     val referralType: ReferralType? = null,
-    val referralNote: String? = null
+    val referralNote: String? = null,
+    val originalBalance: Double? = null,
+    val balance: Double? = null
 ) {
     private val isReferralTypeChanged
         get() = originalReferralType != referralType
@@ -54,4 +62,40 @@ data class BeneficiaryLocal(
 
     val hasReferral
     get() = referralType != null || !referralNote.isNullOrEmpty()
+
+    fun getLimits(): Map<Int,Double> {
+        val limits = mutableMapOf<Int, Double>()
+        this.foodLimit?.let {
+            limits[CategoryType.FOOD.typeId] = it
+        }
+        this.nonfoodLimit?.let {
+            limits[CategoryType.NONFOOD.typeId] = it
+        }
+        this.cashbackLimit?.let {
+            limits[CategoryType.CASHBACK.typeId] = it
+        }
+        return limits
+    }
+}
+
+enum class CategoryType(
+    val typeId: Int,
+    val backendName: String?,
+    val stringRes: Int?
+) {
+    ALL(0, null, null),
+    FOOD (1, "Food", R.string.food),
+    NONFOOD (2, "Non-Food", R.string.nonfood),
+    CASHBACK (3, "Cashback", R.string.cashback),
+    OTHER(4, null, null);
+
+    companion object {
+        fun getByName(backendName: String): CategoryType {
+            return values().find { it.backendName == backendName } ?: OTHER
+        }
+
+        fun getById(id: Int): CategoryType {
+            return values().find { it.typeId == id } ?: OTHER
+        }
+    }
 }

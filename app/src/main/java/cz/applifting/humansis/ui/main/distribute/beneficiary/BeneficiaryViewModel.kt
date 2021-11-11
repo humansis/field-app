@@ -10,7 +10,8 @@ import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import cz.quanti.android.nfc.OfflineFacade
-import cz.quanti.android.nfc.dto.UserPinBalance
+import cz.quanti.android.nfc.dto.v2.Deposit
+import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.Single
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -40,9 +41,6 @@ class BeneficiaryViewModel @Inject constructor(
     var isAssignedInOtherDistribution: Boolean = false
     private set
 
-    private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
-    private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
-
     fun initBeneficiary(id: Int) {
         launch {
             beneficiariesRepository.getBeneficiaryOfflineFlow(id)
@@ -69,30 +67,42 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun depositMoneyToCard(value: Double, currency: String, pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
+    fun depositMoneyToCard(
+        pin: String,
+        remote: Boolean,
+        deposit: Deposit
+    ): Single<Pair<Tag, UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, value, ownerId.toString(), currency).map{
-                Pair(tag, it)
+            if (remote) {
+                nfcFacade.rewriteBalanceForUser(tag, deposit).map{
+                    Pair(tag, it)
+                }
+            } else {
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map{
+                    Pair(tag, it)
+                }
             }
         }
     }
 
     fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.changePinForCard(tag, ownerId.toString(), pin).map{
+            nfcFacade.changePinForCard(tag, ownerId, pin).map{
                 Pair(tag, it)
             }
         }
     }
 
-    fun saveCard(cardId: String?, date: String) {
+    fun saveCard(cardId: String?, date: String, originalBalance: Double?, balance: Double) {
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
                     newSmartcard = cardId?.toUpperCase(Locale.US),
                     edited = true,
                     distributed = true,
-                    distributedAt = date
+                    distributedAt = date,
+                    originalBalance = originalBalance,
+                    balance = balance
                 )
 
                 beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
@@ -135,6 +145,11 @@ class BeneficiaryViewModel @Inject constructor(
 
     private fun isValidBookletCode(code: String): Boolean {
         return (BOOKLET_REGEX.matches(code) || NEW_BOOKLET_REGEX.matches(code))
+    }
+
+    companion object {
+        private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
+        private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
     }
 
 }

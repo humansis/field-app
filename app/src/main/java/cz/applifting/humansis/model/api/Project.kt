@@ -11,7 +11,7 @@ data class Project(
     @SerializedName("start_date") val startDate: String?,
     @SerializedName("end_date") val endDate: String?,
     @SerializedName("number_of_households") val numberOfHouseholds: Int?,
-    val target: Int?,
+    val target: Long?,
     val notes: String?,
     val iso3: String?,
     val donors: List<Any>?,
