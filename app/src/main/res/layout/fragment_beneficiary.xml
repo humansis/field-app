@@ -242,7 +242,7 @@
                     app:titled_text_view_title="@string/humansis_id"  />
 
                 <cz.applifting.humansis.ui.components.TitledTextView
-                    android:id="@+id/tv_beneficiary"
+                    android:id="@+id/tv_national_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -251,6 +251,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_humansis_id"
+                    app:titled_text_view_title="@string/national_id"  />
+
+                <cz.applifting.humansis.ui.components.TitledTextView
+                    android:id="@+id/tv_beneficiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_national_id"
                     app:titled_text_view_title="@string/beneficiary"/>
 
                 <cz.applifting.humansis.ui.components.TitledTextView
