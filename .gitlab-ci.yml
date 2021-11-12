@@ -17,6 +17,7 @@ variables:
   EMULATOR_TIMEOUT: "60"
 
 stages:
+  - prepare
   - build
   - archive
   - upload
@@ -35,6 +36,19 @@ stages:
     - echo $FIREBASE_APP_DISTRIBUTION_ADMIN | base64 -d > ./app/adc.json;
       export GOOGLE_APPLICATION_CREDENTIALS=./app/adc.json;
     - ./gradlew clean
+
+before_build:
+  stage: prepare
+  extends: .gradle_build
+  script:
+    - sudo gem update fastlane
+
+ktlint:
+  stage: prepare
+  extends: .gradle_build
+  script:
+    - echo "ktlint"
+    - fastlane ktlint
 
 build_debug_job:
   stage: build

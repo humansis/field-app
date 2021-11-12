@@ -132,6 +132,8 @@ configurations {
         exclude group: "org.hamcrest", module: "hamcrest-core"
         exclude group: "org.hamcrest", module: "hamcrest-library"
     }
+
+    ktlint
 }
 
 dependencies {
@@ -204,6 +206,9 @@ dependencies {
     // Kotlin logger
     implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
+    // ktlint
+    ktlint "com.pinterest:ktlint:0.33.0"
+
     def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
@@ -214,3 +219,22 @@ dependencies {
     androidTestImplementation "io.mockk:mockk-android:1.12.0"
 
 }
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+    // to generate report in checkstyle format prepend following args:
+    // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+    // see https://github.com/pinterest/ktlint#usage for more
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
+}
+
