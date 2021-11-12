@@ -9,8 +9,8 @@ import cz.applifting.humansis.model.Target
 data class Distribution (
     val id : Int,
     val name : String,
-    val dateDistribution : String?,
-    val dateExpiration : String?,
+    @SerializedName("date_distribution")val dateDistribution : String?,
+    @SerializedName("date_expiration")val dateExpiration : String?,
     val archived : Boolean,
     val validated : Boolean,
     val type : Target,
