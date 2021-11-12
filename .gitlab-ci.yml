@@ -48,7 +48,7 @@ ktlint:
   extends: .gradle_build
   script:
     - echo "ktlint"
-    - fastlane ktlint
+    - ./gradlew ktlint
 
 build_debug_job:
   stage: build
