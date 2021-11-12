@@ -7,7 +7,7 @@ include:
     ref: 'mobile/docker-ci'
     file: 'src/mobile/aws-upload.template.yml'
 
-image: artifactory.quanti.cz/docker/devel-settings:jdk-11
+image: artifactory.quanti.cz/docker/builder-android:v2
 
 # todo: versioning
 variables:
