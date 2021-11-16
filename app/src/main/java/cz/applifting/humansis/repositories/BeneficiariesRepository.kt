@@ -127,11 +127,11 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
 
-        if(beneficiaryLocal.newSmartcard != null) {
+        if (beneficiaryLocal.newSmartcard != null) {
             val time = beneficiaryLocal.distributedAt ?: return
-            if(beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
+            if (beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
-                beneficiaryLocal.smartcard?.let{
+                beneficiaryLocal.smartcard?.let {
                     deactivateSmartcard(beneficiaryLocal.smartcard, time)
                 }
             }
@@ -216,7 +216,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         return commodities ?: mutableListOf()
-
     }
 
     private fun isReliefDistributed(reliefs: List<Relief>): Boolean {

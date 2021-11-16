@@ -1,6 +1,6 @@
 package cz.applifting.humansis.model.api
 
-class DistributeSmartcardRequest (
+class DistributeSmartcardRequest(
     val distributionId: Int,
     val value: Double,
     val createdAt: String,

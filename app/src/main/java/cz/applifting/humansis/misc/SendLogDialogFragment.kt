@@ -130,11 +130,11 @@ class SendLogDialogFragment : DialogFragment() {
         val subject = getString(R.string.logs_email_subject) + " " + getFormattedFileNameDayNow()
         val bodyText = getString(R.string.logs_email_text)
 
-        //await non block's current thread
+        // await non block's current thread
         val zipFileUri = zipFile?.await()?.getUriForFile(appContext)
 
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822" //email
+            type = "message/rfc822" // email
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             putExtra(Intent.EXTRA_EMAIL, addresses)
             putExtra(Intent.EXTRA_SUBJECT, subject)
@@ -151,7 +151,6 @@ class SendLogDialogFragment : DialogFragment() {
                 Toast.LENGTH_LONG
             ).show()
         }
-
     }
 
     /**

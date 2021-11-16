@@ -44,7 +44,7 @@ object NfcInitializer {
         AlertDialog.Builder(activity, R.style.DialogTheme)
             .setMessage(activity.getString(R.string.you_need_to_enable_nfc))
             .setCancelable(true)
-            .setPositiveButton(activity.getString(R.string.action_settings)) { _,_ ->
+            .setPositiveButton(activity.getString(R.string.action_settings)) { _, _ ->
                 activity.startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
             }
             .setNegativeButton(activity.getString(R.string.cancel), null)

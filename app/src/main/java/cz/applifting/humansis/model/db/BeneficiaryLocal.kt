@@ -63,7 +63,7 @@ data class BeneficiaryLocal(
     val hasReferral
     get() = referralType != null || !referralNote.isNullOrEmpty()
 
-    fun getLimits(): Map<Int,Double> {
+    fun getLimits(): Map<Int, Double> {
         val limits = mutableMapOf<Int, Double>()
         this.foodLimit?.let {
             limits[CategoryType.FOOD.typeId] = it
@@ -84,9 +84,9 @@ enum class CategoryType(
     val stringRes: Int?
 ) {
     ALL(0, null, null),
-    FOOD (1, "Food", R.string.food),
-    NONFOOD (2, "Non-Food", R.string.nonfood),
-    CASHBACK (3, "Cashback", R.string.cashback),
+    FOOD(1, "Food", R.string.food),
+    NONFOOD(2, "Non-Food", R.string.nonfood),
+    CASHBACK(3, "Cashback", R.string.cashback),
     OTHER(4, null, null);
 
     companion object {

@@ -15,7 +15,7 @@ internal class ViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        //return viewModels[modelClass]?.get() as T
+        // return viewModels[modelClass]?.get() as T
         val creator = viewModels[modelClass] ?: viewModels.entries.firstOrNull {
             modelClass.isAssignableFrom(it.key)
         }?.value ?: throw IllegalArgumentException("unknown model class $modelClass")

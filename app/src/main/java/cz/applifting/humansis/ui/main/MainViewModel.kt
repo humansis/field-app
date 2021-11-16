@@ -52,21 +52,21 @@ class MainViewModel @Inject constructor(
     }
 
     fun readBalance(): Disposable {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
             pinFacade.readProtectedBalanceForUser(tag)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             readBalanceResult.postValue(it)
-        },{
+        }, {
             readBalanceError.postValue(it)
         })
     }
 
     fun initializeCard(): Disposable {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
             pinFacade.readProtectedBalanceForUser(tag)
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             initializeCardResult.postValue(it)
-        },{
+        }, {
             initializeCardError.postValue(it)
         })
     }

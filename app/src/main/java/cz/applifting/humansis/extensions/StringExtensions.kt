@@ -7,7 +7,7 @@ fun String.shortToast(activity: Activity) {
     Toast.makeText(activity, this, Toast.LENGTH_SHORT).show()
 }
 
-fun String?.equalsIgnoreEmpty(other: String?): Boolean{
+fun String?.equalsIgnoreEmpty(other: String?): Boolean {
     return this.orNullIfEmpty() == other.orNullIfEmpty()
 }
 

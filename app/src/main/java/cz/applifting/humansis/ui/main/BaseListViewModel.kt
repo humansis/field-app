@@ -31,7 +31,6 @@ abstract class BaseListViewModel(
         } else {
             _listStateLD.value?.copy(isRefreshing = show, text = getText(hasData))
         }
-
     }
 
     fun showRetrieving(show: Boolean) {

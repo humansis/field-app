@@ -5,4 +5,4 @@ package cz.applifting.humansis.misc
  */
 class HumansisError(
     reason: String
-): RuntimeException(reason)
+) : RuntimeException(reason)

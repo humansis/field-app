@@ -105,7 +105,6 @@ class SharedViewModel @Inject constructor(
             }
         }
 
-
         launch {
             beneficiariesRepository
                 .arePendingChanges()

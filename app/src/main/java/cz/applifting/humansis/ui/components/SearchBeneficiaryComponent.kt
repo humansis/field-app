@@ -36,23 +36,20 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
     internal fun onTextChanged(search: (String) -> Unit?) {
         et_search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 search(s.toString())
             }
-
         })
     }
 
     internal fun onSort(sort: () -> Unit) {
         btn_sort.setOnClickListener {
-            Log.d(TAG,"Sort button clicked")
+            Log.d(TAG, "Sort button clicked")
             sort()
         }
     }
@@ -74,5 +71,4 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
     companion object {
         private val TAG = SearchBeneficiaryComponent::class.java.simpleName
     }
-
 }

@@ -3,7 +3,6 @@ package cz.applifting.humansis.db.converters
 import androidx.room.TypeConverter
 import java.util.*
 
-
 /**
  * Converter used to store date as long in db.
  *

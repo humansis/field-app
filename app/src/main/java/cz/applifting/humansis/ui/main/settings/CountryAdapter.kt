@@ -16,12 +16,12 @@ class CountryAdapter(context: Context) : SpinnerAdapter, ArrayAdapter<Country>(c
     }
 
     fun getCountryPositionByIso3(iso3: String): Int {
-        if(count < 1) {
+        if (count < 1) {
             return -1
         }
 
-        for(i in (count - 1) downTo 0) {
-            if(getItem(i)?.iso3 == iso3) {
+        for (i in (count - 1) downTo 0) {
+            if (getItem(i)?.iso3 == iso3) {
                 return i
             }
         }

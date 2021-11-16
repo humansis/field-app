@@ -42,7 +42,7 @@ class BeneficiariesFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = if (args.isRemoteDistribution) {
-            getString(R.string.remote, args.distributionName )
+            getString(R.string.remote, args.distributionName)
         } else {
             args.distributionName
         }

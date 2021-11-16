@@ -17,7 +17,6 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */

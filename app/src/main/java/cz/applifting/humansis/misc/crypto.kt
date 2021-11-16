@@ -78,7 +78,6 @@ fun hashSHA512(input: ByteArray, iterations: Int = 1): ByteArray {
     return result
 }
 
-
 fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context, sp: SharedPreferences): ByteArray {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
@@ -155,7 +154,6 @@ private fun hashSHA1(s: String): String {
     return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
 }
 
-
 private fun encryptRSA(secret: ByteArray, publicKey: PublicKey): ByteArray {
     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
     cipher.init(Cipher.ENCRYPT_MODE, publicKey)
@@ -210,7 +208,6 @@ private fun decryptAES(secret: ByteArray, key: SecretKey, sp: SharedPreferences)
     cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
     return cipher.doFinal(secret)
 }
-
 
 @RequiresApi(Build.VERSION_CODES.M)
 private fun generateAESKey(keyAlias: String) {

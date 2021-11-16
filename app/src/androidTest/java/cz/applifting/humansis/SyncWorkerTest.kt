@@ -34,7 +34,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-
 @RunWith(AndroidJUnit4::class)
 class SyncWorkerTest {
 
@@ -252,5 +251,4 @@ class SyncWorkerTest {
 
     private fun anyHttpException() =
         HttpException(Response.error<Any>(HttpURLConnection.HTTP_INTERNAL_ERROR, ResponseBody.create(null, "")))
-
 }

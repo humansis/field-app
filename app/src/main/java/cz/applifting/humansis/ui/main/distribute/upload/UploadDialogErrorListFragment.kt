@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
  */

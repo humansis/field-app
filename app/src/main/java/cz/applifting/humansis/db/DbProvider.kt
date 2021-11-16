@@ -5,7 +5,6 @@ import androidx.room.Room
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import javax.inject.Singleton
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
@@ -31,7 +30,6 @@ class DbProvider(val context: Context) {
                 .fallbackToDestructiveMigration()
                 .build()
         }
-
 
         if (oldPass != null) {
             SafeHelperFactory.rekey(db.openHelper.readableDatabase, String(password).toCharArray())

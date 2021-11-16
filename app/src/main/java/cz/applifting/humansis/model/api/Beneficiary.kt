@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
  * @since 5. 9. 2019
  */
 
-//todo finish model
+// todo finish model
 data class Beneficiary(
     @SerializedName("id") val id: Int,
     @SerializedName("smartcard") val smartcard: String?,

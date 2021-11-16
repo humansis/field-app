@@ -76,7 +76,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(
         launch {
             val beneficiary = beneficiaryLD.value!!
 
-            if(onlyReferral) {
+            if (onlyReferral) {
                 val updatedBeneficiary = beneficiary.copy(
                     referralType = referralTypeLD.value,
                     referralNote = referralNoteLD.value.orNullIfEmpty()
