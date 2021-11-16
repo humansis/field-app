@@ -139,17 +139,16 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             val value = beneficiaryLocal.commodities
                 ?.findLast { it.type == CommodityType.SMARTCARD }
                 ?.value ?: 1.0
-            beneficiaryLocal.balance?.let { balance ->
-                distributeSmartcard(
-                    beneficiaryLocal.newSmartcard,
-                    beneficiaryLocal.assistanceId,
-                    value,
-                    time,
-                    beneficiaryLocal.beneficiaryId,
-                    beneficiaryLocal.originalBalance,
-                    balance
-                )
-            } ?: throw Exception("Beneficiary ${beneficiaryLocal.id} has empty balance after distribution")
+
+            distributeSmartcard(
+                beneficiaryLocal.newSmartcard,
+                beneficiaryLocal.assistanceId,
+                value,
+                time,
+                beneficiaryLocal.beneficiaryId,
+                beneficiaryLocal.originalBalance,
+                beneficiaryLocal.balance ?: 1.0
+            )
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
