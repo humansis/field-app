@@ -83,6 +83,12 @@ android {
             releaseNotes="Release notes"
             groups="quanti-android-testers, pin-testers"
         }
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     signingConfigs {
