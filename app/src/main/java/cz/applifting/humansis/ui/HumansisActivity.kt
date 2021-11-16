@@ -5,7 +5,6 @@ import android.content.*
 import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -39,7 +38,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
-class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback,NavigationView.OnNavigationItemSelectedListener {
+class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -175,7 +174,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback,NavigationVie
     override fun onTagDiscovered(tag: Tag) {
         Log.d(TAG, "onTagDiscovered")
         nfcTagPublisher.getTagSubject().onNext(tag)
-
     }
 
     override fun onNewIntent(intent: Intent) { // TODO smazat

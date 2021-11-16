@@ -22,7 +22,7 @@ import cz.applifting.humansis.model.db.*
     version = 22,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration (
+        AutoMigration(
             from = 21,
             to = 22,
             spec = HumansisDB.AutoMigrationTo22::class
