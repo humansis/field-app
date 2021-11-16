@@ -41,12 +41,12 @@ class BeneficiariesViewModel @Inject constructor(
         }
     }
 
-    fun init(distributionId: Int) {
+    fun init(assistanceId: Int) {
         launch {
             showRetrieving(true)
 
             beneficiariesRepository
-                .getBeneficiariesOffline(distributionId)
+                .getBeneficiariesOffline(assistanceId)
                 .collect { newBeneficiaries ->
                     beneficiariesLD.value = newBeneficiaries
                     statsLD.value = Pair(newBeneficiaries.count { it.distributed }, newBeneficiaries.size)

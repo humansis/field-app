@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_confirm_beneficiary.view.*
 import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
-
 class ConfirmBeneficiaryDialog : DialogFragment() {
 
     @Inject
@@ -86,7 +85,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
         val spinnerOptions = viewModel.referralTypes
             .map { getString(it) }
-        ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
+        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner_referral_type.adapter = adapter
         }

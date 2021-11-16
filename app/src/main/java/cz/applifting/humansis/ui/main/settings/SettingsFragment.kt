@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 9. 10. 2019
@@ -57,7 +56,6 @@ class SettingsFragment : BaseFragment() {
 
         spinner_country.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

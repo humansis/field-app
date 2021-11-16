@@ -95,5 +95,4 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
             }
         }
     }
-
 }

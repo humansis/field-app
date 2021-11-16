@@ -40,7 +40,7 @@
         android:id="@+id/beneficiariesFragment"
         android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment">
         <argument
-            android:name="distributionId"
+            android:name="assistanceId"
             app:argType="integer" />
         <argument
             android:name="distributionName"

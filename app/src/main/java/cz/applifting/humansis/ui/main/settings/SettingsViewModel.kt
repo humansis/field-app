@@ -15,7 +15,6 @@ import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 9. 10. 2019
@@ -30,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     val savedLD: MutableLiveData<Boolean> = MutableLiveData()
 
     suspend fun getCountries(context: Context?): List<Country> {
-        return loginManager.getCountries().map{ Country(it, translateCountry(it, context)) }
+        return loginManager.getCountries().map { Country(it, translateCountry(it, context)) }
     }
 
     fun getCountrySettings(): String {
@@ -61,7 +60,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun translateCountry(iso3: String, context: Context?): String {
-        return when(iso3){
+        return when (iso3) {
             "SYR" -> {
                 context?.getString(R.string.SYR) ?: iso3
             }

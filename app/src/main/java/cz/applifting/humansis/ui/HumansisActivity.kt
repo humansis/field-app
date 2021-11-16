@@ -5,6 +5,7 @@ import android.content.*
 import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -35,11 +36,10 @@ import quanti.com.kotlinlog.Log
 import java.util.*
 import javax.inject.Inject
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
-class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
+class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback,NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -161,7 +161,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         calendar.add(Calendar.HOUR_OF_DAY, -1)
         val dateHourAgo = calendar.time
 
-
         return (lastDownloadDate != null && lastDownloadDate.before(dateHourAgo))
     }
 
@@ -173,10 +172,16 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
+    override fun onTagDiscovered(tag: Tag) {
+        Log.d(TAG, "onTagDiscovered")
+        nfcTagPublisher.getTagSubject().onNext(tag)
+
+    }
+
+    override fun onNewIntent(intent: Intent) { // TODO smazat
         super.onNewIntent(intent)
         if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action) {
-            val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)?:return
+            val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) ?: return
             nfcTagPublisher.getTagSubject().onNext(tag)
         }
     }
@@ -203,7 +208,7 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
         observe(vm.initializeCardError) {
             Log.e(this.javaClass.simpleName, it)
-            if(it is PINException){
+            if (it is PINException) {
                 showCardInitializedDialog(
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
                 )
@@ -230,7 +235,6 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
 
             readBalanceDisposable = null
             readBalanceDisposable = vm.readBalance()
-
         }
     }
 

@@ -1,8 +1,7 @@
 package cz.applifting.humansis.db
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.applifting.humansis.db.converters.*
@@ -20,8 +19,15 @@ import cz.applifting.humansis.model.db.*
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 21,
-    exportSchema = false
+    version = 22,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration (
+            from = 21,
+            to = 22,
+            spec = HumansisDB.AutoMigrationTo22::class
+        )
+    ]
 )
 @TypeConverters(
     StringListConverter::class,
@@ -57,4 +63,7 @@ abstract class HumansisDB : RoomDatabase() {
             }
         }
     }
+
+    @RenameColumn(fromColumnName = "distributionId", toColumnName = "assistanceId", tableName = "beneficiaries")
+    class AutoMigrationTo22 : AutoMigrationSpec
 }

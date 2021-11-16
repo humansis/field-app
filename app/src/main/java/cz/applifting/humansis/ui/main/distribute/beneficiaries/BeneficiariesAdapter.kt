@@ -19,7 +19,6 @@ import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 5. 9. 2019
@@ -111,8 +110,7 @@ class BeneficiariesAdapter(
                     val txtValue = TextView(context)
                     if ((commodity.value % 1) == 0.0) {
                         txtValue.text = context.getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
-                    }
-                    else {
+                    } else {
                         // This needs to be updated if Denars or Madagascar Ariaries are used in the future
                         txtValue.text = context.getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
                     }

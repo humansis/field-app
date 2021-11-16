@@ -18,11 +18,11 @@ interface BeneficiaryDao {
     @Query("SELECT * FROM beneficiaries WHERE distributed = 1 AND edited = 1")
     suspend fun getAssignedBeneficiariesSuspend(): List<BeneficiaryLocal>
 
-    @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
-    fun getByDistribution(distributionId: Int): Flow<List<BeneficiaryLocal>>
+    @Query("SELECT * FROM beneficiaries where assistanceId = :assistanceId")
+    fun getByDistribution(assistanceId: Int): Flow<List<BeneficiaryLocal>>
 
-    @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
-    suspend fun getByDistributionSuspend(distributionId: Int): List<BeneficiaryLocal>
+    @Query("SELECT * FROM beneficiaries where assistanceId = :assistanceId")
+    suspend fun getByDistributionSuspend(assistanceId: Int): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
     suspend fun findById(beneficiaryId: Int): BeneficiaryLocal?
@@ -36,14 +36,14 @@ interface BeneficiaryDao {
     @Update
     suspend fun update(beneficiaryLocal: BeneficiaryLocal)
 
-    @Query("DELETE FROM beneficiaries WHERE distributionId = :distributionId")
-    suspend fun deleteByDistribution(distributionId: Int)
+    @Query("DELETE FROM beneficiaries WHERE assistanceId = :assistanceId")
+    suspend fun deleteByDistribution(assistanceId: Int)
 
     @Query("DELETE FROM beneficiaries")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(id) FROM beneficiaries WHERE distributionId = :distributionId AND distributed = 1")
-    suspend fun countReachedBeneficiaries(distributionId: Int): Int
+    @Query("SELECT COUNT(id) FROM beneficiaries WHERE assistanceId = :assistanceId AND distributed = 1")
+    suspend fun countReachedBeneficiaries(assistanceId: Int): Int
 
     @Query("SELECT qrBooklets FROM beneficiaries")
     suspend fun getAllBooklets(): List<String>?

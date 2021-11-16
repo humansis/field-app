@@ -36,7 +36,7 @@ class App : Application() {
     private fun initLogger() {
         Log.initialise(this)
         Log.addLogger(AndroidLogger(LoggerBundle(LogLevel.DEBUG)))
-        val circleLogBundle = CircleLogBundle(LogLevel.VERBOSE, 1, 50, 30, LogLevel.VERBOSE )
+        val circleLogBundle = CircleLogBundle(LogLevel.VERBOSE, 1, 50, 30, LogLevel.VERBOSE)
         Log.addLogger(FileLogger(applicationContext, circleLogBundle))
         Log.useUncheckedErrorHandler()
         NfcLogger.registerListener(Logger())
@@ -72,7 +72,6 @@ class App : Application() {
         override fun e(tag: String, message: String) {
             Log.e(tag, message)
         }
-
     }
 
     companion object {

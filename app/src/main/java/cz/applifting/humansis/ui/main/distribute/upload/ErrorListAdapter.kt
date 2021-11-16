@@ -16,7 +16,7 @@ import quanti.com.kotlinlog.Log
  */
 class ErrorListAdapter(
     val onItemClick: (SyncError) -> Unit
-): RecyclerView.Adapter<ErrorListAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ErrorListAdapter.ViewHolder>() {
 
     private val syncErrors: MutableList<SyncError> = mutableListOf()
 
@@ -40,7 +40,7 @@ class ErrorListAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val view: View): RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private val tvLocation: TextView = view.tv_location
         private val tvInfo: TextView = view.tv_info
         private val tvError: TextView = view.tv_error

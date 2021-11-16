@@ -25,7 +25,7 @@ class AddReferralInfoDialog : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: ConfirmBeneficiaryViewModel by lazy{ ViewModelProviders.of(this, viewModelFactory)[ConfirmBeneficiaryViewModel::class.java] }
+    private val viewModel: ConfirmBeneficiaryViewModel by lazy { ViewModelProviders.of(this, viewModelFactory)[ConfirmBeneficiaryViewModel::class.java] }
     private lateinit var sharedViewModel: SharedViewModel
     private val args: AddReferralInfoDialogArgs by navArgs()
 
@@ -124,7 +124,6 @@ class AddReferralInfoDialog : DialogFragment() {
         }
         val second: Boolean = !tv_referral_note_referral.text.isNullOrEmpty()
         shouldEnableConfirmLD.postValue(Pair(first, second))
-
     }
 
     // +-1 for the "none" value which is not in the enum

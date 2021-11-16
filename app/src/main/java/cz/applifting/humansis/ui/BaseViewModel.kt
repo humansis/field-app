@@ -8,6 +8,6 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
  */
-abstract class BaseViewModel (app: App) : AndroidViewModel(app), CoroutineScope {
+abstract class BaseViewModel(app: App) : AndroidViewModel(app), CoroutineScope {
     override val coroutineContext: CoroutineContext = viewModelScope.coroutineContext
 }

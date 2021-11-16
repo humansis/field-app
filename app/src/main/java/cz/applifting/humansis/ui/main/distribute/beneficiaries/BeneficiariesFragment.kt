@@ -42,7 +42,7 @@ class BeneficiariesFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = if (args.isRemoteDistribution) {
-            getString(R.string.remote, args.distributionName )
+            getString(R.string.remote, args.distributionName)
         } else {
             args.distributionName
         }
@@ -85,7 +85,7 @@ class BeneficiariesFragment : BaseFragment() {
             cmp_search_beneficiary.changeSortIcon(it)
         })
 
-        viewModel.init(args.distributionId)
+        viewModel.init(args.assistanceId)
 
         sharedViewModel.syncState.observe(viewLifecycleOwner, {
             viewModel.showRefreshing(it.isLoading)

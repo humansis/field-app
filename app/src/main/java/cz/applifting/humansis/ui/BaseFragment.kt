@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-open class BaseFragment: Fragment(), CoroutineScope {
+open class BaseFragment : Fragment(), CoroutineScope {
 
     private val job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.Main
