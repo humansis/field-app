@@ -19,19 +19,19 @@ import javax.inject.Singleton
 @Singleton
 class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
-        val distribution = dbProvider.get().distributionsDao().getById(distributionId)
+        val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getDistributionBeneficiaries(distributionId)
+            .getDistributionBeneficiaries(assistanceId)
             .map {
                 BeneficiaryLocal(
                     id = it.id,
                     beneficiaryId = it.beneficiary.id,
                     givenName = it.beneficiary.givenName,
                     familyName = it.beneficiary.familyName,
-                    distributionId = distributionId,
+                    assistanceId = assistanceId,
                     distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
                     distributedAt = it.smartcardDistributedAt,
                     vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
@@ -54,7 +54,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        dbProvider.get().beneficiariesDao().deleteByDistribution(distributionId)
+        dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
@@ -78,12 +78,12 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().getAllBeneficiaries()
     }
 
-    fun getBeneficiariesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
-        return dbProvider.get().beneficiariesDao().getByDistribution(distributionId)
+    fun getBeneficiariesOffline(assistanceId: Int): Flow<List<BeneficiaryLocal>> {
+        return dbProvider.get().beneficiariesDao().getByDistribution(assistanceId)
     }
 
-    suspend fun getBeneficiariesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
-        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(distributionId)
+    suspend fun getBeneficiariesOfflineSuspend(assistanceId: Int): List<BeneficiaryLocal> {
+        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(assistanceId)
     }
 
     suspend fun getAssignedBeneficiariesOfflineSuspend(): List<BeneficiaryLocal> {
@@ -114,8 +114,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().getAllReferralChanges()
     }
 
-    suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
-        return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(distributionId)
+    suspend fun countReachedBeneficiariesOffline(assistanceId: Int): Int {
+        return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(assistanceId)
     }
 
     suspend fun distribute(beneficiaryLocal: BeneficiaryLocal) {
@@ -124,7 +124,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
-            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
+            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.assistanceId)
         }
 
         if (beneficiaryLocal.newSmartcard != null) {
@@ -142,7 +142,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             beneficiaryLocal.balance?.let { balance ->
                 distributeSmartcard(
                     beneficiaryLocal.newSmartcard,
-                    beneficiaryLocal.distributionId,
+                    beneficiaryLocal.assistanceId,
                     value,
                     time,
                     beneficiaryLocal.beneficiaryId,
@@ -171,8 +171,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.setDistributedRelief(DistributedReliefRequest(ids))
     }
 
-    private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+    private suspend fun assignBooklet(code: String, beneficiaryId: Int, assistanceId: Int) {
+        service.assignBooklet(beneficiaryId, assistanceId, AssingBookletRequest(code))
     }
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
@@ -183,9 +183,9 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
+    private suspend fun distributeSmartcard(code: String, assistanceId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
         service.distributeSmartcard(code, DistributeSmartcardRequest(
-            distributionId = distributionId,
+            assistanceId = assistanceId,
             value = value,
             createdAt = date,
             beneficiaryId = beneficiaryId,

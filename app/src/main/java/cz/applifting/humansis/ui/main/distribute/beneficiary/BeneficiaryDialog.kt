@@ -268,7 +268,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         amount = value,
                         beneficiaryId = beneficiary.beneficiaryId,
                         currency = currency,
-                        depositId = beneficiary.distributionId,
+                        assistanceId = beneficiary.assistanceId,
                         expirationDate = DateUtil.stringToDate(beneficiary.dateExpiration),
                         limits = beneficiary.getLimits()
                     ),

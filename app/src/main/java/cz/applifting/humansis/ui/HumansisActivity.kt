@@ -5,6 +5,7 @@ import android.content.*
 import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -38,7 +39,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
  */
-class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback,NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -171,7 +172,13 @@ class HumansisActivity : BaseActivity(), NavigationView.OnNavigationItemSelected
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
+    override fun onTagDiscovered(tag: Tag) {
+        Log.d(TAG, "onTagDiscovered")
+        nfcTagPublisher.getTagSubject().onNext(tag)
+
+    }
+
+    override fun onNewIntent(intent: Intent) { // TODO smazat
         super.onNewIntent(intent)
         if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action) {
             val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) ?: return

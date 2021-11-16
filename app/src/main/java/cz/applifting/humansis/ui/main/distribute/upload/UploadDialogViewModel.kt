@@ -55,8 +55,8 @@ class UploadDialogViewModel @Inject constructor(
     suspend fun getRelatedEntities(id: Int): Triple<String?, DistributionLocal?, BeneficiaryLocal?> {
         val beneficiary = beneficiariesRepository.getBeneficiaryOffline(id)
         return Triple(
-            beneficiary?.let { projectsRepository.getNameByDistributionId(it.distributionId) },
-            beneficiary?.let { distributionsRepository.getById(it.distributionId) },
+            beneficiary?.let { projectsRepository.getNameByAssistanceId(it.assistanceId) },
+            beneficiary?.let { distributionsRepository.getById(it.assistanceId) },
             beneficiary
         )
     }

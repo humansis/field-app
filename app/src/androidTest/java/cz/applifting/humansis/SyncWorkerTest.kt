@@ -60,7 +60,7 @@ class SyncWorkerTest {
         context = ApplicationProvider.getApplicationContext()
         worker = TestWorkerBuilder.from(context, SyncWorker::class.java).build().also {
             it.projectsRepository = projectsRepository.apply {
-                coEvery { getNameByDistributionId(any()) } returns ""
+                coEvery { getNameByAssistanceId(any()) } returns ""
             }
             it.distributionsRepository = distributionsRepository.apply {
                 coEvery { getNameById(any()) } returns ""
@@ -233,7 +233,7 @@ class SyncWorkerTest {
         beneficiaryId = 0,
         givenName = null,
         familyName = null,
-        distributionId = 0,
+        assistanceId = 0,
         distributed = false,
         vulnerabilities = emptyList(),
         reliefIDs = emptyList(),

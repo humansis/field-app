@@ -17,18 +17,18 @@ import cz.applifting.humansis.model.ReferralType
     foreignKeys = [ForeignKey(
         entity = DistributionLocal::class,
         parentColumns = ["id"],
-        childColumns = ["distributionId"],
+        childColumns = ["assistanceId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
-// this is flattened object from API, original: {id, distributionId, {beneficiaryId, givenName, ...}}
+// this is flattened object from API, original: {id, assistanceId, {beneficiaryId, givenName, ...}}
 // each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple distributions
 data class BeneficiaryLocal(
-    @PrimaryKey val id: Int, // unique combination of beneficiaryId and distributionId
+    @PrimaryKey val id: Int, // unique combination of beneficiaryId and assistanceId
     val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)
     val givenName: String?,
     val familyName: String?,
-    val distributionId: Int,
+    val assistanceId: Int,
     val distributed: Boolean,
     val distributedAt: String?,
     val vulnerabilities: List<String>,
