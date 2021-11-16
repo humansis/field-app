@@ -21,7 +21,7 @@ import cz.applifting.humansis.model.db.*
         SyncError::class
     ],
     version = 21,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(
     StringListConverter::class,
