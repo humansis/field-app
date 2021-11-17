@@ -3,7 +3,6 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.extensions.orNullIfEmpty
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -24,20 +23,19 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getDistributionBeneficiaries(assistanceId)
+            .getDistributionBeneficiaries(assistanceId).data
             .map {
                 BeneficiaryLocal(
                     id = it.id,
                     beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.givenName,
-                    familyName = it.beneficiary.familyName,
+                    givenName = it.beneficiary.localGivenName,
+                    familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
-                    distributedAt = it.smartcardDistributedAt,
-                    vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
-                    reliefIDs = parseReliefs(it.reliefs),
+                    distributed = isReliefDistributed(it.generalReliefItems) || isBookletDistributed(it.booklets) || it.currentSmartcardSerialNumber != null,
+                    distributedAt = it.distributedAt,
+                    reliefIDs = parseReliefs(it.generalReliefItems),
                     qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.beneficiary.smartcard?.toUpperCase(Locale.US),
+                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
@@ -46,11 +44,11 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     foodLimit = distribution?.foodLimit,
                     nonfoodLimit = distribution?.nonfoodLimit,
                     cashbackLimit = distribution?.cashbackLimit,
-                    nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    originalReferralType = it.beneficiary.referral?.type,
-                    originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
-                    referralType = it.beneficiary.referral?.type,
-                    referralNote = it.beneficiary.referral?.note.orNullIfEmpty()
+                    nationalId = it.beneficiary.nationalCardId,
+                    originalReferralType = it.beneficiary.referralType,
+                    originalReferralNote = it.beneficiary.referralComment,
+                    referralType = it.beneficiary.referralType,
+                    referralNote = it.beneficiary.referralComment
                 )
             }
 
@@ -191,10 +189,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             balanceBefore = balanceBefore,
             balanceAfter = balanceAfter
         ))
-    }
-
-    private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
-        return vulnerability.map { it.vulnerabilityName }
     }
 
     private fun parseReliefs(reliefs: List<Relief>): List<Int> {
