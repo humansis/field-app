@@ -246,7 +246,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     private fun getDownloadError(e: Exception, resourceName: String): SyncError {
         e.printStackTrace()
-        Log.d(TAG, "Failed downloading $resourceName: ${e.message}}")
+        Log.e(TAG, "Failed downloading $resourceName: ${e.message}}")
 
         return when (e) {
             is HttpException -> {
