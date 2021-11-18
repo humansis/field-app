@@ -20,8 +20,8 @@ interface HumansisService {
     @GET("v1/projects/{projectId}/distributions")
     suspend fun getDistributions(@Path("projectId") projectId: Int): List<Distribution>
 
-    @GET("v1/distributions/{assistanceId}/beneficiaries")
-    suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): List<DistributionBeneficiary>
+    @GET("v3/assistances/{assistanceId}/targets/beneficiaries")
+    suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<DistributionBeneficiary>
 
     @POST("v1/distributions/generalrelief/distributed")
     suspend fun setDistributedRelief(@Body distributedReliefRequest: DistributedReliefRequest)

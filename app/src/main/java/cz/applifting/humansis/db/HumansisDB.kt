@@ -64,6 +64,7 @@ abstract class HumansisDB : RoomDatabase() {
         }
     }
 
-    @RenameColumn(fromColumnName = "distributionId", toColumnName = "assistanceId", tableName = "beneficiaries")
+    @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
+    @DeleteColumn(tableName = "beneficiaries", columnName = "vulnerabilities")
     class AutoMigrationTo22 : AutoMigrationSpec
 }
