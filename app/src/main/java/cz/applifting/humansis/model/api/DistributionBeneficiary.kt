@@ -4,7 +4,7 @@ data class DistributionBeneficiary(
     val id: Int,
     val beneficiary: Beneficiary,
     val distributedAt: String?, // TODO tyka se jenom smartcarty v teto distribuci, prejmenovat na smartcardDistributedAt
-    val currentSmartcardSerialNumber: String?,
+    val currentSmartcardSerialNumber: String?, // TODO presunout zpet do objektu beneficiary, jednalo se o nedorozumeni
     val generalReliefItems: List<Relief>,
     val booklets: List<Booklet>
 )
