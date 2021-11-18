@@ -203,7 +203,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
-                val bookletValue = booklet.vouchers.sumBy { it.value }.toDouble()
+                val bookletValue = booklet.voucherValues.sum().toDouble()
                 CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }
