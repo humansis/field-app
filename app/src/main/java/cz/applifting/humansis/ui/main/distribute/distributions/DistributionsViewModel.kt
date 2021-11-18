@@ -48,7 +48,6 @@ class DistributionsViewModel @Inject constructor(
                         }
                         DistributionItemWrapper(it, reachedBeneficiaries)
                     }
-
                 }
                 .collect { list ->
                     distributionsLD.value = list.defaultSort()

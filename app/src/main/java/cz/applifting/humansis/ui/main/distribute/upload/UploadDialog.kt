@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.fragment_dialog_upload_status.view.*
 import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
-
 class UploadDialog : DialogFragment() {
 
     @Inject
@@ -29,7 +28,7 @@ class UploadDialog : DialogFragment() {
         (rootView as ViewGroup).layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
         rootView.iv_cross.setOnClickListener {
-            Log.d(TAG,"Cross clicked")
+            Log.d(TAG, "Cross clicked")
             dismiss()
         }
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -53,7 +52,7 @@ class UploadDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout( ViewGroup.LayoutParams.WRAP_CONTENT, resources.displayMetrics.heightPixels.times(0.6).toInt())
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, resources.displayMetrics.heightPixels.times(0.6).toInt())
     }
 
     companion object {

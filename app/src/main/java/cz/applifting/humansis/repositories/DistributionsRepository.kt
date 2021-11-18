@@ -65,11 +65,11 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().distributionsDao().findUncompletedDistributionsSuspend(projectId)
     }
 
-    suspend fun getById(distributionId: Int) =
-        dbProvider.get().distributionsDao().getById(distributionId)
+    suspend fun getById(assistanceId: Int) =
+        dbProvider.get().distributionsDao().getById(assistanceId)
 
-    suspend fun getNameById(distributionId: Int): String? {
-        return getById(distributionId)?.name
+    suspend fun getNameById(assistanceId: Int): String? {
+        return getById(assistanceId)?.name
     }
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {

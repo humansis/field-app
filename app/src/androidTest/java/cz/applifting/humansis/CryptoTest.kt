@@ -15,7 +15,6 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.security.auth.x500.X500Principal
 
-
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -45,7 +44,7 @@ class CryptoTest {
 
         val key = keyGenerator.generateKey()
 
-        val cipher = Cipher.getInstance ("AES/GCM/NoPadding")
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
         cipher.init(Cipher.ENCRYPT_MODE, key)
 
         val encrypted = cipher.doFinal("password".toByteArray())

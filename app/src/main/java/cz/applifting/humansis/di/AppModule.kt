@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
@@ -77,7 +76,7 @@ class AppModule {
                         runBlocking {
                             val headersBuilder = oldRequest.headers().newBuilder()
 
-                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("country", it ) }
+                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("country", it) }
 
                             loginManager.getAuthHeader()?.let {
                                 headersBuilder.add("x-wsse", it)
@@ -91,7 +90,6 @@ class AppModule {
                     } catch (e: Exception) {
                         buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "Service unavailable")
                     }
-
                 } else {
                     buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "No internet connection")
                 }

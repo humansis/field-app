@@ -34,11 +34,10 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class MainFragment : BaseFragment(){
+class MainFragment : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels { viewModelFactory }
     private lateinit var baseNavController: NavController
@@ -85,7 +84,7 @@ class MainFragment : BaseFragment(){
 
         val metrics: DisplayMetrics = resources.displayMetrics
         val ivAppIcon = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_app_icon)
-        ivAppIcon.layoutParams.height = if ((metrics.heightPixels/metrics.density) > 640) {
+        ivAppIcon.layoutParams.height = if ((metrics.heightPixels / metrics.density) > 640) {
             resources.getDimensionPixelSize(R.dimen.nav_header_image_height_tall)
         } else {
             resources.getDimensionPixelSize(R.dimen.nav_header_image_height_regular)
@@ -99,7 +98,7 @@ class MainFragment : BaseFragment(){
         tvAppVersion.text = appVersion
 
         val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             tvEnvironment.text = getString(
                 R.string.environment,
                 viewModel.environmentLD.value
@@ -140,7 +139,7 @@ class MainFragment : BaseFragment(){
             val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
             if (!pendingChanges) {
-                 AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                     .setTitle(R.string.logout_alert_title)
                     .setMessage(getString(R.string.logout_alert_text))
                     .setPositiveButton(android.R.string.ok) { _, _ ->

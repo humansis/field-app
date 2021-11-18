@@ -85,5 +85,5 @@ abstract class ViewModelModule {
     @ViewModelKey(UploadDialogViewModel::class)
     internal abstract fun bindUploadDialogViewModel(viewModel: UploadDialogViewModel): ViewModel
 
-    //Add more ViewModels here
+    // Add more ViewModels here
 }

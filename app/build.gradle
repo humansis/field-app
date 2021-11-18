@@ -46,14 +46,14 @@ repositories {
 
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     ndkVersion "21.3.6528147"
 
     defaultConfig {
         applicationId "org.humansis.app.user"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode gitVersionCode(false)
         versionName VERSION_NAME
         setProperty("archivesBaseName", VERSION_FULL_NAME_FILE)
@@ -82,6 +82,12 @@ android {
             appId="1:1075203125993:android:e6616d8f23331ac2cb3678"
             releaseNotes="Release notes"
             groups="quanti-android-testers, pin-testers"
+        }
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
         }
     }
 
@@ -132,6 +138,8 @@ configurations {
         exclude group: "org.hamcrest", module: "hamcrest-core"
         exclude group: "org.hamcrest", module: "hamcrest-library"
     }
+
+    ktlint
 }
 
 dependencies {
@@ -148,7 +156,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:1.2.11"
+    implementation "cz.quanti.android:nfc:2.0.0"
 
     // DI
     ext.dagger2_version = '2.23.2'
@@ -156,7 +164,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger2_version"
 
     // Database
-    def room_version = "2.2.2"
+    def room_version = "2.4.0-beta01" // TODO update to release version when possible
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
@@ -183,7 +191,7 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8' //use older version until newer are available on mavenCentral
 
     // Worker
-    def work_version = "2.2.0"
+    def work_version = "2.7.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
     // Spinner (actually usable one)
@@ -204,6 +212,9 @@ dependencies {
     // Kotlin logger
     implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
+    // ktlint
+    ktlint "com.pinterest:ktlint:0.33.0"
+
     def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'
@@ -214,3 +225,22 @@ dependencies {
     androidTestImplementation "io.mockk:mockk-android:1.12.0"
 
 }
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+    // to generate report in checkstyle format prepend following args:
+    // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+    // see https://github.com/pinterest/ktlint#usage for more
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
+}
+

@@ -13,7 +13,6 @@ import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_project.view.*
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */

@@ -64,5 +64,4 @@ class DistributionsFragment : BaseFragment() {
 
         viewModel.init(args.projectId)
     }
-
 }

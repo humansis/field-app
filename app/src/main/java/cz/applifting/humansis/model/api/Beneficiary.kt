@@ -1,20 +1,18 @@
 package cz.applifting.humansis.model.api
 
-import com.google.gson.annotations.SerializedName
+import cz.applifting.humansis.model.ReferralType
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 5. 9. 2019
  */
 
-//todo finish model
+// todo finish model
 data class Beneficiary(
-    @SerializedName("id") val id: Int,
-    @SerializedName("smartcard") val smartcard: String?,
-    @SerializedName("local_given_name") val givenName: String?,
-    @SerializedName("local_family_name") val familyName: String?,
-    @SerializedName("status") val distributed: Boolean,
-    @SerializedName("vulnerability_criteria") val vulnerabilities: List<Vulnerability>,
-    @SerializedName("national_ids") val nationalIds: List<IdNumber>?,
-    @SerializedName("referral") val referral: Referral?
+    val id: Int,
+    val localGivenName: String?,
+    val localFamilyName: String?,
+    val referralType: ReferralType?,
+    val referralComment: String?,
+    val nationalCardId: String?
 )

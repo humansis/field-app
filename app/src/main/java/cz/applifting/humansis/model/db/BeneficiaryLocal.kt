@@ -17,21 +17,20 @@ import cz.applifting.humansis.model.ReferralType
     foreignKeys = [ForeignKey(
         entity = DistributionLocal::class,
         parentColumns = ["id"],
-        childColumns = ["distributionId"],
+        childColumns = ["assistanceId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
-// this is flattened object from API, original: {id, distributionId, {beneficiaryId, givenName, ...}}
+// this is flattened object from API, original: {id, assistanceId, {beneficiaryId, givenName, ...}}
 // each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple distributions
 data class BeneficiaryLocal(
-    @PrimaryKey val id: Int, // unique combination of beneficiaryId and distributionId
+    @PrimaryKey val id: Int, // unique combination of beneficiaryId and assistanceId
     val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)
     val givenName: String?,
     val familyName: String?,
-    val distributionId: Int,
+    val assistanceId: Int,
     val distributed: Boolean,
     val distributedAt: String?,
-    val vulnerabilities: List<String>,
     val reliefIDs: List<Int>,
     val qrBooklets: List<String>?,
     val smartcard: String?,
@@ -63,7 +62,7 @@ data class BeneficiaryLocal(
     val hasReferral
     get() = referralType != null || !referralNote.isNullOrEmpty()
 
-    fun getLimits(): Map<Int,Double> {
+    fun getLimits(): Map<Int, Double> {
         val limits = mutableMapOf<Int, Double>()
         this.foodLimit?.let {
             limits[CategoryType.FOOD.typeId] = it
@@ -84,9 +83,9 @@ enum class CategoryType(
     val stringRes: Int?
 ) {
     ALL(0, null, null),
-    FOOD (1, "Food", R.string.food),
-    NONFOOD (2, "Non-Food", R.string.nonfood),
-    CASHBACK (3, "Cashback", R.string.cashback),
+    FOOD(1, "Food", R.string.food),
+    NONFOOD(2, "Non-Food", R.string.nonfood),
+    CASHBACK(3, "Cashback", R.string.cashback),
     OTHER(4, null, null);
 
     companion object {

@@ -3,7 +3,6 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.extensions.orNullIfEmpty
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -19,25 +18,24 @@ import javax.inject.Singleton
 @Singleton
 class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
-        val distribution = dbProvider.get().distributionsDao().getById(distributionId)
+        val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
         val result = service
-            .getDistributionBeneficiaries(distributionId)
+            .getDistributionBeneficiaries(assistanceId).data
             .map {
                 BeneficiaryLocal(
                     id = it.id,
                     beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.givenName,
-                    familyName = it.beneficiary.familyName,
-                    distributionId = distributionId,
-                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets) || (it.smartcardDistributed ?: false),
-                    distributedAt = it.smartcardDistributedAt,
-                    vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
-                    reliefIDs = parseReliefs(it.reliefs),
+                    givenName = it.beneficiary.localGivenName,
+                    familyName = it.beneficiary.localFamilyName,
+                    assistanceId = assistanceId,
+                    distributed = isReliefDistributed(it.generalReliefItems) || isBookletDistributed(it.booklets) || it.currentSmartcardSerialNumber != null,
+                    distributedAt = it.distributedAt,
+                    reliefIDs = parseReliefs(it.generalReliefItems),
                     qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.beneficiary.smartcard?.toUpperCase(Locale.US),
+                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
@@ -46,15 +44,15 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     foodLimit = distribution?.foodLimit,
                     nonfoodLimit = distribution?.nonfoodLimit,
                     cashbackLimit = distribution?.cashbackLimit,
-                    nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    originalReferralType = it.beneficiary.referral?.type,
-                    originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
-                    referralType = it.beneficiary.referral?.type,
-                    referralNote = it.beneficiary.referral?.note.orNullIfEmpty()
+                    nationalId = it.beneficiary.nationalCardId,
+                    originalReferralType = it.beneficiary.referralType,
+                    originalReferralNote = it.beneficiary.referralComment,
+                    referralType = it.beneficiary.referralType,
+                    referralNote = it.beneficiary.referralComment
                 )
             }
 
-        dbProvider.get().beneficiariesDao().deleteByDistribution(distributionId)
+        dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
@@ -78,12 +76,12 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().getAllBeneficiaries()
     }
 
-    fun getBeneficiariesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
-        return dbProvider.get().beneficiariesDao().getByDistribution(distributionId)
+    fun getBeneficiariesOffline(assistanceId: Int): Flow<List<BeneficiaryLocal>> {
+        return dbProvider.get().beneficiariesDao().getByDistribution(assistanceId)
     }
 
-    suspend fun getBeneficiariesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
-        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(distributionId)
+    suspend fun getBeneficiariesOfflineSuspend(assistanceId: Int): List<BeneficiaryLocal> {
+        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(assistanceId)
     }
 
     suspend fun getAssignedBeneficiariesOfflineSuspend(): List<BeneficiaryLocal> {
@@ -114,8 +112,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().getAllReferralChanges()
     }
 
-    suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
-        return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(distributionId)
+    suspend fun countReachedBeneficiariesOffline(assistanceId: Int): Int {
+        return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(assistanceId)
     }
 
     suspend fun distribute(beneficiaryLocal: BeneficiaryLocal) {
@@ -124,14 +122,14 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
-            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
+            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.assistanceId)
         }
 
-        if(beneficiaryLocal.newSmartcard != null) {
+        if (beneficiaryLocal.newSmartcard != null) {
             val time = beneficiaryLocal.distributedAt ?: return
-            if(beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
+            if (beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
-                beneficiaryLocal.smartcard?.let{
+                beneficiaryLocal.smartcard?.let {
                     deactivateSmartcard(beneficiaryLocal.smartcard, time)
                 }
             }
@@ -139,17 +137,16 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
             val value = beneficiaryLocal.commodities
                 ?.findLast { it.type == CommodityType.SMARTCARD }
                 ?.value ?: 1.0
-            beneficiaryLocal.balance?.let { balance ->
-                distributeSmartcard(
-                    beneficiaryLocal.newSmartcard,
-                    beneficiaryLocal.distributionId,
-                    value,
-                    time,
-                    beneficiaryLocal.beneficiaryId,
-                    beneficiaryLocal.originalBalance,
-                    balance
-                )
-            } ?: throw Exception("Beneficiary ${beneficiaryLocal.id} has empty balance after distribution")
+
+            distributeSmartcard(
+                beneficiaryLocal.newSmartcard,
+                beneficiaryLocal.assistanceId,
+                value,
+                time,
+                beneficiaryLocal.beneficiaryId,
+                beneficiaryLocal.originalBalance,
+                beneficiaryLocal.balance ?: 1.0
+            )
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
@@ -171,8 +168,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.setDistributedRelief(DistributedReliefRequest(ids))
     }
 
-    private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
+    private suspend fun assignBooklet(code: String, beneficiaryId: Int, assistanceId: Int) {
+        service.assignBooklet(beneficiaryId, assistanceId, AssingBookletRequest(code))
     }
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
@@ -183,19 +180,15 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, distributionId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
+    private suspend fun distributeSmartcard(code: String, assistanceId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
         service.distributeSmartcard(code, DistributeSmartcardRequest(
-            distributionId = distributionId,
+            assistanceId = assistanceId,
             value = value,
             createdAt = date,
             beneficiaryId = beneficiaryId,
             balanceBefore = balanceBefore,
             balanceAfter = balanceAfter
         ))
-    }
-
-    private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
-        return vulnerability.map { it.vulnerabilityName }
     }
 
     private fun parseReliefs(reliefs: List<Relief>): List<Int> {
@@ -216,7 +209,6 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         return commodities ?: mutableListOf()
-
     }
 
     private fun isReliefDistributed(reliefs: List<Relief>): Boolean {

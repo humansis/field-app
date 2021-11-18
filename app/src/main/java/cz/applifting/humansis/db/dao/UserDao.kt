@@ -3,7 +3,6 @@ package cz.applifting.humansis.db.dao
 import androidx.room.*
 import cz.applifting.humansis.model.db.User
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */

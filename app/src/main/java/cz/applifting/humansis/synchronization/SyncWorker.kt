@@ -73,8 +73,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             Log.d(TAG, "Started Sync")
-            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(BuildConfig.DEMO_ACCOUNT, true) == true)
-            {
+            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(BuildConfig.DEMO_ACCOUNT, true) == true) {
                 val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
                 hostUrlInterceptor.setHost(host)
             }
@@ -97,8 +96,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
                 // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.distributionId)
-                val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
+                val distributionName = distributionsRepository.getNameById(it.assistanceId)
+                val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
                 val beneficiaryName = "${it.givenName} ${it.familyName}"
 
                 val syncError = SyncError(
@@ -246,7 +245,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     private fun getDownloadError(e: Exception, resourceName: String): SyncError {
-        Log.d(TAG, "Failed downloading ${resourceName}: ${e.message}}")
+        Log.d(TAG, "Failed downloading $resourceName: ${e.message}}")
 
         return when (e) {
             is HttpException -> {

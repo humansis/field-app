@@ -23,5 +23,4 @@ class ReachedBeneficiariesComponent @JvmOverloads constructor(context: Context, 
             pb_beneficiaries_reached.progress = reachedBeneficiaries * 100 / totalBeneficiaries
         }
     }
-
 }

@@ -50,7 +50,6 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
                 btn_action.visibility = View.VISIBLE
             }
         }
-
     }
 
     fun getValue(): String {

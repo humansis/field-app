@@ -72,22 +72,22 @@ class BeneficiaryViewModel @Inject constructor(
         remote: Boolean,
         deposit: Deposit
     ): Single<Pair<Tag, UserPinBalance>> {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
             if (remote) {
-                nfcFacade.rewriteBalanceForUser(tag, deposit).map{
+                nfcFacade.rewriteBalanceForUser(tag, deposit).map {
                     Pair(tag, it)
                 }
             } else {
-                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map{
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map {
                     Pair(tag, it)
                 }
             }
         }
     }
 
-    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag,UserPinBalance>> {
-        return nfcTagPublisher.getTagObservable().firstOrError().flatMap{ tag ->
-            nfcFacade.changePinForCard(tag, ownerId, pin).map{
+    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag, UserPinBalance>> {
+        return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
+            nfcFacade.changePinForCard(tag, ownerId, pin).map {
                 Pair(tag, it)
             }
         }
@@ -151,5 +151,4 @@ class BeneficiaryViewModel @Inject constructor(
         private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
         private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
     }
-
 }

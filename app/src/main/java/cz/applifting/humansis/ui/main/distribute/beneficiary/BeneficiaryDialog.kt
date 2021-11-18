@@ -136,7 +136,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
                 tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
-                beneficiary.nationalId.let{
+                beneficiary.nationalId.let {
                     tv_national_id.setValue("$it")
                     tv_national_id.visible(it != null)
                 }
@@ -148,7 +148,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let { getString(it) })
                 tv_referral_note.setOptionalValue(beneficiary.referralNote)
 
-                if(args.isSmartcard) {
+                if (args.isSmartcard) {
                     if (beneficiary.distributed && args.isSmartcard && beneficiary.newSmartcard == null && !beneficiary.edited) {
                         // it was distributed and already synced with the server
                         tv_smartcard.visibility = View.GONE
@@ -209,7 +209,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     else -> {
                         // edit state changed
                         // Close dialog and notify shareViewModel after beneficiary is saved to db
-                        if(!args.isSmartcard) {
+                        if (!args.isSmartcard) {
                             leaveWithSuccess()
                         }
                     }
@@ -258,7 +258,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         btn_scan_smartcard.setOnClickListener {
             Log.d(TAG, "Scan smartcard button clicked")
             btn_scan_smartcard.isEnabled = false
-            if(NfcInitializer.initNfc(requireActivity())) {
+            if (NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 writeBalanceOnCard(
                     pin,
@@ -268,7 +268,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         amount = value,
                         beneficiaryId = beneficiary.beneficiaryId,
                         currency = currency,
-                        depositId = beneficiary.distributionId,
+                        assistanceId = beneficiary.assistanceId,
                         expirationDate = DateUtil.stringToDate(beneficiary.dateExpiration),
                         limits = beneficiary.getLimits()
                     ),
@@ -283,7 +283,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         btn_change_pin.setOnClickListener {
             Log.d(TAG, "Change pin button clicked")
             btn_change_pin.isEnabled = false
-            if(NfcInitializer.initNfc(requireActivity())) {
+            if (NfcInitializer.initNfc(requireActivity())) {
                 val pin = generateRandomPin()
                 changePinOnCard(
                     beneficiary,
@@ -297,8 +297,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         if (newSmartcard == null) {
-            if(beneficiary.distributed)
-            {
+            if (beneficiary.distributed) {
                 btn_scan_smartcard.visibility = View.GONE
                 btn_scan_smartcard.isEnabled = false
                 btn_change_pin.visibility = View.VISIBLE
@@ -330,7 +329,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         val third = (0..9).random()
         val fourth = (0..9).random()
 
-        return "${first}${second}${third}${fourth}"
+        return "${first}${second}${third}$fourth"
     }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
@@ -351,7 +350,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         )
 
-        if(view?.btn_action?.isEnabled == true) {
+        if (view?.btn_action?.isEnabled == true) {
             view?.btn_action?.isEnabled = booklet.isValidBooklet
         }
 
@@ -412,7 +411,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setTitle(getString((R.string.card_updated)))
             .setView(layoutInflater.inflate(R.layout.dialog_card_message, null).apply {
                 this.pin.text = pin
-                if(message != null){
+                if (message != null) {
                     this.message.text = message
                 } else {
                     this.message.visibility = View.GONE
@@ -422,7 +421,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .setPositiveButton(getString(R.string.add_referral)) { _, _ ->
                 showAddReferralInfoDialog(beneficiaryLocalId)
             }
-            .setNegativeButton(getString(R.string.close)){ _, _ ->
+            .setNegativeButton(getString(R.string.close)) { _, _ ->
                 sharedViewModel.shouldDismissBeneficiaryDialog.call()
                 dismiss()
             }
@@ -444,7 +443,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(pin, remote, deposit)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
-                {   info ->
+                { info ->
                     val tag = info.first
                     val cardContent = info.second
                     val id = tag.id
@@ -464,7 +463,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         getString(
                             R.string.scanning_card_balance,
                             "${cardContent.balance} ${cardContent.currencyCode}" +
-                                if(cardContent.balance != 0.0) {
+                                if (cardContent.balance != 0.0) {
                                     getExpirationDateAsString(cardContent.expirationDate, requireContext()) +
                                         getLimitsAsText(cardContent.limits, cardContent.currencyCode, requireContext())
                                 } else {

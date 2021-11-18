@@ -1,6 +1,5 @@
 package cz.applifting.humansis.misc.connectionObserver
 
-
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
@@ -28,7 +27,7 @@ import javax.net.SocketFactory
  */
 class ConnectionObserverImpl(
     context: Context
-): ConnectionObserver {
+) : ConnectionObserver {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private var cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -90,7 +89,6 @@ class ConnectionObserverImpl(
             validNetworks.remove(network)
             checkValidNetworks()
         }
-
     }
 
     private fun doesNetworkHaveInternet(socketFactory: SocketFactory): Boolean {

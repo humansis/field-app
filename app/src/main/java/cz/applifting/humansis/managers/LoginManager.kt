@@ -15,7 +15,6 @@ import net.sqlcipher.database.SQLiteException
 import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
-
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  *
@@ -61,7 +60,6 @@ class LoginManager @Inject constructor(
             putString(SP_COUNTRY, defaultCountry)
             suspendCommit()
         }
-
 
         val db = dbProvider.get()
 
