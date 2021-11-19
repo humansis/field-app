@@ -31,7 +31,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     givenName = it.beneficiary.localGivenName,
                     familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = isReliefDistributed(it.generalReliefItems) || isBookletDistributed(it.booklets) || it.currentSmartcardSerialNumber != null,
+                    distributed = isReliefDistributed(it.generalReliefItems) || isBookletDistributed(it.booklets) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
                     reliefIDs = parseReliefs(it.generalReliefItems),
                     qrBooklets = parseQRBooklets(it.booklets),
@@ -203,7 +203,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
-                val bookletValue = booklet.vouchers.sumBy { it.value }.toDouble()
+                val bookletValue = booklet.voucherValues.sum().toDouble()
                 CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }
