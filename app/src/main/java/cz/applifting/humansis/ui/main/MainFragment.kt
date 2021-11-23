@@ -223,8 +223,10 @@ class MainFragment : BaseFragment() {
     }
 
     private fun setUpBackground() {
-        tb_toolbar.setBackgroundColor(getBackgroundColor())
-        nav_host_fragment.setBackgroundColor(getBackgroundColor())
+        val backgroundColor = getBackgroundColor()
+        tb_toolbar.setBackgroundColor(backgroundColor)
+        nav_host_fragment.setBackgroundColor(backgroundColor)
+        (requireActivity() as HumansisActivity).window.navigationBarColor = backgroundColor
     }
 
     private fun getBackgroundColor(): Int {
