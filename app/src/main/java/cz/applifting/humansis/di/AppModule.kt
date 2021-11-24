@@ -75,12 +75,13 @@ class AppModule {
                     try {
                         runBlocking {
                             val headersBuilder = oldRequest.headers().newBuilder()
-
-                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("country", it) }
-
                             loginManager.getAuthHeader()?.let {
-                                headersBuilder.add("x-wsse", it)
+                                headersBuilder.add("X-Wsse", it)
                             }
+                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("Country", it) }
+                            headersBuilder.add("Version-Name", BuildConfig.VERSION_NAME)
+                            headersBuilder.add("Build-Number", BuildConfig.BUILD_NUMBER.toString())
+                            headersBuilder.add("Build-Type", BuildConfig.BUILD_TYPE)
 
                             val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
                             withContext(Dispatchers.IO) {
