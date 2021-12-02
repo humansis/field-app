@@ -56,7 +56,7 @@ class LoginManagerTest {
             //language = null,
             password = "hashedPassword",
             //roles = emptyList(),
-            username = "username",
+            username = "username"
             //vendor = null,
             //projects = emptyList()
         )
