@@ -172,4 +172,5 @@
     <string name="food">Food</string>
     <string name="nonfood">Non-food</string>
     <string name="cashback">Cashback</string>
+    <string name="card_balance_expired">Card balance has expired</string>
 </resources>
