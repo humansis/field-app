@@ -242,16 +242,20 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         val cardResultDialog = AlertDialog.Builder(this, R.style.DialogTheme)
             .setTitle(getString((R.string.read_balance)))
             .setMessage(
-                getString(
-                    R.string.scanning_card_balance,
-                    if ((expirationDate != null && expirationDate < Date()) || cardContent.balance == 0.0) {
-                        "${0.0} ${cardContent.currencyCode}"
-                    } else {
-                        "${cardContent.balance} ${cardContent.currencyCode}" +
-                        getExpirationDateAsString(expirationDate, this) +
-                        getLimitsAsText(cardContent.limits, cardContent.currencyCode, this)
-                    }
-                )
+                if (expirationDate != null && expirationDate < Date()) {
+                    getString(R.string.card_balance_expired)
+                } else {
+                    getString(
+                        R.string.scanning_card_balance,
+                        if (cardContent.balance == 0.0) {
+                            "${0.0} ${cardContent.currencyCode}"
+                        } else {
+                            "${cardContent.balance} ${cardContent.currencyCode}" +
+                            getExpirationDateAsString(expirationDate, this) +
+                            getLimitsAsText(cardContent.limits, cardContent.currencyCode, this)
+                        }
+                    )
+                }
             )
             .setCancelable(true)
             .setNegativeButton(getString(R.string.close)) { dialog, _ ->
