@@ -107,6 +107,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
                 popup.menu.add(0, ApiEnvironments.DEV.id, 0, "DEV API")
                 popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
+                popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
                 popup.setOnMenuItemClickListener { item ->
                     val env = ApiEnvironments.values().find { it.id == item?.itemId }
                     changeEnvironment(env)

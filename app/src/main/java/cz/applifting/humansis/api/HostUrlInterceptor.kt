@@ -15,15 +15,16 @@ class HostUrlInterceptor : Interceptor {
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-            var request: Request = chain.request()
-            host?.let { host ->
-                    val newUrl = request.url().newBuilder()
-                            .host(host.url)
-                            .build()
-                    request = request.newBuilder()
-                            .url(newUrl)
-                            .build()
-            }
+        var request: Request = chain.request()
+        host?.let { host ->
+            val newUrl = request.url().newBuilder()
+                .host(host.url)
+                .port(host.port ?: 443)
+                .build()
+            request = request.newBuilder()
+                .url(newUrl)
+                .build()
+        }
         return chain.proceed(request)
     }
 }
