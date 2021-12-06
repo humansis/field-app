@@ -14,6 +14,7 @@ variables:
   ARTIFACT_PATH: ./app/build/outputs/apk/*/user-app-*.apk
   ARTIFACT_DEBUG_PATH: ./app/build/outputs/apk/*/user-app-*debug.apk
   ARTIFACT_RELEASE_PATH: ./app/build/outputs/apk/*/user-app-*release.apk
+  ARTIFACT_BUNDLE_PATH: ./app/build/outputs/bundle/*/user-app-*.aab
   EMULATOR_TIMEOUT: "60"
 
 stages:
@@ -143,6 +144,20 @@ upload_to_firebase:
     - ./gradlew --build-cache clean
         app:assembleDebug app:appDistributionUploadDebug
   when: manual
+
+# Build release and archive bundle automatically
+archive_release_bundle_job_automatically:
+  stage: publish
+  extends: .gradle_build
+  script:
+    - ./gradlew :app:bundleRelease
+  only:
+    - tags
+  artifacts:
+    when: always
+    expire_in: 4 week
+    paths:
+      - $ARTIFACT_BUNDLE_PATH
 
 publish_to_playstore:
   stage: publish
