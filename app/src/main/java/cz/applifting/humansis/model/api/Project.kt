@@ -8,5 +8,5 @@ import com.google.gson.annotations.SerializedName
 data class Project(
     val id: Int,
     val name: String?,
-    @SerializedName("number_of_households") val numberOfHouseholds: Int?,
+    @SerializedName("number_of_households") val numberOfHouseholds: Int?
 )
