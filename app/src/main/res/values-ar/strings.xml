@@ -137,7 +137,7 @@
     <string name="different_user_card_error">تم تخصيص هذه البطاقة بالفعل لمستخدم مختلف</string>
     <string name="success">نجاح!</string>
     <string name="navigation_drawer_open">افتح قائمة التنقل</string>
-    <string name="navigation_drawer_close">"اغلق قائمة التنقل "</string>
+    <string name="navigation_drawer_close">اغلق قائمة التنقل</string>
     <string name="unnamed_project">مشروع بدون اسم</string>
     <string name="ETH">أثيوبيا</string>
     <string name="commodity_value_decimal">%1$.2f %2$s</string>
@@ -171,4 +171,5 @@
     <string name="nonfood">مواد غيرغذائية</string>
     <string name="cashback">مبلغ مالي</string>
     <string name="product_type_limit_formatted">\n%1$s: %2$s متبقي</string>
+    <string name="card_balance_expired">انتهت فترة صلاحية رصيد البطاقة</string>
 </resources>
