@@ -53,12 +53,12 @@ class LoginManagerTest {
             changePassword = false,
             email = "email",
             id = 42,
-            //language = null,
+//            language = null,
             password = "hashedPassword",
-            //roles = emptyList(),
+//            roles = emptyList(),
             username = "username"
-            //vendor = null,
-            //projects = emptyList()
+//            vendor = null,
+//            projects = emptyList()
         )
         coEvery { db.userDao().getUser() } returns null
         coEvery { db.userDao().insert(any()) } returns Unit
