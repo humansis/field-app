@@ -82,7 +82,7 @@
 
     <style name="DialogButtonPositive" parent="@style/DialogButton">
         <item name="backgroundTint">@color/white</item>
-        <item name="android:textColor">@color/green</item>
+        <item name="android:textColor">@color/button_text_color</item>
         <item name="android:layout_marginStart">6dp</item>
     </style>
 
