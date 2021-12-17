@@ -5,8 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.VmPolicy
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -16,11 +14,9 @@ import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.message
 import kotlinx.android.synthetic.main.dialog_logs.view.*
 import kotlinx.coroutines.*
-import quanti.com.kotlinlog.BuildConfig
 import quanti.com.kotlinlog.Log
 import quanti.com.kotlinlog.utils.*
 import java.io.File
-
 
 /**
  * Created by Trnka Vladislav on 20.06.2017.
