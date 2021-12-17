@@ -97,15 +97,6 @@ class SendLogDialogFragment : DialogFragment() {
     private lateinit var dialogLogsBinding: DialogLogsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (BuildConfig.DEBUG) {
-            StrictMode.setVmPolicy(
-                VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build()
-            )
-        }
         super.onCreate(savedInstanceState)
         zipFile = CoroutineScope(Dispatchers.IO).async {
             val extraFiles = requireArguments().getSerializable(EXTRA_FILES) as ArrayList<File>

@@ -7,6 +7,7 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -31,6 +32,7 @@ import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
+import quanti.com.kotlinlog.BuildConfig
 import quanti.com.kotlinlog.Log
 import java.util.*
 import javax.inject.Inject
@@ -64,6 +66,16 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             window.statusBarColor = Color.BLACK
+        }
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build()
+            )
         }
 
         (application as App).appComponent.inject(this)
