@@ -142,8 +142,7 @@ class SendLogDialogFragment : DialogFragment() {
         dialog.setCancelable(false)
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).isEnabled = false
-        dialogLogsBinding.message.text =
-            "Preparing logs.\nPlease wait, this may take a while." // TODO stringres preklad
+        dialogLogsBinding.message.text = requireContext().getString(R.string.preparing_logs)
         dialogLogsBinding.progressBar.isVisible = true
     }
 

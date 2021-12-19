@@ -173,4 +173,5 @@
     <string name="nonfood">Non-food</string>
     <string name="cashback">Cashback</string>
     <string name="card_balance_expired">Card balance has expired</string>
+    <string name="preparing_logs">Preparing logs.\nPlease wait, this may take a while.</string>
 </resources>
