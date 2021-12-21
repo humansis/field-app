@@ -8,7 +8,7 @@ import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.di.SPQualifier
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
-import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.model.api.LoginResponse
 import cz.applifting.humansis.model.db.User
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
@@ -35,7 +35,7 @@ class LoginManager @Inject constructor(
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
-    suspend fun login(userResponse: LoginReqRes, originalPass: ByteArray): User {
+    suspend fun login(userResponse: LoginResponse, originalPass: ByteArray): User {
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
@@ -43,8 +43,13 @@ class LoginManager @Inject constructor(
 
         if (retrieveUser()?.invalidPassword == true) {
             // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekyed using the new one.
-            val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: throw IllegalStateException("DB password lost")
-            val oldDecryptedPassword = decryptUsingKeyStoreKey(base64decode(oldEncryptedPassword), KEYSTORE_KEY_ALIAS, spCrypto)
+            val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null)
+                ?: throw IllegalStateException("DB password lost")
+            val oldDecryptedPassword = decryptUsingKeyStoreKey(
+                base64decode(oldEncryptedPassword),
+                KEYSTORE_KEY_ALIAS,
+                spCrypto
+            )
                 ?: throw IllegalStateException("DB password couldn't be decrypted")
 
             dbProvider.init(dbPass, oldDecryptedPassword)
@@ -55,7 +60,8 @@ class LoginManager @Inject constructor(
 
         with(sp.edit()) {
             // Note that encryptUsingKeyStoreKey generates and stores IV to shared prefs
-            val encryptedDbPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context, spCrypto))
+            val encryptedDbPass =
+                base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context, spCrypto))
             putString(SP_DB_PASS_KEY, encryptedDbPass)
             putString(SP_COUNTRY, defaultCountry)
             suspendCommit()
@@ -67,7 +73,7 @@ class LoginManager @Inject constructor(
             id = userResponse.id,
             username = userResponse.username,
             email = userResponse.email,
-            saltedPassword = userResponse.password,
+            token = userResponse.token,
             countries = userResponse.availableCountries ?: listOf()
         )
         db.userDao().insert(user)
@@ -92,9 +98,13 @@ class LoginManager @Inject constructor(
 
     // Initializes DB if the key is available. Otherwise returns false.
     fun tryInitDB(): Boolean {
-        if (dbProvider.isInitialized()) { return true }
+        if (dbProvider.isInitialized()) {
+            return true
+        }
         val encryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: return false
-        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, spCrypto) ?: return false
+        val decryptedPassword =
+            decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, spCrypto)
+                ?: return false
 
         dbProvider.init(decryptedPassword)
 
@@ -112,13 +122,8 @@ class LoginManager @Inject constructor(
         }
     }
 
-    suspend fun getAuthHeader(): String? {
-        if (!dbProvider.isInitialized()) return null
-
-        val user = retrieveUser()
-        return user?.let {
-            generateXWSSEHeader(user.username, user.saltedPassword, sp.getBoolean("test", false))
-        }
+    suspend fun getAuthToken(): String? {
+        return retrieveUser()?.token
     }
 
     suspend fun getCountries(): List<String> {

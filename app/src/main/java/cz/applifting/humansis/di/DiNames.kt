@@ -5,4 +5,3 @@ package cz.applifting.humansis.di
  */
 
 const val BASE_URL = "base_url"
-const val LOGFILE_PATH = "logfile_path"

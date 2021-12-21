@@ -9,8 +9,7 @@ import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
-import cz.applifting.humansis.misc.hashAndSaltPassword
-import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.model.api.LoginRequest
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
@@ -48,7 +47,9 @@ class LoginViewModel @Inject constructor(
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
-        val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
+        val host = ApiEnvironments.valueOf(
+            sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
+        )
         hostUrlInterceptor.setHost(host)
         return host
     }
@@ -61,13 +62,9 @@ class LoginViewModel @Inject constructor(
             )
 
             try {
-                val saltResponse = service.getSalt(username)
-                val hashedPassword = hashAndSaltPassword(saltResponse.salt, password)
                 val userResponse = service.postLogin(
-                    LoginReqRes(
-                        changePassword = true,
-                        email = username,
-                        password = hashedPassword,
+                    LoginRequest(
+                        password = password,
                         username = username
                     )
                 )

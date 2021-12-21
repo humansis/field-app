@@ -1,6 +1,5 @@
 package cz.applifting.humansis.misc
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
@@ -9,11 +8,8 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.security.*
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -31,42 +27,6 @@ const val SP_AES_IV_KEY = "db-aes"
 
 // TODO measure these functions and check which - if not all - should be done on background thread
 
-suspend fun hashAndSaltPassword(salt: String, password: String): String {
-    return withContext(Dispatchers.Default) {
-        val salted = "$password{$salt}".toByteArray()
-        var digest = hashSHA512(salted)
-
-        for (i in 1..4999) {
-            digest = hashSHA512(digest.plus(salted))
-        }
-
-        Base64.encodeToString(digest, Base64.NO_WRAP)
-    }
-}
-
-@SuppressLint("SimpleDateFormat")
-fun generateXWSSEHeader(username: String, saltedPassword: String, test: Boolean): String {
-    val nonce = generateNonce()
-
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
-    sdf.timeZone = TimeZone.getTimeZone("UTC")
-    val createdAt = sdf.format(Date())
-
-    val digest = generateDigest(saltedPassword, nonce, createdAt)
-    val nonce64 = Base64.encodeToString(nonce.toByteArray(), Base64.NO_WRAP)
-
-    if (test) {
-        return "UsernameToken Username=\"$username\", PasswordDigest=\"$digest\", Nonce=\"badNone\", Created=\"$createdAt\""
-    }
-
-    return "UsernameToken Username=\"$username\", PasswordDigest=\"$digest\", Nonce=\"$nonce64\", Created=\"$createdAt\""
-}
-
-fun generateDigest(saltedPassword: String, nonce: String, created: String): String {
-    val mix = nonce + created + saltedPassword
-    return hashSHA1(mix)
-}
-
 fun hashSHA512(input: ByteArray, iterations: Int = 1): ByteArray {
     val digestor = MessageDigest.getInstance("SHA-512")
 
@@ -78,7 +38,12 @@ fun hashSHA512(input: ByteArray, iterations: Int = 1): ByteArray {
     return result
 }
 
-fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context, sp: SharedPreferences): ByteArray {
+fun encryptUsingKeyStoreKey(
+    secret: ByteArray,
+    keyAlias: String,
+    context: Context,
+    sp: SharedPreferences
+): ByteArray {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
 
@@ -89,7 +54,11 @@ fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Contex
     }
 }
 
-fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, sp: SharedPreferences): ByteArray? {
+fun decryptUsingKeyStoreKey(
+    secret: ByteArray,
+    keyAlias: String,
+    sp: SharedPreferences
+): ByteArray? {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
 
@@ -121,7 +90,12 @@ fun generateNonce(): String {
 
 // ----------------------------------------------------------------------------------------------------------------------------- //
 
-private fun doEncryptionUsingRSA(secret: ByteArray, keyAlias: String, keyStore: KeyStore, context: Context): ByteArray {
+private fun doEncryptionUsingRSA(
+    secret: ByteArray,
+    keyAlias: String,
+    keyStore: KeyStore,
+    context: Context
+): ByteArray {
     if (!keyStore.containsAlias(keyAlias)) {
         generateKeyStoreRSAKey(keyAlias, context)
     }
@@ -130,13 +104,22 @@ private fun doEncryptionUsingRSA(secret: ByteArray, keyAlias: String, keyStore: 
     return encryptRSA(secret, keyEntry.certificate.publicKey)
 }
 
-private fun doDecryptionUsingRSA(secret: ByteArray, keyAlias: String, keyStore: KeyStore): ByteArray {
+private fun doDecryptionUsingRSA(
+    secret: ByteArray,
+    keyAlias: String,
+    keyStore: KeyStore
+): ByteArray {
     val privateKey = keyStore.getKey(keyAlias, null) as PrivateKey
     return decryptRSA(secret, privateKey)
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
-private fun doEncryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, sp: SharedPreferences): ByteArray {
+private fun doEncryptionUsingAES(
+    secret: ByteArray,
+    keyAlias: String,
+    keyStore: KeyStore,
+    sp: SharedPreferences
+): ByteArray {
     if (!keyStore.containsAlias(keyAlias)) {
         generateAESKey(keyAlias)
     }
@@ -145,13 +128,14 @@ private fun doEncryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: 
     return encryptAES(secret, keyEntry.secretKey, sp)
 }
 
-private fun doDecryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, sp: SharedPreferences): ByteArray {
+private fun doDecryptionUsingAES(
+    secret: ByteArray,
+    keyAlias: String,
+    keyStore: KeyStore,
+    sp: SharedPreferences
+): ByteArray {
     val key = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
     return decryptAES(secret, key.secretKey, sp)
-}
-
-private fun hashSHA1(s: String): String {
-    return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
 }
 
 private fun encryptRSA(secret: ByteArray, publicKey: PublicKey): ByteArray {
@@ -202,7 +186,9 @@ private fun encryptAES(secret: ByteArray, key: SecretKey, sp: SharedPreferences)
 }
 
 private fun decryptAES(secret: ByteArray, key: SecretKey, sp: SharedPreferences): ByteArray {
-    val iv = base64decode(sp.getString(SP_AES_IV_KEY, null) ?: throw IllegalStateException("AES IV missing"))
+    val iv = base64decode(
+        sp.getString(SP_AES_IV_KEY, null) ?: throw IllegalStateException("AES IV missing")
+    )
 
     val cipher = Cipher.getInstance("AES/GCM/NoPadding")
     cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))

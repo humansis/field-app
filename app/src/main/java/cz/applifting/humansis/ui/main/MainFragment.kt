@@ -111,6 +111,9 @@ class MainFragment : BaseFragment() {
 
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
+            if (it.token == null) {
+                viewModel.logout()
+            }
             if (it == null) {
                 findNavController().navigate(R.id.logout)
                 return@Observer
