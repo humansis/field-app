@@ -138,7 +138,7 @@ class SendLogDialogFragment : DialogFragment() {
      * On button click
      * Update dialog UI to show progress
      */
-    private fun updateDialog(dialog: AlertDialog) {
+    private fun showProgress(dialog: AlertDialog) {
         dialog.setCancelable(false)
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).isEnabled = false
