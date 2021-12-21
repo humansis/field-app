@@ -2,14 +2,19 @@ package cz.applifting.humansis.misc
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import cz.applifting.humansis.R
+import cz.applifting.humansis.databinding.DialogLogsBinding
+import kotlinx.android.synthetic.main.dialog_card_message.view.*
+import kotlinx.android.synthetic.main.dialog_card_message.view.message
+import kotlinx.android.synthetic.main.dialog_logs.view.*
 import kotlinx.coroutines.*
 import quanti.com.kotlinlog.Log
-import quanti.com.kotlinlog.R
 import quanti.com.kotlinlog.utils.*
 import java.io.File
 
@@ -85,44 +90,67 @@ class SendLogDialogFragment : DialogFragment() {
 
     private var zipFile: Deferred<File>? = null
 
+    private lateinit var dialogLogsBinding: DialogLogsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        zipFile = GlobalScope.async {
+        zipFile = CoroutineScope(Dispatchers.IO).async {
             val extraFiles = requireArguments().getSerializable(EXTRA_FILES) as ArrayList<File>
             getZipOfLogs(requireActivity().applicationContext, 30, extraFiles)
         }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        dialogLogsBinding = DialogLogsBinding.inflate(layoutInflater)
+
         val hasFilePermission = requireActivity().applicationContext.hasFileWritePermission()
 
-        return AlertDialog
-            .Builder(requireContext(), requireArguments().getInt(DIALOG_THEME))
+        val dialog = AlertDialog.Builder(requireContext(), requireArguments().getInt(DIALOG_THEME))
             .apply {
-                setMessage(requireArguments().getString(MESSAGE))
-                setTitle(requireArguments().getString(TITLE))
-                setPositiveButton(
-                    requireArguments().getString(EMAIL_BUTTON_TEXT),
-                    this@SendLogDialogFragment::positiveButtonClick
-                )
-
+                setView(dialogLogsBinding.root.apply {
+                    this.title.text = requireArguments().getString(TITLE)
+                    this.message.text = requireArguments().getString(MESSAGE)
+                })
+                setPositiveButton(requireArguments().getString(EMAIL_BUTTON_TEXT)) { _, _ -> }
                 if (hasFilePermission) {
-                    setNeutralButton(
-                        requireArguments().getString(FILE_BUTTON_TEXT),
-                        this@SendLogDialogFragment::neutralButtonClick
-                    )
+                    setNeutralButton(requireArguments().getString(FILE_BUTTON_TEXT)) { _, _ -> }
                 }
             }.create()
+
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            Log.d(TAG, "Positive Button Clicked")
+            updateDialog(dialog)
+            shareLogs(dialog)
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+            Log.d(TAG, "Neutral button clicked")
+            updateDialog(dialog)
+            saveLogs(dialog)
+        }
+
+        return dialog
+    }
+
+    /**
+     * On button click
+     * Update dialog UI to show progress
+     */
+    private fun showProgress(dialog: AlertDialog) {
+        dialog.setCancelable(false)
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).isEnabled = false
+        dialogLogsBinding.message.text = requireContext().getString(R.string.preparing_logs)
+        dialogLogsBinding.progressBar.isVisible = true
     }
 
     /**
      * On positive button click
      * Create zip of all logs and open email client to send
      */
-    @Suppress("UNUSED_PARAMETER")
-    private fun positiveButtonClick(dialog: DialogInterface, which: Int) = runBlocking {
-
-        Log.d(TAG, "Positive Button Clicked")
+    private fun shareLogs(dialog: AlertDialog) = CoroutineScope(Dispatchers.Main).launch {
 
         val appContext = this@SendLogDialogFragment.requireContext().applicationContext
 
@@ -142,6 +170,17 @@ class SendLogDialogFragment : DialogFragment() {
             putExtra(Intent.EXTRA_STREAM, zipFileUri)
         }
 
+        appContext.packageManager?.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            ?.let {
+                appContext.grantUriPermission(
+                    it.activityInfo.packageName,
+                    zipFileUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
+        dialog.dismiss()
+
         try {
             startActivity(Intent.createChooser(intent, "Send mail..."))
         } catch (ex: android.content.ActivityNotFoundException) {
@@ -157,22 +196,18 @@ class SendLogDialogFragment : DialogFragment() {
      * On neutral button click
      * Copy ZIP of all logs to sd card
      */
-    @Suppress("UNUSED_PARAMETER")
-    private fun neutralButtonClick(dialog: DialogInterface, which: Int) {
-
-        Log.d(TAG, "Neutral button clicked")
+    private fun saveLogs(dialog: AlertDialog) = CoroutineScope(Dispatchers.Main).launch {
 
         val appContext = this@SendLogDialogFragment.requireContext().applicationContext
 
-        GlobalScope.launch(Dispatchers.IO) {
-            val file = zipFile!!.await().copyLogsTOSDCard(requireContext())
-            launch(Dispatchers.Main) {
-                Toast.makeText(
-                    appContext,
-                    "File successfully copied" + "\n" + file.absolutePath,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+        val file = zipFile?.await()?.copyLogsTOSDCard(requireContext())
+
+        dialog.dismiss()
+
+        Toast.makeText(
+            appContext,
+            "File successfully copied" + "\n" + file?.absolutePath,
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
