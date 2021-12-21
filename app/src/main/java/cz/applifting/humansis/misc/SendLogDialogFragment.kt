@@ -121,13 +121,13 @@ class SendLogDialogFragment : DialogFragment() {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             Log.d(TAG, "Positive Button Clicked")
-            updateDialog(dialog)
+            showProgress(dialog)
             shareLogs(dialog)
         }
 
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
             Log.d(TAG, "Neutral button clicked")
-            updateDialog(dialog)
+            showProgress(dialog)
             saveLogs(dialog)
         }
 
