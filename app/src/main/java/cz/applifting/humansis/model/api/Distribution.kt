@@ -11,14 +11,14 @@ data class Distribution(
     val name: String,
     @SerializedName("date_distribution")val dateDistribution: String?,
     @SerializedName("date_expiration")val dateExpiration: String?,
-    val archived: Boolean,
-    val validated: Boolean,
     val type: Target,
     val commodities: List<Commodity>,
     @SerializedName("beneficiaries_count") val numberOfBeneficiaries: Int,
-    val completed: Boolean,
-    val remoteDistributionAllowed: Boolean,
     val foodLimit: Double?,
     val nonfoodLimit: Double?,
-    val cashbackLimit: Double?
+    val cashbackLimit: Double?,
+    val remoteDistributionAllowed: Boolean,
+    val completed: Boolean,
+    val validated: Boolean,
+    val archived: Boolean
 )

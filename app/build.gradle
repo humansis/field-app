@@ -71,6 +71,7 @@ android {
         buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
         buildConfigField "String", "DEV_API_URL", "\"$DEV_API_URL\""
+        buildConfigField "String", "LOCAL_API_URL", "\"$LOCAL_API_URL\""
 
         buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
         buildConfigField "String", "APP_ID", "\"$APP_ID\""

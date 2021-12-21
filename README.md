@@ -20,6 +20,15 @@ Artifactory is necessary because project depends on NFC secure library which we 
 
 <img src="img/artifactory_password.png" width="50%" height="50%">
 
+## Docker mock server
+
+App is ready to work with docker swagger mock server with emulator. If you want to use mock server with an actual smartphone, do this:
+1. turn on hotspot on your computer
+1. open port 8091 in firewall
+1. run cmd ipconfig to find your virtual adapter ip address
+1. open gradle.properties and change LOCAL_API_URL from 10.0.2.2 to your ip address
+1. paste <domain includeSubdomains="true">1your_ip_address</domain> to res/xml/network_security_config.xml
+1. build, run and connect your smartphone to your hotspot
 
 ## Smartcard Lifecycle 
 

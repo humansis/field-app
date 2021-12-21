@@ -258,7 +258,6 @@ class MainFragment : BaseFragment() {
         val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
         tvMessage.text = text
         val toast = Toast(context)
-        toast.setGravity(Gravity.BOTTOM, 0, 50)
         toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
