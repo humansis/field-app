@@ -83,7 +83,7 @@ class AppModule {
                         runBlocking {
                             val headersBuilder = oldRequest.headers().newBuilder()
                             loginManager.getAuthToken()?.let {
-                                headersBuilder.add("Authorization", it)
+                                headersBuilder.add("Authorization", "Bearer $it")
                             }
                             sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("Country", it) }
                             headersBuilder.add("Version-Name", BuildConfig.VERSION_NAME)

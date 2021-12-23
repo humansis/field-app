@@ -35,6 +35,7 @@ class MainViewModel @Inject constructor(
 
     val userLD = MutableLiveData<User>()
     val environmentLD = MutableLiveData<String>()
+    var authToken: String? = null
 
     val readBalanceResult = SingleLiveEvent<UserPinBalance>()
     val readBalanceError = SingleLiveEvent<Throwable>()
@@ -45,6 +46,7 @@ class MainViewModel @Inject constructor(
         launch {
             val user = loginManager.retrieveUser()
             userLD.value = user
+            authToken = user?.token
         }
         launch {
             environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)

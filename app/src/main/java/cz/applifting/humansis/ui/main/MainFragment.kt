@@ -27,12 +27,14 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.misc.getPayload
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
 import quanti.com.kotlinlog.Log
+import java.util.*
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -110,18 +112,6 @@ class MainFragment : BaseFragment() {
         setUpBackground()
 
         // Define Observers
-        viewModel.userLD.observe(viewLifecycleOwner, Observer {
-            if (it.token == null) {
-                viewModel.logout()
-            }
-            if (it == null) {
-                findNavController().navigate(R.id.logout)
-                return@Observer
-            }
-
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
-            tvUsername.text = it.username
-        })
 
         sharedViewModel.toastLD.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -167,6 +157,22 @@ class MainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.userLD.observe(viewLifecycleOwner, Observer {
+
+            if (it == null) {
+                findNavController().navigate(R.id.logout)
+                return@Observer
+            } else if (isTokenValid(it.token) && it.token != viewModel.authToken) {
+                viewModel.authToken = it.token
+            }
+
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+            tvUsername.text = it.username
+        })
     }
 
     override fun onDestroy() {
@@ -217,12 +223,24 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(R.id.uploadDialog)
-                return true
+                if (isTokenValid(viewModel.authToken)) {
+                    mainNavController.navigate(R.id.uploadDialog)
+                    return true
+                }
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun isTokenValid(token: String?): Boolean {
+        return if (token == null || token.isExpired()) {
+            sharedViewModel.toastLD.value = "You have been logged out because your authentication token has expired or is missing." // TODO stringres
+            viewModel.logout()
+            false
+        } else {
+            true
+        }
     }
 
     private fun setUpBackground() {
@@ -264,6 +282,14 @@ class MainFragment : BaseFragment() {
         toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
+    }
+
+    private fun String.isExpired(): Boolean {
+        return getPayload(this).let { payload ->
+            val tokenExpirationInMillis = payload.exp * 1000
+            val oneHourInMillis = 60 * 60 * 1000 // TODO poresit jestli hodina staci
+            (tokenExpirationInMillis - oneHourInMillis) < Date().time
+        }
     }
 
     companion object {
