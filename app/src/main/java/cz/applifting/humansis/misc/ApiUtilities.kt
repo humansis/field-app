@@ -49,5 +49,4 @@ object ApiUtilities {
             )
         }
     }
-
 }
