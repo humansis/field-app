@@ -17,10 +17,7 @@ import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
-import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
-import cz.applifting.humansis.repositories.ErrorsRepository
-import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.repositories.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
@@ -28,6 +25,7 @@ import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
+import quanti.com.kotlinlog.file.FileLogger
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -50,6 +48,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     lateinit var distributionsRepository: DistributionsRepository
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
+    @Inject
+    lateinit var logsRepository: LogsRepository
     @Inject
     lateinit var sp: SharedPreferences
     @Inject
@@ -180,6 +180,17 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 }
             }
 
+            // Upload logs
+            try {
+                loginManager.retrieveUser()?.id?.let { id ->
+                    logsRepository.postLogs(id)
+                    FileLogger.deleteAllLogs(applicationContext)
+                }
+            } catch (e: Exception) {
+                syncErrors.add(getUploadError(e, applicationContext.getString(R.string.logs))) // TODO translations
+            }
+            if (isStopped) return@supervisorScope stopWork("Uploading logs")
+
             finishWork()
         }
     }
@@ -260,6 +271,30 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             else -> {
                 SyncError(
                     location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    params = applicationContext.getString(R.string.unknwon_error),
+                    errorMessage = e.message ?: "",
+                    code = 0
+                )
+            }
+        }
+    }
+
+    private fun getUploadError(e: Exception, resourceName: String): SyncError {
+        e.printStackTrace()
+        Log.e(TAG, "Failed uploading $resourceName: ${e.message}}")
+
+        return when (e) {
+            is HttpException -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.upload_error).format(resourceName.toLowerCase(Locale.ROOT)), // TODO translations
+                    params = applicationContext.getString(R.string.error_server),
+                    errorMessage = getErrorMessageByCode(e.code()),
+                    code = e.code()
+                )
+            }
+            else -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.upload_error).format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0

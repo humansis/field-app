@@ -1,6 +1,8 @@
 package cz.applifting.humansis.api
 
 import cz.applifting.humansis.model.api.*
+import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.*
 
 /**
@@ -40,4 +42,8 @@ interface HumansisService {
 
     @POST("v4/smartcards/{serialNumber}/deposit")
     suspend fun distributeSmartcard(@Path("serialNumber") serialNumber: String, @Body distributeSmartcardRequest: DistributeSmartcardRequest)
+
+    @Multipart
+    @POST("v1/users/{id}/logs")
+    suspend fun postLogs(@Path("id") userId: Long, @Part logfile: MultipartBody.Part): Response<Unit>
 }
