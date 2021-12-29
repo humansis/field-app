@@ -10,6 +10,8 @@ import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
+import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -85,7 +87,11 @@ class AppModule {
 
                             val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
                             withContext(Dispatchers.IO) {
-                                chain.proceed(request)
+                                chain.proceed(request).apply {
+                                    if (!isPositiveResponseHttpCode(this.code()) && !BuildConfig.DEBUG) {
+                                        this.body()?.let { logResponseBody(this.headers(), it) }
+                                    }
+                                }
                             }
                         }
                     } catch (e: Exception) {
