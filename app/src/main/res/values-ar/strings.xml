@@ -173,4 +173,6 @@
     <string name="product_type_limit_formatted">\n%1$s: %2$s متبقي</string>
     <string name="card_balance_expired">انتهت فترة صلاحية رصيد البطاقة</string>
     <string name="preparing_logs">تجهيز السجلات.\\nالرجاء الانتظار، قد يستغرق بعد الوقت</string>
+    <string name="logs">السجلات</string>
+    <string name="upload_error">تعذر تحميل %1$s.</string>
 </resources>

@@ -188,14 +188,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         nfcTagPublisher.getTagSubject().onNext(tag)
     }
 
-    override fun onNewIntent(intent: Intent) { // TODO smazat
-        super.onNewIntent(intent)
-        if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action) {
-            val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) ?: return
-            nfcTagPublisher.getTagSubject().onNext(tag)
-        }
-    }
-
     private fun setUpObservers() {
         observe(vm.readBalanceResult) {
             showReadBalanceResult(it)

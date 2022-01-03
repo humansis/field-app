@@ -180,23 +180,19 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 }
             }
 
-            // Upload logs
+            // Upload logs // TODO try to make it upload even if previous syncs fail
             try {
                 loginManager.retrieveUser()?.id?.let { id ->
                     logsRepository.postLogs(id)
                     FileLogger.deleteAllLogs(applicationContext)
                 }
             } catch (e: Exception) {
-                syncErrors.add(getUploadError(e, applicationContext.getString(R.string.logs))) // TODO translations
+                syncErrors.add(getUploadError(e, applicationContext.getString(R.string.logs)))
             }
             if (isStopped) return@supervisorScope stopWork("Uploading logs")
 
             finishWork()
         }
-    }
-
-    private fun getCurrentCountry(sp: SharedPreferences): String {
-        return sp.getString(SP_COUNTRY, "") ?: ""
     }
 
     private suspend fun stopWork(location: String): Result {
@@ -286,7 +282,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return when (e) {
             is HttpException -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.upload_error).format(resourceName.toLowerCase(Locale.ROOT)), // TODO translations
+                    location = applicationContext.getString(R.string.upload_error).format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code()
