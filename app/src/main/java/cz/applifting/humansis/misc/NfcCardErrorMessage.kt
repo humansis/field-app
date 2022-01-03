@@ -15,6 +15,7 @@ object NfcCardErrorMessage {
             PINExceptionEnum.TAG_LOST -> context.getString(R.string.tag_lost_card_error)
             PINExceptionEnum.DIFFERENT_USER -> context.getString(R.string.different_user_card_error)
             PINExceptionEnum.CARD_INITIALIZED -> context.getString(R.string.card_initialized)
+            PINExceptionEnum.CARD_EMPTY -> context.getString(R.string.card_empty)
             else -> context.getString(R.string.card_error)
         }
     }

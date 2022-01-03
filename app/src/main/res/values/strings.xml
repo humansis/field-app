@@ -176,4 +176,5 @@
     <string name="preparing_logs">Preparing logs.\nPlease wait, this may take a while.</string>
     <string name="upload_error">Couldn\'t upload %1$s.</string>
     <string name="logs">Logs</string>
+    <string name="card_empty">This card is empty</string>
 </resources>

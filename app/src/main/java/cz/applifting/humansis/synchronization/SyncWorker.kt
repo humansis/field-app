@@ -179,14 +179,14 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 }
             }
 
-            // Upload logs // TODO try to make it upload even if previous syncs fail
+            // Upload logs
             try {
                 loginManager.retrieveUser()?.id?.let { id ->
                     logsRepository.postLogs(id)
                     FileLogger.deleteAllLogs(applicationContext)
                 }
             } catch (e: Exception) {
-                syncErrors.add(getUploadError(e, applicationContext.getString(R.string.logs)))
+                syncErrors.add(getUploadError(e, applicationContext.getString(R.string.logs))) // TODO otestovat, vraci to worker state success ikdyz je 404
             }
             if (isStopped) return@supervisorScope stopWork("Uploading logs")
 
