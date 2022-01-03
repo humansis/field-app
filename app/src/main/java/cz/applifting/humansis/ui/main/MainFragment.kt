@@ -235,7 +235,7 @@ class MainFragment : BaseFragment() {
 
     private fun isTokenValid(token: String?): Boolean {
         return if (token == null || token.isExpired()) {
-            sharedViewModel.toastLD.value = "You have been logged out because your authentication token has expired or is missing." // TODO stringres
+            sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             viewModel.logout()
             false
         } else {
