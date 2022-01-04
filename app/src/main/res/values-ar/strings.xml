@@ -173,4 +173,5 @@
     <string name="product_type_limit_formatted">\n%1$s: %2$s متبقي</string>
     <string name="card_balance_expired">انتهت فترة صلاحية رصيد البطاقة</string>
     <string name="preparing_logs">تجهيز السجلات.\\nالرجاء الانتظار، قد يستغرق بعد الوقت</string>
+    <string name="token_missing_or_expired">لقد تم تسجيل خروجك لأن رمز المصادقة الخاص بك قد انتهى أو أنه مفقود.</string>
 </resources>

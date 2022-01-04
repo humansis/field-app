@@ -11,7 +11,6 @@ import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -42,20 +41,27 @@ const val ERROR_MESSAGE_KEY = "error-message-key"
 const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
 const val SP_SYNC_SUMMARY = "sync-summary"
 
-class SyncWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
+class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams) {
 
     @Inject
     lateinit var projectsRepository: ProjectsRepository
+
     @Inject
     lateinit var distributionsRepository: DistributionsRepository
+
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
+
     @Inject
     lateinit var sp: SharedPreferences
+
     @Inject
     lateinit var loginManager: LoginManager
+
     @Inject
     lateinit var errorsRepository: ErrorsRepository
+
     @Inject
     lateinit var hostUrlInterceptor: HostUrlInterceptor
 
@@ -73,8 +79,15 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             Log.d(TAG, "Started Sync")
-            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(BuildConfig.DEMO_ACCOUNT, true) == true) {
-                val host = ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
+            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(
+                    BuildConfig.DEMO_ACCOUNT,
+                    true
+                ) == true
+            ) {
+                val host = ApiEnvironments.valueOf(
+                    sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
+                        ?: ApiEnvironments.STAGE.name
+                )
                 hostUrlInterceptor.setHost(host)
             }
 
@@ -91,7 +104,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             errorsRepository.clearAll()
 
-            suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
+            suspend fun logUploadError(
+                e: HttpException,
+                it: BeneficiaryLocal,
+                action: UploadAction
+            ) {
                 val errBody = "${e.response()?.errorBody()?.toString()}"
                 Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
@@ -112,8 +129,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 syncErrors.add(syncError)
             }
 
-            val assignedBeneficiaries = beneficiariesRepository.getAssignedBeneficiariesOfflineSuspend()
-            val referralChangedBeneficiaries = beneficiariesRepository.getAllReferralChangesOffline()
+            val assignedBeneficiaries =
+                beneficiariesRepository.getAssignedBeneficiariesOfflineSuspend()
+            val referralChangedBeneficiaries =
+                beneficiariesRepository.getAllReferralChangesOffline()
             syncStats.uploadCandidatesCount = assignedBeneficiaries.count()
             if (assignedBeneficiaries.isNotEmpty() || referralChangedBeneficiaries.isNotEmpty()) {
                 sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
@@ -149,7 +168,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 val projects = try {
                     projectsRepository.getProjectsOnline()
                 } catch (e: Exception) {
-                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
+                    syncErrors.add(
+                        getDownloadError(
+                            e,
+                            applicationContext.getString(R.string.projects)
+                        )
+                    )
                     emptyList()
                 }
 
@@ -162,7 +186,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         it.await().toList()
                     }
                 } catch (e: Exception) {
-                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
+                    syncErrors.add(
+                        getDownloadError(
+                            e,
+                            applicationContext.getString(R.string.distribution)
+                        )
+                    )
                     emptyList()
                 }
 
@@ -175,17 +204,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         it.await()
                     }
                 } catch (e: Exception) {
-                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
+                    syncErrors.add(
+                        getDownloadError(
+                            e,
+                            applicationContext.getString(R.string.beneficiary)
+                        )
+                    )
                     emptyList<ProjectLocal>()
                 }
             }
 
             finishWork()
         }
-    }
-
-    private fun getCurrentCountry(sp: SharedPreferences): String {
-        return sp.getString(SP_COUNTRY, "") ?: ""
     }
 
     private suspend fun stopWork(location: String): Result {
@@ -219,7 +249,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             Log.d(TAG, "Sync finished with failure")
             sp.setDate(LAST_SYNC_FAILED_KEY, Date())
-            Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build())
+            Result.failure(
+                reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()
+            )
         }
     }
 
@@ -251,7 +283,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return when (e) {
             is HttpException -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error)
+                        .format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code()
@@ -259,7 +292,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             }
             else -> {
                 SyncError(
-                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    location = applicationContext.getString(R.string.download_error)
+                        .format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0
@@ -284,7 +318,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             return if (uploadCandidatesCount == null || uploadCandidatesCount == 0) {
                 applicationContext.getString(R.string.sync_summary_nothing)
             } else {
-                applicationContext.getString(R.string.sync_summary, uploadedSuccessfullyCount, uploadCandidatesCount)
+                applicationContext.getString(
+                    R.string.sync_summary,
+                    uploadedSuccessfullyCount,
+                    uploadCandidatesCount
+                )
             }
         }
     }

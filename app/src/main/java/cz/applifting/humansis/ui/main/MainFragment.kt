@@ -27,12 +27,14 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
 import quanti.com.kotlinlog.Log
+import java.util.*
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -67,9 +69,10 @@ class MainFragment : BaseFragment() {
 
         drawer = requireActivity().findViewById(R.id.drawer_layout)
 
-        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
-            "Cannot find nav host in main"
-        )
+        val fragmentContainer =
+            view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
+                "Cannot find nav host in main"
+            )
 
         baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
@@ -91,7 +94,10 @@ class MainFragment : BaseFragment() {
         }
 
         val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
-        var appVersion = getString(R.string.app_name) + " " + getString(R.string.version, BuildConfig.VERSION_NAME)
+        var appVersion = getString(R.string.app_name) + " " + getString(
+            R.string.version,
+            BuildConfig.VERSION_NAME
+        )
         if (BuildConfig.DEBUG) {
             appVersion += (" (" + BuildConfig.BUILD_NUMBER + ")")
         }
@@ -110,15 +116,6 @@ class MainFragment : BaseFragment() {
         setUpBackground()
 
         // Define Observers
-        viewModel.userLD.observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                findNavController().navigate(R.id.logout)
-                return@Observer
-            }
-
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
-            tvUsername.text = it.username
-        })
 
         sharedViewModel.toastLD.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -166,6 +163,22 @@ class MainFragment : BaseFragment() {
         setHasOptionsMenu(true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.userLD.observe(viewLifecycleOwner, Observer {
+
+            if (it == null) {
+                findNavController().navigate(R.id.logout)
+                return@Observer
+            } else if (checkIfTokenValid(it.token) && it.token != viewModel.authToken) {
+                viewModel.authToken = it.token
+            }
+
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+            tvUsername.text = it.username
+        })
+    }
+
     override fun onDestroy() {
         sharedViewModel.stopObservingConnection()
         super.onDestroy()
@@ -198,9 +211,10 @@ class MainFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner, {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
-        onDestinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
-        }
+        onDestinationChangedListener =
+            NavController.OnDestinationChangedListener { _, destination, _ ->
+                pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
+            }
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         super.onCreateOptionsMenu(menu, inflater)
@@ -214,12 +228,24 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(R.id.uploadDialog)
-                return true
+                if (checkIfTokenValid(viewModel.authToken)) {
+                    mainNavController.navigate(R.id.uploadDialog)
+                    return true
+                }
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun checkIfTokenValid(token: JWToken?): Boolean {
+        return if (token == null || token.isExpired()) {
+            sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
+            viewModel.logout()
+            false
+        } else {
+            true
+        }
     }
 
     private fun setUpBackground() {

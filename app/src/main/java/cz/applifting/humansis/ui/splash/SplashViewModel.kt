@@ -2,7 +2,7 @@ package cz.applifting.humansis.ui.splash
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
