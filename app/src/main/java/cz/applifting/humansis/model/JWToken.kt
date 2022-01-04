@@ -11,5 +11,4 @@ class JWToken(
         val oneHourInMillis = 60 * 60 * 1000 // TODO poresit jestli hodina staci
         return (tokenExpirationInMillis - oneHourInMillis) < Date().time
     }
-
 }

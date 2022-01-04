@@ -8,7 +8,6 @@ import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.model.User
-import cz.applifting.humansis.model.db.UserDbEntity
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
