@@ -2,10 +2,12 @@ package cz.applifting.humansis.repositories
 
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import quanti.com.kotlinlog.utils.getZipOfLogs
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +29,10 @@ class LogsRepository @Inject constructor(val service: HumansisService, val conte
                     zipOfLogs
                 )
             )
-        )
+        ).let { response ->
+            if (!isPositiveResponseHttpCode(response.code())) {
+                throw HttpException(response)
+            }
+        }
     }
 }

@@ -60,7 +60,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             viewModel.login(username, et_password.text.toString(), this)
         }
 
-        imageView3.setOnLongClickListener {
+        loginLogo.setOnLongClickListener {
             SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
                 title = getString(R.string.logs_dialog_title),

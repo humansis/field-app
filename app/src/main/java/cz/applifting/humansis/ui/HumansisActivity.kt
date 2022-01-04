@@ -199,7 +199,9 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
                 this,
                 if (it is PINException) {
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
-                } else getString(R.string.card_error),
+                } else {
+                    getString(R.string.card_error)
+                },
                 Toast.LENGTH_LONG
             ).show()
             displayedDialog?.dismiss()

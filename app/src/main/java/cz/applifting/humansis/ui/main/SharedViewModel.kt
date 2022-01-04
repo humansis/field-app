@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.managers.SP_LOGS_UPLOAD_FAILED_ONLY
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
@@ -69,7 +70,8 @@ class SharedViewModel @Inject constructor(
                 isLoading(it),
                 sp.getDate(LAST_SYNC_FAILED_KEY),
                 sp.getDate(LAST_DOWNLOAD_KEY),
-                sp.getBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false)
+                sp.getBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false),
+                sp.getBoolean(SP_LOGS_UPLOAD_FAILED_ONLY, false)
             )
         }
 

@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/imageView3"
+                        android:id="@+id/loginLogo"
                         android:layout_width="86dp"
                         android:layout_height="86dp"
                         app:layout_constraintEnd_toEndOf="parent"

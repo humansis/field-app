@@ -9,5 +9,6 @@ data class SyncWorkerState(
     val isLoading: Boolean,
     val lastSyncFail: Date?,
     val lastDownload: Date?,
-    val isFirstCountryDownload: Boolean
+    val isFirstCountryDownload: Boolean,
+    val logsUploadFailedOnly: Boolean
 )

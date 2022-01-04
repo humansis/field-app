@@ -22,5 +22,17 @@ data class SyncError(
     val params: String,
     val code: Int,
     val errorMessage: String,
-    val beneficiaryId: Int? = null
+    val beneficiaryId: Int? = null,
+    val action: SyncErrorActionEnum?
 )
+
+enum class SyncErrorActionEnum {
+    BEFORE_INITIALIZATION,
+    AFTER_INITIALIZATION,
+    DISTRIBUTION,
+    REFERRAL_UPDATE,
+    PROJECTS_DOWNLOAD,
+    DISTRIBUTIONS_DOWNLOAD,
+    BENEFICIARIES_DOWNLOAD,
+    LOGS_UPLOAD
+}
