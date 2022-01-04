@@ -14,13 +14,6 @@ class ParamsModule {
     @Provides
     @Named(BASE_URL)
     fun baseUrl(): String {
-        return "https://" + BuildConfig.RELEASE_API_URL + "/api/wsse/offline-app/"
-    }
-
-    @Provides
-    @Named(LOGFILE_PATH)
-    fun logFilePath(): String {
-        // todo cesta k kotlinloggerfile
-        return "log.txt"
+        return "https://" + BuildConfig.RELEASE_API_URL + "/api/jwt/offline-app/"
     }
 }

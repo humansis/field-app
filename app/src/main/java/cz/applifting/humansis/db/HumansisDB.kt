@@ -13,19 +13,24 @@ import cz.applifting.humansis.model.db.*
  */
 @Database(
     entities = [
-        User::class,
+        UserDbEntity::class,
         BeneficiaryLocal::class,
         ProjectLocal::class,
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 22,
+    version = 23,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
             from = 21,
             to = 22,
             spec = HumansisDB.AutoMigrationTo22::class
+        ),
+        AutoMigration(
+            from = 22,
+            to = 23,
+            spec = HumansisDB.AutoMigrationTo23::class
         )
     ]
 )
@@ -67,4 +72,10 @@ abstract class HumansisDB : RoomDatabase() {
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
     @DeleteColumn(tableName = "beneficiaries", columnName = "vulnerabilities")
     class AutoMigrationTo22 : AutoMigrationSpec
+
+    @DeleteColumn(
+        tableName = "User",
+        columnName = "salted_password"
+    )
+    class AutoMigrationTo23 : AutoMigrationSpec
 }

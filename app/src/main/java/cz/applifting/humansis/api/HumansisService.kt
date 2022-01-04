@@ -10,11 +10,8 @@ import retrofit2.http.*
  */
 interface HumansisService {
 
-    @GET("v1/salt/{username}")
-    suspend fun getSalt(@Path("username") username: String): GetSaltResponse
-
-    @POST("v1/login")
-    suspend fun postLogin(@Body loginReqRes: LoginReqRes): LoginReqRes
+    @POST("v2/login")
+    suspend fun postLogin(@Body loginRequest: LoginRequest): LoginResponse
 
     @GET("v1/projects")
     suspend fun getProjects(): List<Project>
