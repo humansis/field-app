@@ -12,7 +12,6 @@ import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
-import cz.applifting.humansis.managers.SP_LOGS_UPLOAD_FAILED_ONLY
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
@@ -283,7 +282,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             sp.setDate(LAST_SYNC_FAILED_KEY, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
             sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
-            sp.edit().putBoolean(SP_LOGS_UPLOAD_FAILED_ONLY, false).suspendCommit()
             Log.d(TAG, "Sync finished successfully")
             Result.success()
         } else {
@@ -296,11 +294,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Log.d(TAG, "Sync finished with failure")
             sp.setDate(LAST_SYNC_FAILED_KEY, Date())
-
-            sp.edit().putBoolean(
-                SP_LOGS_UPLOAD_FAILED_ONLY,
-                (syncErrors.size == 1 && syncErrors.single().action == SyncErrorActionEnum.LOGS_UPLOAD)
-            ).suspendCommit()
 
             Result.failure(
                 reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()
@@ -329,7 +322,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private fun getDownloadError(e: Exception, resourceName: String, action: SyncErrorActionEnum): SyncError {
+    private fun getDownloadError(
+        e: Exception,
+        resourceName: String,
+        action: SyncErrorActionEnum
+    ): SyncError {
         e.printStackTrace()
         Log.e(TAG, "Failed downloading $resourceName: ${e.message}")
 
@@ -357,7 +354,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         }
     }
 
-    private fun getUploadError(e: Exception, resourceName: String, action: SyncErrorActionEnum): SyncError {
+    private fun getUploadError(
+        e: Exception,
+        resourceName: String,
+        action: SyncErrorActionEnum
+    ): SyncError {
         e.printStackTrace()
         Log.e(TAG, "Failed uploading $resourceName: ${e.message}")
 

@@ -56,7 +56,14 @@ class AppModule {
     @Provides
     @Singleton
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
-        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
+
+        val forbiddenRegex = Regex("(password|multipart/form-data|^Content-Type|^Content-Length|^Authorization|^Country|^Version-Name|^Build-Number|^Build-Type|^Transfer-Encoding|^Set-Cookie|^Cache-Control|^Date|^Connection|^Server|^X-|^x-|^ETag|^vary|^Age|^Strict-Transport-Security)")
+
+        val logging = HttpLoggingInterceptor { message ->
+            if (!message.contains(forbiddenRegex)) {
+                Log.d("OkHttp", message)
+            }
+        }
 
         logging.level = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.BODY

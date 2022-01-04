@@ -176,4 +176,5 @@
     <string name="logs">السجلات</string>
     <string name="upload_error">تعذر تحميل %1$s.</string>
     <string name="card_empty">هذه البطاقة فارغة</string>
+    <string name="logs_upload_failed">فشل في رفع السجلات، هل ترغب في إرسالها يدوياً</string>
 </resources>

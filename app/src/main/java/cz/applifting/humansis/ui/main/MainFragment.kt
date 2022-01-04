@@ -27,6 +27,7 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -202,6 +203,16 @@ class MainFragment : BaseFragment() {
             pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
         }
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
+
+        sharedViewModel.logsUploadFailed.observe(viewLifecycleOwner, {
+            SendLogDialogFragment.newInstance(
+                sendEmailAddress = getString(R.string.send_email_adress),
+                title = getString(R.string.logs_dialog_title),
+                message = getString(R.string.logs_upload_failed),
+                emailButtonText = getString(R.string.logs_dialog_email_button),
+                dialogTheme = R.style.DialogTheme
+            ).show(requireActivity().supportFragmentManager, "TAG")
+        })
 
         super.onCreateOptionsMenu(menu, inflater)
     }

@@ -25,7 +25,6 @@ const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
 const val SP_COUNTRY = "country"
 const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
-const val SP_LOGS_UPLOAD_FAILED_ONLY = "logs_upload_failed_only"
 
 class LoginManager @Inject constructor(
     private val dbProvider: DbProvider,
