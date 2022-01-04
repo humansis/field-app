@@ -13,7 +13,7 @@ import cz.applifting.humansis.model.db.*
  */
 @Database(
     entities = [
-        User::class,
+        UserDbEntity::class,
         BeneficiaryLocal::class,
         ProjectLocal::class,
         DistributionLocal::class,

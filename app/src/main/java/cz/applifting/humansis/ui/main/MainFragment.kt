@@ -27,7 +27,7 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
-import cz.applifting.humansis.misc.getPayload
+import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -69,9 +69,10 @@ class MainFragment : BaseFragment() {
 
         drawer = requireActivity().findViewById(R.id.drawer_layout)
 
-        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
-            "Cannot find nav host in main"
-        )
+        val fragmentContainer =
+            view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError(
+                "Cannot find nav host in main"
+            )
 
         baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
@@ -93,7 +94,10 @@ class MainFragment : BaseFragment() {
         }
 
         val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
-        var appVersion = getString(R.string.app_name) + " " + getString(R.string.version, BuildConfig.VERSION_NAME)
+        var appVersion = getString(R.string.app_name) + " " + getString(
+            R.string.version,
+            BuildConfig.VERSION_NAME
+        )
         if (BuildConfig.DEBUG) {
             appVersion += (" (" + BuildConfig.BUILD_NUMBER + ")")
         }
@@ -166,7 +170,7 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 findNavController().navigate(R.id.logout)
                 return@Observer
-            } else if (isTokenValid(it.token) && it.token != viewModel.authToken) {
+            } else if (checkIfTokenValid(it.token) && it.token != viewModel.authToken) {
                 viewModel.authToken = it.token
             }
 
@@ -207,9 +211,10 @@ class MainFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner, {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
-        onDestinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
-        }
+        onDestinationChangedListener =
+            NavController.OnDestinationChangedListener { _, destination, _ ->
+                pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
+            }
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         super.onCreateOptionsMenu(menu, inflater)
@@ -223,7 +228,7 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                if (isTokenValid(viewModel.authToken)) {
+                if (checkIfTokenValid(viewModel.authToken)) {
                     mainNavController.navigate(R.id.uploadDialog)
                     return true
                 }
@@ -233,7 +238,7 @@ class MainFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun isTokenValid(token: String?): Boolean {
+    private fun checkIfTokenValid(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
             sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             viewModel.logout()
@@ -282,14 +287,6 @@ class MainFragment : BaseFragment() {
         toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
-    }
-
-    private fun String.isExpired(): Boolean {
-        return getPayload(this).let { payload ->
-            val tokenExpirationInMillis = payload.exp * 1000
-            val oneHourInMillis = 60 * 60 * 1000 // TODO poresit jestli hodina staci
-            (tokenExpirationInMillis - oneHourInMillis) < Date().time
-        }
     }
 
     companion object {

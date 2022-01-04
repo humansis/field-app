@@ -9,8 +9,8 @@ import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
-import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch

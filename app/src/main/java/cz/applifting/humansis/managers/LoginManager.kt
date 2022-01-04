@@ -8,8 +8,10 @@ import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.di.SPQualifier
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
+import cz.applifting.humansis.model.JWToken
+import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginResponse
-import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.model.db.UserDbEntity
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
 import quanti.com.kotlinlog.Log
@@ -69,7 +71,7 @@ class LoginManager @Inject constructor(
 
         val db = dbProvider.get()
 
-        val user = User(
+        val user = UserDbEntity(
             id = userResponse.id,
             username = userResponse.username,
             email = userResponse.email,
@@ -78,7 +80,7 @@ class LoginManager @Inject constructor(
         )
         db.userDao().insert(user)
 
-        return user
+        return convert(user)
     }
 
     suspend fun logout() {
@@ -90,7 +92,7 @@ class LoginManager @Inject constructor(
     }
 
     suspend fun markInvalidPassword() {
-        val user = db.userDao().getUser()
+        val user = retrieveUserDb()
         if (user != null) {
             db.userDao().update(user.copy(invalidPassword = true))
         }
@@ -111,7 +113,7 @@ class LoginManager @Inject constructor(
         return true
     }
 
-    suspend fun retrieveUser(): User? {
+    private suspend fun retrieveUserDb(): UserDbEntity? {
         return supervisorScope {
             try {
                 val db = dbProvider.get()
@@ -122,12 +124,29 @@ class LoginManager @Inject constructor(
         }
     }
 
+    suspend fun retrieveUser(): User? {
+        return retrieveUserDb()?.let { convert(it) }
+    }
+
     suspend fun getAuthToken(): String? {
-        return retrieveUser()?.token
+        return retrieveUserDb()?.token
     }
 
     suspend fun getCountries(): List<String> {
-        return db.userDao().getUser()?.countries ?: listOf()
+        return retrieveUserDb()?.countries ?: listOf()
+    }
+
+    private fun convert(userDb: UserDbEntity): User {
+        return userDb.let {
+            User(
+                id = it.id,
+                username = it.username,
+                token = it.token?.let { token -> JWToken(getPayload(token)) },
+                email = it.email,
+                invalidPassword = it.invalidPassword,
+                countries = it.countries
+            )
+        }
     }
 
     private fun encryptDefault() {

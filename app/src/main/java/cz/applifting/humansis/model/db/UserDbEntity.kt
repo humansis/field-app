@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
-@Entity
-data class User(
+@Entity(tableName = "User")
+data class UserDbEntity(
     @PrimaryKey val id: Long,
     val username: String,
     val token: String?,

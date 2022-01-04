@@ -6,7 +6,9 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
-import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.model.JWToken
+import cz.applifting.humansis.model.User
+import cz.applifting.humansis.model.db.UserDbEntity
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
@@ -35,7 +37,7 @@ class MainViewModel @Inject constructor(
 
     val userLD = MutableLiveData<User>()
     val environmentLD = MutableLiveData<String>()
-    var authToken: String? = null
+    var authToken: JWToken? = null
 
     val readBalanceResult = SingleLiveEvent<UserPinBalance>()
     val readBalanceError = SingleLiveEvent<Throwable>()
