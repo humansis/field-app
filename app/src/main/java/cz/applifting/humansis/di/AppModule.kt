@@ -11,6 +11,7 @@ import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
+import cz.applifting.humansis.misc.ApiUtilities.logRequestBody
 import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
@@ -63,13 +64,7 @@ class AppModule {
         hostUrlInterceptor: HostUrlInterceptor
     ): HumansisService {
 
-        val forbiddenRegex = Regex("(password|multipart/form-data|^<html>)")
-
-        val logging = HttpLoggingInterceptor { message ->
-            if (!message.contains(forbiddenRegex)) {
-                Log.d("OkHttp", message)
-            }
-        }
+        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
 
         logging.level = HttpLoggingInterceptor.Level.BASIC
 
@@ -95,12 +90,18 @@ class AppModule {
                             headersBuilder.add("Build-Number", BuildConfig.BUILD_NUMBER.toString())
                             headersBuilder.add("Build-Type", BuildConfig.BUILD_TYPE)
 
-                            val request =
-                                oldRequest.newBuilder().headers(headersBuilder.build()).build()
+                            val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
                             withContext(Dispatchers.IO) {
                                 chain.proceed(request).apply {
+                                    if (BuildConfig.DEBUG) {
+                                        request.body()?.let {
+                                            logRequestBody(request.method(), it)
+                                        }
+                                    }
                                     if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
-                                        this.body()?.let { logResponseBody(this.headers(), it) }
+                                        this.body()?.let {
+                                            logResponseBody(this.headers(), it)
+                                        }
                                     }
                                 }
                             }

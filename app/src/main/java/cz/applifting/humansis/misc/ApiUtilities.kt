@@ -1,6 +1,7 @@
 package cz.applifting.humansis.misc
 
 import okhttp3.Headers
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
 import okio.GzipSource
@@ -9,9 +10,30 @@ import java.nio.charset.Charset
 
 object ApiUtilities {
 
+    private val forbiddenRegex = Regex("(password|multipart/form-data|^<html>)")
+
     fun isPositiveResponseHttpCode(code: Int): Boolean {
         // The positive http code is in format of 2xx
         return (code - 200 >= 0) && (code - 300 < 0)
+    }
+
+    fun logRequestBody(requestMethod: String, requestBody: RequestBody) {
+        val buffer = Buffer()
+        requestBody.writeTo(buffer)
+        var charset = Charset.forName("UTF-8")
+        val contentType = requestBody.contentType()
+        if (contentType != null) {
+            charset = contentType.charset(charset)
+        }
+        val body = buffer.readString(charset)
+        if (!body.contains(forbiddenRegex)) {
+            Log.d("OkHttp", "")
+            Log.d("OkHttp", body)
+            Log.d(
+                "OkHttp",
+                "--> END " + requestMethod + " (" + requestBody.contentLength() + "-byte body)"
+            )
+        }
     }
 
     fun logResponseBody(headers: Headers, responseBody: ResponseBody) {
@@ -36,17 +58,21 @@ object ApiUtilities {
             var charset = Charset.forName("UTF-8")
             val contentType = responseBody.contentType()
             if (contentType != null) {
-                charset = contentType.charset(Charset.forName("UTF-8"))
+                charset = contentType.charset(charset)
             }
-            Log.d("OkHttp", "")
-            Log.d("OkHttp", buffer.clone().readString(charset))
+            val body = buffer.clone().readString(charset)
+            if (!body.contains(forbiddenRegex)) {
+                Log.d("OkHttp", "")
+                Log.d("OkHttp", body)
+            }
         }
         if (gzippedLength != null) {
             Log.d(
                 "OkHttp",
-                "<-- END HTTP (" + buffer.size() + "-byte, " +
-                        gzippedLength + "-gzipped-byte body)"
+                "<-- END HTTP (" + buffer.size() + "-byte, " + gzippedLength + "-gzipped-byte body)"
             )
+        } else {
+            Log.d("OkHttp", "<-- END HTTP (" + buffer.size() + "-byte body)")
         }
     }
 }

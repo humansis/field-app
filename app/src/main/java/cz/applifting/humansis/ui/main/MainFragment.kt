@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -47,6 +48,7 @@ class MainFragment : BaseFragment() {
     private lateinit var mainNavController: NavController
     private lateinit var drawer: DrawerLayout
     private lateinit var onDestinationChangedListener: NavController.OnDestinationChangedListener
+    private var displayedDialog: DialogFragment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -180,6 +182,11 @@ class MainFragment : BaseFragment() {
         })
     }
 
+    override fun onPause() {
+        displayedDialog?.dismiss()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         sharedViewModel.stopObservingConnection()
         super.onDestroy()
@@ -219,13 +226,14 @@ class MainFragment : BaseFragment() {
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         sharedViewModel.logsUploadFailed.observe(viewLifecycleOwner, {
-            SendLogDialogFragment.newInstance(
+            displayedDialog = SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
                 title = getString(R.string.logs_dialog_title),
                 message = getString(R.string.logs_upload_failed),
                 emailButtonText = getString(R.string.logs_dialog_email_button),
                 dialogTheme = R.style.DialogTheme
-            ).show(requireActivity().supportFragmentManager, "TAG")
+            )
+            displayedDialog?.show(requireActivity().supportFragmentManager, "TAG")
         })
 
         super.onCreateOptionsMenu(menu, inflater)
