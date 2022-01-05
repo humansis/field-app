@@ -26,7 +26,7 @@
         android:layout_marginVertical="8dp"
         android:textColor="@color/black"
         android:textSize="16sp"
-        tools:text="Downloading ..."/>
+        tools:text="@string/downloading"/>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBar"

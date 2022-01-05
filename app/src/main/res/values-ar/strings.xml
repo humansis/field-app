@@ -174,4 +174,8 @@
     <string name="card_balance_expired">انتهت فترة صلاحية رصيد البطاقة</string>
     <string name="preparing_logs">تجهيز السجلات.\\nالرجاء الانتظار، قد يستغرق بعد الوقت</string>
     <string name="token_missing_or_expired">لقد تم تسجيل خروجك لأن رمز المصادقة الخاص بك قد انتهى أو أنه مفقود.</string>
+    <string name="logs">السجلات</string>
+    <string name="upload_error">تعذر تحميل %1$s.</string>
+    <string name="card_empty">هذه البطاقة فارغة</string>
+    <string name="logs_upload_failed">فشل في رفع السجلات، هل ترغب في إرسالها يدوياً</string>
 </resources>

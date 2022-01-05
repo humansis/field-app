@@ -175,4 +175,8 @@
     <string name="card_balance_expired">Card balance has expired</string>
     <string name="preparing_logs">Preparing logs.\nPlease wait, this may take a while.</string>
     <string name="token_missing_or_expired">You have been logged out because your authentication token has expired or is missing.</string>
+    <string name="upload_error">Couldn\'t upload %1$s.</string>
+    <string name="logs">Logs</string>
+    <string name="card_empty">This card is empty</string>
+    <string name="logs_upload_failed">Logs upload failed. Would you like to send them manually?</string>
 </resources>

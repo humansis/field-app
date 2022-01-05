@@ -10,6 +10,9 @@ import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
+import cz.applifting.humansis.misc.ApiUtilities.logRequestBody
+import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -53,21 +56,17 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences, hostUrlInterceptor: HostUrlInterceptor): HumansisService {
+    fun retrofitProvider(
+        @Named(BASE_URL) baseUrl: String,
+        loginManager: LoginManager,
+        context: Context,
+        sp: SharedPreferences,
+        hostUrlInterceptor: HostUrlInterceptor
+    ): HumansisService {
 
-        val forbiddenRegex = Regex("(password|^Content-Type|^Content-Length|^Authorization|^Country|^Version-Name|^Build-Number|^Build-Type|^Transfer-Encoding|^Set-Cookie|^Cache-Control|^Date|^Connection|^Server|^X-)")
+        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
 
-        val logging = HttpLoggingInterceptor { message ->
-            if (!message.contains(forbiddenRegex)) {
-                Log.d("OkHttp", message)
-            }
-        }
-
-        logging.level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.BASIC
-        }
+        logging.level = HttpLoggingInterceptor.Level.BASIC
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
@@ -85,21 +84,41 @@ class AppModule {
                             loginManager.getAuthToken()?.let {
                                 headersBuilder.add("Authorization", "Bearer $it")
                             }
-                            sp.getString(SP_COUNTRY, "SYR")?.let { headersBuilder.add("Country", it) }
+                            sp.getString(SP_COUNTRY, "SYR")
+                                ?.let { headersBuilder.add("Country", it) }
                             headersBuilder.add("Version-Name", BuildConfig.VERSION_NAME)
                             headersBuilder.add("Build-Number", BuildConfig.BUILD_NUMBER.toString())
                             headersBuilder.add("Build-Type", BuildConfig.BUILD_TYPE)
 
                             val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
                             withContext(Dispatchers.IO) {
-                                chain.proceed(request)
+                                chain.proceed(request).apply {
+                                    if (BuildConfig.DEBUG) {
+                                        request.body()?.let {
+                                            logRequestBody(request.method(), it)
+                                        }
+                                    }
+                                    if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
+                                        this.body()?.let {
+                                            logResponseBody(this.headers(), it)
+                                        }
+                                    }
+                                }
                             }
                         }
                     } catch (e: Exception) {
-                        buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "Service unavailable")
+                        buildErrorResponse(
+                            oldRequest,
+                            HttpURLConnection.HTTP_UNAVAILABLE,
+                            "Service unavailable"
+                        )
                     }
                 } else {
-                    buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "No internet connection")
+                    buildErrorResponse(
+                        oldRequest,
+                        HttpURLConnection.HTTP_UNAVAILABLE,
+                        "No internet connection"
+                    )
                 }
             }
             .addInterceptor(logging)
@@ -107,12 +126,20 @@ class AppModule {
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().serializeNulls().create()))
+            .addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder().serializeNulls().create()
+                )
+            )
             .client(client)
             .build().create()
     }
 
-    private fun buildErrorResponse(oldRequest: Request, errorCode: Int, errorMessage: String): Response {
+    private fun buildErrorResponse(
+        oldRequest: Request,
+        errorCode: Int,
+        errorMessage: String
+    ): Response {
         return Response.Builder()
             .protocol(Protocol.HTTP_2)
             .request(oldRequest)

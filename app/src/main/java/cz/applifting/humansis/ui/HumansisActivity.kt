@@ -188,14 +188,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         nfcTagPublisher.getTagSubject().onNext(tag)
     }
 
-    override fun onNewIntent(intent: Intent) { // TODO smazat
-        super.onNewIntent(intent)
-        if (NfcAdapter.ACTION_TAG_DISCOVERED == intent.action || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action) {
-            val tag: Tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) ?: return
-            nfcTagPublisher.getTagSubject().onNext(tag)
-        }
-    }
-
     private fun setUpObservers() {
         observe(vm.readBalanceResult) {
             showReadBalanceResult(it)
@@ -205,7 +197,11 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
             Log.e(this.javaClass.simpleName, it)
             Toast.makeText(
                 this,
-                getString(R.string.card_error),
+                if (it is PINException) {
+                    NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
+                } else {
+                    getString(R.string.card_error)
+                },
                 Toast.LENGTH_LONG
             ).show()
             displayedDialog?.dismiss()

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +58,18 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 changeEnvironment(ApiEnvironments.STAGE)
             }
             viewModel.login(username, et_password.text.toString(), this)
+        }
+
+        loginLogo.setOnLongClickListener {
+            SendLogDialogFragment.newInstance(
+                sendEmailAddress = getString(R.string.send_email_adress),
+                title = getString(R.string.logs_dialog_title),
+                message = getString(R.string.logs_dialog_message),
+                emailButtonText = getString(R.string.logs_dialog_email_button),
+                dialogTheme = R.style.DialogTheme
+            ).show(requireActivity().supportFragmentManager, "TAG")
+            // TODO inside this method in kotlinlogger there is a method getZipOfFiles() that automatically deletes all logs older than 4 days
+            return@setOnLongClickListener true
         }
 
         viewModel.viewStateLD.observe(viewLifecycleOwner, { viewState ->

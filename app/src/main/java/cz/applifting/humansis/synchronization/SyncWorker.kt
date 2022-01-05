@@ -16,10 +16,8 @@ import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
-import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
-import cz.applifting.humansis.repositories.ErrorsRepository
-import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.model.db.SyncErrorActionEnum
+import cz.applifting.humansis.repositories.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
@@ -27,6 +25,7 @@ import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
+import quanti.com.kotlinlog.file.FileLogger
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -54,6 +53,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     lateinit var beneficiariesRepository: BeneficiariesRepository
 
     @Inject
+    lateinit var logsRepository: LogsRepository
+
+    @Inject
     lateinit var sp: SharedPreferences
 
     @Inject
@@ -76,7 +78,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         return supervisorScope {
 
-            if (isStopped) return@supervisorScope stopWork("Before initialization")
+            if (isStopped) return@supervisorScope stopWork(
+                "Before initialization",
+                SyncErrorActionEnum.BEFORE_INITIALIZATION
+            )
 
             Log.d(TAG, "Started Sync")
             if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(
@@ -107,7 +112,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             suspend fun logUploadError(
                 e: HttpException,
                 it: BeneficiaryLocal,
-                action: UploadAction
+                action: SyncErrorActionEnum
             ) {
                 val errBody = "${e.response()?.errorBody()?.toString()}"
                 Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
@@ -123,7 +128,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
                     code = e.code(),
                     errorMessage = "${e.code()}: $errBody",
-                    beneficiaryId = it.id
+                    beneficiaryId = it.id,
+                    action = action
                 )
 
                 syncErrors.add(syncError)
@@ -138,7 +144,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
             }
 
-            if (isStopped) return@supervisorScope stopWork("After initialization")
+            if (isStopped) return@supervisorScope stopWork(
+                "After initialization",
+                SyncErrorActionEnum.AFTER_INITIALIZATION
+            )
 
             // Upload distributions of beneficiaries
             assignedBeneficiaries
@@ -147,9 +156,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                         beneficiariesRepository.distribute(it)
                         syncStats.countUploadSuccess()
                     } catch (e: HttpException) {
-                        logUploadError(e, it, UploadAction.DISTRIBUTION)
+                        logUploadError(e, it, SyncErrorActionEnum.DISTRIBUTION)
                     }
-                    if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
+                    if (isStopped) return@supervisorScope stopWork(
+                        "Uploading ${it.beneficiaryId}",
+                        SyncErrorActionEnum.DISTRIBUTION
+                    )
                 }
             // Upload changes of referral
             referralChangedBeneficiaries
@@ -157,9 +169,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     try {
                         beneficiariesRepository.updateBeneficiaryReferralOnline(it)
                     } catch (e: HttpException) {
-                        logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
+                        logUploadError(e, it, SyncErrorActionEnum.REFERRAL_UPDATE)
                     }
-                    if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
+                    if (isStopped) return@supervisorScope stopWork(
+                        "Uploading ${it.beneficiaryId}",
+                        SyncErrorActionEnum.REFERRAL_UPDATE
+                    )
                 }
 
             // Download updated data
@@ -171,13 +186,17 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     syncErrors.add(
                         getDownloadError(
                             e,
-                            applicationContext.getString(R.string.projects)
+                            applicationContext.getString(R.string.projects),
+                            SyncErrorActionEnum.PROJECTS_DOWNLOAD
                         )
                     )
                     emptyList()
                 }
 
-                if (isStopped) return@supervisorScope stopWork("Downloading projects")
+                if (isStopped) return@supervisorScope stopWork(
+                    "Downloading projects",
+                    SyncErrorActionEnum.PROJECTS_DOWNLOAD
+                )
 
                 val distributions = try {
                     projects.map {
@@ -189,13 +208,17 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     syncErrors.add(
                         getDownloadError(
                             e,
-                            applicationContext.getString(R.string.distribution)
+                            applicationContext.getString(R.string.distribution),
+                            SyncErrorActionEnum.DISTRIBUTIONS_DOWNLOAD
                         )
                     )
                     emptyList()
                 }
 
-                if (isStopped) return@supervisorScope stopWork("Downloading distributions")
+                if (isStopped) return@supervisorScope stopWork(
+                    "Downloading distributions",
+                    SyncErrorActionEnum.DISTRIBUTIONS_DOWNLOAD
+                )
 
                 try {
                     distributions.map {
@@ -207,24 +230,46 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     syncErrors.add(
                         getDownloadError(
                             e,
-                            applicationContext.getString(R.string.beneficiary)
+                            applicationContext.getString(R.string.beneficiary),
+                            SyncErrorActionEnum.BENEFICIARIES_DOWNLOAD
                         )
                     )
                     emptyList<ProjectLocal>()
                 }
             }
 
+            // Upload logs
+            try {
+                loginManager.retrieveUser()?.id?.let { id ->
+                    logsRepository.postLogs(id)
+                    FileLogger.deleteAllLogs(applicationContext)
+                }
+            } catch (e: Exception) {
+                syncErrors.add(
+                    getUploadError(
+                        e,
+                        applicationContext.getString(R.string.logs),
+                        SyncErrorActionEnum.LOGS_UPLOAD
+                    )
+                )
+            }
+            if (isStopped) return@supervisorScope stopWork(
+                "Uploading logs",
+                SyncErrorActionEnum.LOGS_UPLOAD
+            )
+
             finishWork()
         }
     }
 
-    private suspend fun stopWork(location: String): Result {
+    private suspend fun stopWork(location: String, action: SyncErrorActionEnum): Result {
         syncErrors.add(
             SyncError(
                 location = location,
                 params = "",
                 code = 0,
-                errorMessage = "Sync was stopped by work manager"
+                errorMessage = "Sync was stopped by work manager",
+                action = action
             )
         )
         return finishWork()
@@ -249,6 +294,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Log.d(TAG, "Sync finished with failure")
             sp.setDate(LAST_SYNC_FAILED_KEY, Date())
+
             Result.failure(
                 reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()
             )
@@ -276,9 +322,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         )
     }
 
-    private fun getDownloadError(e: Exception, resourceName: String): SyncError {
+    private fun getDownloadError(
+        e: Exception,
+        resourceName: String,
+        action: SyncErrorActionEnum
+    ): SyncError {
         e.printStackTrace()
-        Log.e(TAG, "Failed downloading $resourceName: ${e.message}}")
+        Log.e(TAG, "Failed downloading $resourceName: ${e.message}")
 
         return when (e) {
             is HttpException -> {
@@ -287,7 +337,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                         .format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
-                    code = e.code()
+                    code = e.code(),
+                    action = action
                 )
             }
             else -> {
@@ -296,14 +347,43 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                         .format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
-                    code = 0
+                    code = 0,
+                    action = action
                 )
             }
         }
     }
 
-    private enum class UploadAction {
-        DISTRIBUTION, REFERRAL_UPDATE
+    private fun getUploadError(
+        e: Exception,
+        resourceName: String,
+        action: SyncErrorActionEnum
+    ): SyncError {
+        e.printStackTrace()
+        Log.e(TAG, "Failed uploading $resourceName: ${e.message}")
+
+        return when (e) {
+            is HttpException -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.upload_error)
+                        .format(resourceName.toLowerCase(Locale.ROOT)),
+                    params = applicationContext.getString(R.string.error_server),
+                    errorMessage = getErrorMessageByCode(e.code()),
+                    code = e.code(),
+                    action = action
+                )
+            }
+            else -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.upload_error)
+                        .format(resourceName.toLowerCase(Locale.ROOT)),
+                    params = applicationContext.getString(R.string.unknwon_error),
+                    errorMessage = e.message ?: "",
+                    code = 0,
+                    action = action
+                )
+            }
+        }
     }
 
     private inner class SyncStats(
