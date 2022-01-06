@@ -226,6 +226,7 @@ class MainFragment : BaseFragment() {
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
         sharedViewModel.logsUploadFailed.observe(viewLifecycleOwner, {
+            displayedDialog?.dismiss()
             displayedDialog = SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
                 title = getString(R.string.logs_dialog_title),
