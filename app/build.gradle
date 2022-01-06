@@ -49,7 +49,7 @@ android {
 
     compileSdkVersion 31
 
-    ndkVersion "21.3.6528147"
+    ndkVersion "23.1.7779620"
 
     defaultConfig {
         applicationId "org.humansis.app.user"
