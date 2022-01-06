@@ -114,10 +114,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
             debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
         debug {
             debuggable true
