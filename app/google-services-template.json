@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID}",
         "android_client_info": {
-          "package_name": "org.humansis.app.user"
+          "package_name": "org.humansis.app.field"
         }
       },
       "oauth_client": [
@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEMO}",
         "android_client_info": {
-          "package_name": "org.humansis.app.user.demo"
+          "package_name": "org.humansis.app.field.demo"
         }
       },
       "oauth_client": [

@@ -11,10 +11,10 @@ image: artifactory.quanti.cz/docker/builder-android:v2
 
 # todo: versioning
 variables:
-  ARTIFACT_PATH: ./app/build/outputs/apk/*/user-app-*.apk
-  ARTIFACT_DEBUG_PATH: ./app/build/outputs/apk/*/user-app-*debug.apk
-  ARTIFACT_RELEASE_PATH: ./app/build/outputs/apk/*/user-app-*release.apk
-  ARTIFACT_BUNDLE_PATH: ./app/build/outputs/bundle/*/user-app-*.aab
+  ARTIFACT_PATH: ./app/build/outputs/apk/*/field-app-*.apk
+  ARTIFACT_DEBUG_PATH: ./app/build/outputs/apk/*/field-app-*debug.apk
+  ARTIFACT_RELEASE_PATH: ./app/build/outputs/apk/*/field-app-*release.apk
+  ARTIFACT_BUNDLE_PATH: ./app/build/outputs/bundle/*/field-app-*.aab
   EMULATOR_TIMEOUT: "60"
 
 stages:
@@ -123,7 +123,7 @@ archive_release_job_automatically:
 upload_to_artifactory:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
+    ARTIFACTORY_REPOSITORY: /field_app-gradle-local/
   extends: .upload_gradle
   when: manual
   except:
@@ -132,7 +132,7 @@ upload_to_artifactory:
 upload_to_artifactory_automatically:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
+    ARTIFACTORY_REPOSITORY: /field_app-gradle-local/
   extends: .upload_gradle
   only:
     - tags
@@ -178,7 +178,7 @@ publish_to_playstore:
 upload_release_candidate:
   stage: upload_aws
   variables:
-    APP_NAME: user-app
+    APP_NAME: field-app
     APK: $ARTIFACT_DEBUG_PATH
   extends: .release_rc
   when: manual
@@ -188,7 +188,7 @@ upload_release_candidate:
 upload_stable:
   stage: upload_aws
   variables:
-    APP_NAME: user-app
+    APP_NAME: field-app
     APK: $ARTIFACT_RELEASE_PATH
   extends: .release_stable
   when: manual
