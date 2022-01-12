@@ -7,6 +7,7 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -221,6 +222,7 @@ private fun generateAESKey(keyAlias: String) {
 // JWT
 private val json = Json { ignoreUnknownKeys = true }
 
+@Keep
 @Serializable
 data class Payload(
     val iat: Long,

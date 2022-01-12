@@ -49,7 +49,7 @@ android {
 
     compileSdkVersion 31
 
-    ndkVersion "21.3.6528147"
+    ndkVersion "23.0.7599858"
 
     defaultConfig {
         applicationId "org.humansis.app.user"
@@ -114,10 +114,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
             debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
         debug {
             debuggable true
