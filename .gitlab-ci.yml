@@ -123,7 +123,7 @@ archive_release_job_automatically:
 upload_to_artifactory:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /field_app-gradle-local/
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   when: manual
   except:
@@ -132,7 +132,7 @@ upload_to_artifactory:
 upload_to_artifactory_automatically:
   stage: upload
   variables:
-    ARTIFACTORY_REPOSITORY: /field_app-gradle-local/
+    ARTIFACTORY_REPOSITORY: /user_app-gradle-local/
   extends: .upload_gradle
   only:
     - tags
