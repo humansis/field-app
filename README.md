@@ -1,4 +1,4 @@
-# User app
+# Field app
 
 This application is made for users working for PIN in the field. 
 
@@ -49,7 +49,7 @@ Optionally there is an option to create APK under archive jobs.
 
 Those APKs can be downloaded directly from Gitlab or uploaded to artifactory. 
 
-It's very important to use properly versioning in user app in file `app/build.gradle`
+It's very important to use properly versioning in field app in file `app/build.gradle`
 
 ```
 	// Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
@@ -65,10 +65,10 @@ It's very important to use properly versioning in user app in file `app/build.gr
 
 ## Important links
  - **Artifactory repository**
- 	- https://artifactory.quanti.cz/ui/repos/tree/General/user_app-gradle-local
+ 	- https://artifactory.quanti.cz/ui/repos/tree/General/field_app-gradle-local
 - **Direct file download**
-	- https://artifactory.quanti.cz:443/artifactory/user_app-gradle-local/
+	- https://artifactory.quanti.cz:443/artifactory/field_app-gradle-local/
 
 Name and password are LDAP (so same as JIRA / Gitlab / Nextcloud)
 - **AWS**
-	- http://apks.humansis.org.s3-website.eu-central-1.amazonaws.com/user-app/
+	- http://apks.humansis.org.s3-website.eu-central-1.amazonaws.com/field-app/
