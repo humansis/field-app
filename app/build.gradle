@@ -52,7 +52,7 @@ android {
     ndkVersion "21.3.6528147"
 
     defaultConfig {
-        applicationId "org.humansis.app.field"
+        applicationId "org.humansis.app.user"
         minSdkVersion 21
         targetSdkVersion 31
         versionCode gitVersionCode(false)
