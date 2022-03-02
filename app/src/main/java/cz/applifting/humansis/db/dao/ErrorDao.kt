@@ -1,9 +1,6 @@
 package cz.applifting.humansis.db.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import cz.applifting.humansis.model.db.SyncError
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +17,7 @@ interface ErrorDao {
 
     @Query("DELETE FROM errors")
     suspend fun deleteAll()
+
+    @Update
+    suspend fun update(syncError: SyncError)
 }

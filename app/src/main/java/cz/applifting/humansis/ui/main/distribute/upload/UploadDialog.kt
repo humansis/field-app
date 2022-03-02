@@ -35,7 +35,7 @@ class UploadDialog : DialogFragment() {
 
         val fragmentManager = childFragmentManager
 
-        uploadDialogViewModel.currentScreenLD.observe(viewLifecycleOwner, {
+        uploadDialogViewModel.currentScreenLD.observe(viewLifecycleOwner) {
             val fragmentTransaction = fragmentManager.beginTransaction()
             val fragment = if (it == Screen.MAIN) {
                 UploadDialogMainFragment()
@@ -45,7 +45,7 @@ class UploadDialog : DialogFragment() {
 
             fragmentTransaction.replace(R.id.fc_container, fragment)
             fragmentTransaction.commit()
-        })
+        }
 
         return rootView
     }
