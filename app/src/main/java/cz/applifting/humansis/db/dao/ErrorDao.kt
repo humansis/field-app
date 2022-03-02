@@ -1,6 +1,10 @@
 package cz.applifting.humansis.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import cz.applifting.humansis.model.db.SyncError
 import kotlinx.coroutines.flow.Flow
 
