@@ -37,7 +37,6 @@ import cz.applifting.humansis.ui.main.SharedViewModel
 import cz.quanti.android.nfc.dto.v2.Deposit
 import cz.quanti.android.nfc.exception.PINException
 import cz.quanti.android.nfc.exception.PINExceptionEnum
-import cz.quanti.android.nfc.logger.NfcLogger
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -106,7 +105,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_beneficiary, container, false)
         (activity?.application as App).appComponent.inject(this)
-        sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
+        sharedViewModel = ViewModelProviders.of(
+            activity as HumansisActivity,
+            viewModelFactory
+        )[SharedViewModel::class.java]
         return view
     }
 
@@ -143,9 +145,18 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
-                tv_screen_title.text = getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
-                tv_screen_subtitle.text = getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName)
-                tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let { getString(it) })
+                tv_screen_title.text =
+                    getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
+                tv_screen_subtitle.text = getString(
+                    R.string.beneficiary_name,
+                    beneficiary.givenName,
+                    beneficiary.familyName
+                )
+                tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let {
+                    getString(
+                        it
+                    )
+                })
                 tv_referral_note.setOptionalValue(beneficiary.referralNote)
 
                 if (args.isSmartcard) {
@@ -161,19 +172,33 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         if (beneficiary.edited) {
                             btn_action.text = context.getString(R.string.revert)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_revert_btn, context.theme)
+                                btn_action.backgroundTintList = context.resources.getColorStateList(
+                                    R.color.background_revert_btn,
+                                    context.theme
+                                )
                             } else {
-                                btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_revert_btn)
+                                btn_action.backgroundTintList =
+                                    AppCompatResources.getColorStateList(
+                                        context,
+                                        R.color.background_revert_btn
+                                    )
                             }
                         } else {
                             btn_action.visible(false)
                         }
                     } else {
-                        btn_action.text = context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
+                        btn_action.text =
+                            context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            btn_action.backgroundTintList = context.resources.getColorStateList(R.color.background_confirm_btn, context.theme)
+                            btn_action.backgroundTintList = context.resources.getColorStateList(
+                                R.color.background_confirm_btn,
+                                context.theme
+                            )
                         } else {
-                            btn_action.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.background_confirm_btn)
+                            btn_action.backgroundTintList = AppCompatResources.getColorStateList(
+                                context,
+                                R.color.background_confirm_btn
+                            )
                         }
                     }
 
@@ -436,7 +461,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         deposit: Deposit,
         scanCardDialog: AlertDialog
     ) {
-        NfcLogger.d(
+        Log.d(
             TAG,
             "writeBalanceOnCard: pin: $pin, remote: $remote, deposit: $deposit"
         )
@@ -451,7 +476,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     id?.let {
                         cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
                     }
-                    viewModel.saveCard(cardId, convertTimeForApiRequestBody(Date()), cardContent.originalBalance, cardContent.balance)
+                    viewModel.saveCard(
+                        cardId,
+                        convertTimeForApiRequestBody(Date()),
+                        cardContent.originalBalance,
+                        cardContent.balance
+                    )
                     btn_scan_smartcard.visibility = View.GONE
                     scanCardDialog.dismiss()
                     showCardUpdatedDialog(
@@ -463,15 +493,22 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         getString(
                             R.string.scanning_card_balance,
                             "${cardContent.balance} ${cardContent.currencyCode}" +
-                                if (cardContent.balance != 0.0) {
-                                    getExpirationDateAsString(cardContent.expirationDate, requireContext()) +
-                                        getLimitsAsText(cardContent.limits, cardContent.currencyCode, requireContext())
-                                } else {
-                                    String()
-                                }
+                                    if (cardContent.balance != 0.0) {
+                                        getExpirationDateAsString(
+                                            cardContent.expirationDate,
+                                            requireContext()
+                                        ) +
+                                                getLimitsAsText(
+                                                    cardContent.limits,
+                                                    cardContent.currencyCode,
+                                                    requireContext()
+                                                )
+                                    } else {
+                                        String()
+                                    }
                         )
                     )
-                    NfcLogger.d(
+                    Log.d(
                         TAG,
                         "writtenBalanceOnCard: cardContent: $cardContent"
                     )
@@ -483,7 +520,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            NfcLogger.e(this.javaClass.simpleName, "${ex.pinExceptionEnum.name} tagId: ${ex.tagId}")
                             when (ex.pinExceptionEnum) {
                                 PINExceptionEnum.CARD_INITIALIZED -> {
                                     if (NfcInitializer.initNfc(requireActivity())) {
@@ -524,7 +560,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             )
     }
 
-    private fun changePinOnCard(beneficiary: BeneficiaryLocal, pin: String, scanCardDialog: AlertDialog) {
+    private fun changePinOnCard(
+        beneficiary: BeneficiaryLocal,
+        pin: String,
+        scanCardDialog: AlertDialog
+    ) {
         disposable?.dispose()
         disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -540,7 +580,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             R.string.changing_pin_result,
                             cardContent.pin
                         ),
-                null
+                        null
                     )
                 },
                 {
@@ -550,21 +590,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            Log.e(this.javaClass.simpleName, ex.pinExceptionEnum.name)
                             Toast.makeText(
-                                    requireContext(),
-                                    NfcCardErrorMessage.getNfcCardErrorMessage(
-                                        ex.pinExceptionEnum,
-                                        requireActivity()
-                                    ),
-                                    Toast.LENGTH_LONG
+                                requireContext(),
+                                NfcCardErrorMessage.getNfcCardErrorMessage(
+                                    ex.pinExceptionEnum,
+                                    requireActivity()
+                                ),
+                                Toast.LENGTH_LONG
                             ).show()
                         }
                         else -> {
                             Toast.makeText(
-                                    requireContext(),
-                                    getString(R.string.card_error),
-                                    Toast.LENGTH_LONG
+                                requireContext(),
+                                getString(R.string.card_error),
+                                Toast.LENGTH_LONG
                             ).show()
                         }
                     }
@@ -606,7 +645,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         super.onStop()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         if (CAMERA_REQUEST_CODE == requestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 viewModel.beneficiaryLD.postValue(viewModel.beneficiaryLD.value)
@@ -658,7 +701,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun isCameraPermissionGranted(): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (activity as HumansisActivity).checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (activity as HumansisActivity).checkSelfPermission(
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun showConfirmBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
@@ -695,6 +740,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun convertTimeForApiRequestBody(date: Date): String {
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
-                .format(date)
+            .format(date)
     }
 }
