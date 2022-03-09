@@ -198,7 +198,6 @@ class MainFragment : BaseFragment() {
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener {
-            Log.d(TAG, "Menu item $item clicked")
             onOptionsItemSelected(item)
         }
 
@@ -248,6 +247,7 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
+                Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
                 if (checkIfTokenValid(viewModel.authToken)) {
                     mainNavController.navigate(R.id.uploadDialog)
                     return true
