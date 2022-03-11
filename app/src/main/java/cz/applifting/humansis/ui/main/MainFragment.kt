@@ -1,7 +1,6 @@
 package cz.applifting.humansis.ui.main
 
 import android.app.AlertDialog
-import android.content.*
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
@@ -36,7 +35,6 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
 import quanti.com.kotlinlog.Log
-import java.util.*
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -120,19 +118,19 @@ class MainFragment : BaseFragment() {
 
         // Define Observers
 
-        sharedViewModel.toastLD.observe(viewLifecycleOwner, {
+        sharedViewModel.toastLD.observe(viewLifecycleOwner) {
             if (it != null) {
                 showToast(it)
                 sharedViewModel.showToast(null)
             }
-        })
+        }
 
-        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, {
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner) {
             if (it) {
                 sharedViewModel.resetShouldReauthenticate()
                 baseNavController.navigate(R.id.loginFragment)
             }
-        })
+        }
 
         btn_logout.setOnClickListener {
             Log.d(TAG, "Logout button clicked")
@@ -198,7 +196,6 @@ class MainFragment : BaseFragment() {
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener {
-            Log.d(TAG, "Menu item $item clicked")
             onOptionsItemSelected(item)
         }
 
@@ -206,26 +203,26 @@ class MainFragment : BaseFragment() {
         pbSyncProgress.setBackgroundColor(getBackgroundColor())
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
 
-        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner, { available ->
+        sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner) { available ->
             val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
             ivStatus.simpleDrawable(drawable)
-        })
+        }
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner) {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
-        })
+        }
 
         // show sync in toolbar only on settings screen, because there is no other progress indicator when country is updated
-        sharedViewModel.syncState.observe(viewLifecycleOwner, {
+        sharedViewModel.syncState.observe(viewLifecycleOwner) {
             pbSyncProgress.visible(it.isLoading && mainNavController.currentDestination?.id == R.id.settingsFragment)
-        })
+        }
         onDestinationChangedListener =
             NavController.OnDestinationChangedListener { _, destination, _ ->
                 pbSyncProgress.visible(destination.id == R.id.settingsFragment && sharedViewModel.syncState.value?.isLoading == true)
             }
         mainNavController.addOnDestinationChangedListener(onDestinationChangedListener)
 
-        sharedViewModel.logsUploadFailed.observe(viewLifecycleOwner, {
+        sharedViewModel.logsUploadFailed.observe(viewLifecycleOwner) {
             displayedDialog?.dismiss()
             displayedDialog = SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
@@ -235,7 +232,7 @@ class MainFragment : BaseFragment() {
                 dialogTheme = R.style.DialogTheme
             )
             displayedDialog?.show(requireActivity().supportFragmentManager, "TAG")
-        })
+        }
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -248,6 +245,7 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
+                Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
                 if (checkIfTokenValid(viewModel.authToken)) {
                     mainNavController.navigate(R.id.uploadDialog)
                     return true

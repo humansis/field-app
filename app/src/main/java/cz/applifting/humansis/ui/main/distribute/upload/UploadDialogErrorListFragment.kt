@@ -47,9 +47,9 @@ class UploadDialogErrorListFragment : BaseFragment() {
         )
         rl_erros.addItemDecoration(dividerItemDecoration)
 
-        uploadDialogViewModel.syncErrorListLD.observe(viewLifecycleOwner, {
+        uploadDialogViewModel.syncErrorListLD.observe(viewLifecycleOwner) {
             adapter.update(it)
-        })
+        }
 
         btn_back.setOnClickListener {
             Log.d(TAG, "Back button clicked")
