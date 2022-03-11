@@ -119,19 +119,22 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "onNavigationItemSelected $item")
         val mainNavController = Navigation.findNavController(this, R.id.nav_host_fragment)
         when (item.itemId) {
             R.id.action_read_balance -> {
+                Log.d(TAG, "onNavigationItemSelected Read balance")
                 showReadBalanceDialog()
             }
             R.id.action_initialize_cards -> {
+                Log.d(TAG, "onNavigationItemSelected Initialize cards")
                 showInitializeCardsDialog()
             }
             R.id.projectsFragment -> {
+                Log.d(TAG, "onNavigationItemSelected Projects")
                 mainNavController.navigate(R.id.projectsFragment)
             }
             R.id.settingsFragment -> {
+                Log.d(TAG, "onNavigationItemSelected Settings")
                 mainNavController.navigate(R.id.settingsFragment)
             }
         }
