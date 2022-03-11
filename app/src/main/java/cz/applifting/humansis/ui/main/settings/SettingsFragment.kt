@@ -75,9 +75,9 @@ class SettingsFragment : BaseFragment() {
             }
         }
 
-        sharedViewModel.networkStatus.observe(viewLifecycleOwner, {
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner) {
             spinner_country.isEnabled = it
-        })
+        }
 
         btn_export_logs.setOnClickListener {
             Log.d(TAG, "Export logs button clicked")
@@ -90,7 +90,7 @@ class SettingsFragment : BaseFragment() {
             ).show(requireActivity().supportFragmentManager, "TAG")
         }
 
-        viewModel.savedLD.observe(viewLifecycleOwner, {
+        viewModel.savedLD.observe(viewLifecycleOwner) {
             val message = if (it) {
                 sharedViewModel.forceSynchronize()
                 getString(R.string.settings_country_update_success)
@@ -101,7 +101,7 @@ class SettingsFragment : BaseFragment() {
             view?.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
             }
-        })
+        }
     }
 
     companion object {

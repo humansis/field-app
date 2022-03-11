@@ -249,13 +249,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     getUploadError(
                         e,
                         applicationContext.getString(R.string.logs),
-                        SyncErrorActionEnum.LOGS_UPLOAD
+                        SyncErrorActionEnum.LOGS_UPLOAD_NEW
                     )
                 )
             }
             if (isStopped) return@supervisorScope stopWork(
                 "Uploading logs",
-                SyncErrorActionEnum.LOGS_UPLOAD
+                SyncErrorActionEnum.LOGS_UPLOAD_NEW
             )
 
             finishWork()
