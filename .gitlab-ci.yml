@@ -141,8 +141,10 @@ upload_to_firebase:
   stage: firebase
   extends: .gradle_build
   script:
+    - MESSAGES=$(git log -5 --pretty=format:'%h %s')
+    - RELEASE_NOTES=$(echo -e "$CI_COMMIT_REF_NAME\n$MESSAGES")
     - ./gradlew --build-cache clean
-        app:assembleDebug app:appDistributionUploadDebug
+        app:assembleDebug app:appDistributionUploadDebug -PappTesterReleaseNotes="$RELEASE_NOTES"
   when: manual
 
 # Build release and archive bundle automatically
