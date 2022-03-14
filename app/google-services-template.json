@@ -37,7 +37,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEMO}",
+        "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEBUG}",
         "android_client_info": {
           "package_name": "org.humansis.app.user.debug"
         }
