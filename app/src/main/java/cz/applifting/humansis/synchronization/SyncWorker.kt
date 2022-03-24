@@ -25,7 +25,6 @@ import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
-import quanti.com.kotlinlog.file.FileLogger
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -242,7 +241,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             try {
                 loginManager.retrieveUser()?.id?.let { id ->
                     logsRepository.postLogs(id)
-                    FileLogger.deleteAllLogs(applicationContext)
                 }
             } catch (e: Exception) {
                 syncErrors.add(
