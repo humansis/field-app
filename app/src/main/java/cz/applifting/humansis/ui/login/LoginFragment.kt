@@ -60,6 +60,8 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             viewModel.login(username, et_password.text.toString(), this)
         }
 
+        verTextView.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+
         loginLogo.setOnLongClickListener {
             SendLogDialogFragment.newInstance(
                 sendEmailAddress = getString(R.string.send_email_adress),
@@ -72,7 +74,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             return@setOnLongClickListener true
         }
 
-        viewModel.viewStateLD.observe(viewLifecycleOwner, { viewState ->
+        viewModel.viewStateLD.observe(viewLifecycleOwner) { viewState ->
             et_username.isEnabled = viewState.etUsernameIsEnabled
             et_password.isEnabled = viewState.etPasswordIsEnabled
             btn_login.visibility = viewState.btnLoginVisibility
@@ -84,11 +86,12 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             } else {
                 tv_error.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.loginLD.observe(viewLifecycleOwner, {
+        viewModel.loginLD.observe(viewLifecycleOwner) {
             if (it != null && !it.invalidPassword) {
-                val action = LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
+                val action =
+                    LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
                 navController.navigate(action)
             } else if (it == null) {
                 et_username.isEnabled = true
@@ -98,39 +101,44 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 et_username.setText("")
                 et_password.setText("")
             }
-        })
+        }
     }
 
     private fun settingsButtonInit() {
+        val host = viewModel.loadHostFromSaved()
+        envTextView.text = host.name
+
+        settingsImageView.setOnClickListener {
+            Log.d(TAG, "Settings button clicked")
+            val contextThemeWrapper =
+                ContextThemeWrapper(requireContext(), R.style.PopupMenuTheme)
+            val popup = PopupMenu(contextThemeWrapper, settingsImageView)
+            popup.inflate(R.menu.api_urls_menu)
+            popup.menu.add(0, ApiEnvironments.FRONT.id, 0, "FRONT API")
+            popup.menu.add(0, ApiEnvironments.DEMO.id, 0, "DEMO API")
+            popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
+            popup.menu.add(0, ApiEnvironments.DEV.id, 0, "DEV API")
+            popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
+            popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
+            popup.setOnMenuItemClickListener { item ->
+                val env = ApiEnvironments.values().find { it.id == item?.itemId }
+                changeEnvironment(env)
+                true
+            }
+            popup.show()
+        }
+
         if (BuildConfig.DEBUG) {
             settingsImageView.visibility = View.VISIBLE
             envTextView.visibility = View.VISIBLE
-
-            val host = viewModel.loadHostFromSaved()
-            envTextView.text = host.name
-
-            settingsImageView.setOnClickListener {
-                Log.d(TAG, "Settings button clicked")
-                val contextThemeWrapper =
-                        ContextThemeWrapper(requireContext(), R.style.PopupMenuTheme)
-                val popup = PopupMenu(contextThemeWrapper, settingsImageView)
-                popup.inflate(R.menu.api_urls_menu)
-                popup.menu.add(0, ApiEnvironments.FRONT.id, 0, "FRONT API")
-                popup.menu.add(0, ApiEnvironments.DEMO.id, 0, "DEMO API")
-                popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
-                popup.menu.add(0, ApiEnvironments.DEV.id, 0, "DEV API")
-                popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
-                popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
-                popup.setOnMenuItemClickListener { item ->
-                    val env = ApiEnvironments.values().find { it.id == item?.itemId }
-                    changeEnvironment(env)
-                    true
-                }
-                popup.show()
-            }
         } else {
             settingsImageView.visibility = View.INVISIBLE
             envTextView.visibility = View.INVISIBLE
+            verTextView.setOnLongClickListener {
+                settingsImageView.visibility = View.VISIBLE
+                envTextView.visibility = View.VISIBLE
+                return@setOnLongClickListener true
+            }
         }
     }
 

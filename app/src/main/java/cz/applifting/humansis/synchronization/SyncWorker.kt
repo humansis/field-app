@@ -325,8 +325,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         resourceName: String,
         action: SyncErrorActionEnum
     ): SyncError {
-        e.printStackTrace()
-        Log.e(TAG, "Failed downloading $resourceName: ${e.message}")
+        Log.e(TAG, e, "Failed downloading $resourceName")
 
         return when (e) {
             is HttpException -> {
@@ -357,8 +356,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         resourceName: String,
         action: SyncErrorActionEnum
     ): SyncError {
-        e.printStackTrace()
-        Log.e(TAG, "Failed uploading $resourceName: ${e.message}")
+        Log.e(TAG, e, "Failed uploading $resourceName")
 
         return when (e) {
             is HttpException -> {
