@@ -37,6 +37,35 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEBUG}",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "${FIREBASE_CLIENT_ID}",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "${FIREBASE_API_KEY}"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "${FIREBASE_CLIENT_ID}",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "${FIREBASE_MOBILESDK_APP_ID_DEMO}",
         "android_client_info": {
           "package_name": "org.humansis.app.user.demo"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Humansis Field DEMO</string>
+    <string name="app_name" translatable="false">Humansis Field DEBUG</string>
     <string name="send_email_adress" translatable="false">mobilne-pin@quanti.cz</string>
 </resources>

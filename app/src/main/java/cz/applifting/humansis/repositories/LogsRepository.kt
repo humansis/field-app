@@ -6,6 +6,7 @@ import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import quanti.com.kotlinlog.file.FileLogger
 import quanti.com.kotlinlog.utils.getZipOfLogs
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -30,7 +31,9 @@ class LogsRepository @Inject constructor(val service: HumansisService, val conte
                 )
             )
         ).let { response ->
-            if (!isPositiveResponseHttpCode(response.code())) {
+            if (isPositiveResponseHttpCode(response.code())) {
+                FileLogger.deleteAllLogs(context)
+            } else {
                 throw HttpException(response)
             }
         }

@@ -23,4 +23,8 @@ class ErrorsRepository @Inject constructor(val dbProvider: DbProvider) {
     suspend fun clearAll() {
         dbProvider.get().errorsDao().deleteAll()
     }
+
+    suspend fun update(syncError: SyncError) {
+        dbProvider.get().errorsDao().update(syncError)
+    }
 }

@@ -37,18 +37,24 @@ class UploadDialogMainFragment : BaseFragment() {
         iv_connection_status.simpleDrawable(if (online) R.drawable.ic_online else R.drawable.ic_offline)
         tv_connectoin_status.text = getString(if (online) R.string.online else R.string.offline)
 
-        sharedViewModel.networkStatus.observe(viewLifecycleOwner, {
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner) {
             btn_sync.isEnabled = it
             iv_connection_status.simpleDrawable(if (it) R.drawable.ic_online else R.drawable.ic_offline)
             tv_connectoin_status.text = getString(if (it) R.string.online else R.string.offline)
-        })
+        }
 
-        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, {
-            tv_changes.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tv_changes.setTextColor(ContextCompat.getColor(requireContext(), if (it) R.color.red else R.color.green))
-        })
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner) {
+            tv_changes.text =
+                getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
+            tv_changes.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (it) R.color.red else R.color.green
+                )
+            )
+        }
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, {
+        sharedViewModel.syncState.observe(viewLifecycleOwner) {
             btn_sync.visibility = if (it.isLoading) {
                 View.INVISIBLE
             } else {
@@ -62,12 +68,12 @@ class UploadDialogMainFragment : BaseFragment() {
             btn_show_error_info.visible(it.lastSyncFail != null)
 
             tv_current_data_date.text = it.lastDownload?.format()
-        })
+        }
 
-        uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner, {
+        uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner) {
             tv_sync_summary.visible(!it.isNullOrBlank())
             tv_sync_summary.text = it
-        })
+        }
 
         btn_sync.setOnClickListener {
             Log.d(TAG, "Sync button clicked")

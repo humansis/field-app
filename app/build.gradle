@@ -80,9 +80,15 @@ android {
 
         buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
 
+        def currentAppTesterReleaseNotes
+        if (project.hasProperty("appTesterReleaseNotes")) {
+            currentAppTesterReleaseNotes = "$appTesterReleaseNotes"
+        } else {
+            currentAppTesterReleaseNotes = "Built from gradle"
+        }
+
         firebaseAppDistribution {
-            appId="1:1075203125993:android:e6616d8f23331ac2cb3678"
-            releaseNotes="Release notes"
+            releaseNotes = currentAppTesterReleaseNotes
             groups="quanti-android-testers, pin-testers"
         }
 
@@ -125,6 +131,7 @@ android {
         debug {
             debuggable true
             signingConfig signingConfigs.debug
+            applicationIdSuffix '.debug'
         }
     }
     compileOptions {
