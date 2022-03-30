@@ -152,7 +152,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
     }
 
-    suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
+    suspend fun checkBookletAssignedLocally(bookletId: String): Boolean {
         val booklets = dbProvider.get().beneficiariesDao().getAllBooklets()
 
         booklets?.forEach {
