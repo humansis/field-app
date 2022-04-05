@@ -117,7 +117,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             popup.menu.add(0, ApiEnvironments.FRONT.id, 0, "FRONT API")
             popup.menu.add(0, ApiEnvironments.DEMO.id, 0, "DEMO API")
             popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
-            popup.menu.add(0, ApiEnvironments.DEV.id, 0, "DEV API")
+            popup.menu.add(0, ApiEnvironments.DEV1.id, 0, "DEV1 API")
+            popup.menu.add(0, ApiEnvironments.DEV2.id, 0, "DEV2 API")
+            popup.menu.add(0, ApiEnvironments.DEV3.id, 0, "DEV3 API")
             popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
             popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
             popup.setOnMenuItemClickListener { item ->

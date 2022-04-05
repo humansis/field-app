@@ -276,7 +276,7 @@ class MainFragment : BaseFragment() {
     private fun getBackgroundColor(): Int {
         return if (BuildConfig.DEBUG) {
             when (viewModel.getHostUrl().id) {
-                ApiEnvironments.DEV.id -> {
+                ApiEnvironments.DEV1.id, ApiEnvironments.DEV2.id, ApiEnvironments.DEV3.id -> {
                     ContextCompat.getColor(requireContext(), R.color.dev)
                 }
                 ApiEnvironments.TEST.id -> {

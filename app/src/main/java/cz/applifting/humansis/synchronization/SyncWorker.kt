@@ -17,16 +17,24 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.model.db.SyncErrorActionEnum
-import cz.applifting.humansis.repositories.*
+import cz.applifting.humansis.repositories.BeneficiariesRepository
+import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.ErrorsRepository
+import cz.applifting.humansis.repositories.LogsRepository
+import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -113,25 +121,29 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 it: BeneficiaryLocal,
                 action: SyncErrorActionEnum
             ) {
-                val errBody = "${e.response()?.errorBody()?.toString()}"
-                Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
+                CoroutineScope(Dispatchers.IO).launch {
+                    runCatching {
+                        val errBody = "${e.response()?.errorBody()?.string()}"
+                        Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
-                // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.assistanceId)
-                val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
-                val beneficiaryName = "${it.givenName} ${it.familyName}"
+                        // Mark conflicts in DB
+                        val distributionName = distributionsRepository.getNameById(it.assistanceId)
+                        val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
+                        val beneficiaryName = "${it.givenName} ${it.familyName}"
 
-                val syncError = SyncError(
-                    id = it.id,
-                    location = "[$action] $projectName → $distributionName → $beneficiaryName",
-                    params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
-                    code = e.code(),
-                    errorMessage = "${e.code()}: $errBody",
-                    beneficiaryId = it.id,
-                    action = action
-                )
+                        val syncError = SyncError(
+                            id = it.id,
+                            location = "[$action] $projectName → $distributionName → $beneficiaryName",
+                            params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                            code = e.code(),
+                            errorMessage = "${e.code()}: $errBody",
+                            beneficiaryId = it.id,
+                            action = action
+                        )
 
-                syncErrors.add(syncError)
+                        syncErrors.add(syncError)
+                    }
+                }
             }
 
             val assignedBeneficiaries =
