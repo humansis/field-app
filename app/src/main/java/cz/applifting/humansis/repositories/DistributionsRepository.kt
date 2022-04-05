@@ -21,9 +21,9 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         val result = service
             .getDistributions(projectId)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
-                it.commodities.fold(true, { acc, commodity ->
+                it.commodities.fold(true) { acc, commodity ->
                     commodity.modalityType?.name != CommodityType.MOBILE_MONEY && acc
-                })
+                }
             }
             .filter { it.validated && !it.archived && !it.completed }
             .map {
