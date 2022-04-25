@@ -82,10 +82,10 @@ class SharedViewModel @Inject constructor(
 
                 if (it.first().state == WorkInfo.State.FAILED) {
                     errorsRepository.getAll().collect { errors ->
-                        errors.find { error -> error.action == SyncErrorActionEnum.LOGS_UPLOAD_NEW }
+                        errors.find { error -> error.syncErrorAction == SyncErrorActionEnum.LOGS_UPLOAD_NEW }
                             ?.let {
                                 logsUploadFailed.call()
-                                errorsRepository.update(it.copy(action = SyncErrorActionEnum.LOGS_UPLOAD))
+                                errorsRepository.update(it.copy(syncErrorAction = SyncErrorActionEnum.LOGS_UPLOAD))
                             }
                     }
                 }
@@ -184,7 +184,7 @@ class SharedViewModel @Inject constructor(
     private suspend fun logsUploadFailedOnly(): Boolean {
         val errors = errorsRepository.getAll().first()
         val logUploadErrorActions = listOf(SyncErrorActionEnum.LOGS_UPLOAD_NEW, SyncErrorActionEnum.LOGS_UPLOAD)
-        return errors.size == 1 && logUploadErrorActions.contains(errors.single().action)
+        return errors.size == 1 && logUploadErrorActions.contains(errors.single().syncErrorAction)
     }
 
     fun getNetworkStatus(): LiveData<Boolean> {
