@@ -169,7 +169,7 @@ class MainFragment : BaseFragment() {
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
 
             if (it == null) {
-                Log.d(TAG, "Application moved to login screen because user == null.")
+                Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
                 return@Observer
             } else if (checkIfTokenValid(it.token) && it.token != viewModel.authToken) {

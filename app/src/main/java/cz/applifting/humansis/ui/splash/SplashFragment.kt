@@ -50,7 +50,7 @@ class SplashFragment : Fragment(), CoroutineScope {
 
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
-                Log.v(TAG, "Application logged out due to user == null.")
+                Log.v(TAG, "Application navigated to login screen because userLD.value == null.")
                 goToLoginScreen()
                 return@Observer
             }
