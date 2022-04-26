@@ -31,7 +31,7 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 3
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 3
+def VERSION_MINOR = 4
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
 def VERSION_PATCH = 0
 
@@ -71,7 +71,9 @@ android {
         buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
         buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
-        buildConfigField "String", "DEV_API_URL", "\"$DEV_API_URL\""
+        buildConfigField "String", "DEV1_API_URL", "\"$DEV1_API_URL\""
+        buildConfigField "String", "DEV2_API_URL", "\"$DEV2_API_URL\""
+        buildConfigField "String", "DEV3_API_URL", "\"$DEV3_API_URL\""
         buildConfigField "String", "LOCAL_API_URL", "\"$LOCAL_API_URL\""
 
         buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
@@ -168,7 +170,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:2.1.0"
+    implementation "cz.quanti.android:nfc:2.1.2"
 
     // DI
     ext.dagger2_version = '2.23.2'

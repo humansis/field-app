@@ -42,9 +42,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.*
-import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -128,11 +126,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
         viewModel.initBeneficiary(args.beneficiaryId)
 
-        sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner, {
+        sharedViewModel.shouldDismissBeneficiaryDialog.observe(viewLifecycleOwner) {
             leaveWithSuccess()
-        })
+        }
 
-        viewModel.beneficiaryLD.observe(viewLifecycleOwner, { beneficiary ->
+        viewModel.beneficiaryLD.observe(viewLifecycleOwner) { beneficiary ->
             // Views
             view.apply {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
@@ -240,15 +238,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                 }
             }
-        })
+        }
 
-        viewModel.scannedIdLD.observe(viewLifecycleOwner, {
+        viewModel.scannedIdLD.observe(viewLifecycleOwner) {
             viewModel.scanQRBooklet(it)
-        })
+        }
 
-        viewModel.goBackEventLD.observe(viewLifecycleOwner, {
+        viewModel.goBackEventLD.observe(viewLifecycleOwner) {
             handleBackPressed()
-        })
+        }
     }
 
     private fun leaveWithSuccess() {

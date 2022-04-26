@@ -23,7 +23,7 @@ data class SyncError(
     val code: Int,
     val errorMessage: String,
     val beneficiaryId: Int? = null,
-    val action: SyncErrorActionEnum?
+    val syncErrorAction: SyncErrorActionEnum?
 )
 
 enum class SyncErrorActionEnum {

@@ -198,3 +198,15 @@ upload_stable:
     name: aws-stable
   only:
     - tags
+
+upload_stable_debug:
+  stage: upload_aws
+  variables:
+    APP_NAME: field-app
+    APK: $ARTIFACT_RELEASE_PATH
+  extends: .release_stable_debug
+  when: manual
+  environment:
+    name: aws-debug
+  only:
+    - tags    

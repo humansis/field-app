@@ -132,7 +132,7 @@ class BeneficiaryViewModel @Inject constructor(
 
     internal fun checkScannedId(scannedId: String) {
         launch {
-            val assigned = beneficiariesRepository.checkBoookletAssignedLocally(scannedId)
+            val assigned = beneficiariesRepository.checkBookletAssignedLocally(scannedId)
 
             val bookletId = when {
                 assigned -> ALREADY_ASSIGNED

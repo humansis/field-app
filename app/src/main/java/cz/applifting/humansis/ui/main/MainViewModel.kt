@@ -75,7 +75,13 @@ class MainViewModel @Inject constructor(
     }
 
     fun getHostUrl(): ApiEnvironments {
-        return ApiEnvironments.valueOf(sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name)
+        return try {
+            ApiEnvironments.valueOf(
+                sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
+            )
+        } catch (e: Exception) {
+            ApiEnvironments.STAGE
+        }
     }
 
     fun logout() {

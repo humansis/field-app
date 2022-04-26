@@ -78,4 +78,9 @@ abstract class HumansisDB : RoomDatabase() {
         columnName = "salted_password"
     )
     class AutoMigrationTo23 : AutoMigrationSpec
+
+    // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
+    // not changed since the last release as it might introduce serious bugs that are hard to trace.
+    // i.e. when migrating from version 23 to version 24, look up last release in git, download "23.json"
+    // and compare it with your current file, that there are no new unwanted changes.
 }

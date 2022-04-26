@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 22,
-    "identityHash": "95edb958daf53c443a8f60fe26ce4f62",
+    "identityHash": "8943f9e5c9d849cc90ef129f13bb5357",
     "entities": [
       {
         "tableName": "User",
@@ -368,7 +368,7 @@
       },
       {
         "tableName": "errors",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `location` TEXT NOT NULL, `params` TEXT NOT NULL, `code` INTEGER NOT NULL, `errorMessage` TEXT NOT NULL, `beneficiaryId` INTEGER, `action` TEXT, FOREIGN KEY(`beneficiaryId`) REFERENCES `beneficiaries`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `location` TEXT NOT NULL, `params` TEXT NOT NULL, `code` INTEGER NOT NULL, `errorMessage` TEXT NOT NULL, `beneficiaryId` INTEGER, FOREIGN KEY(`beneficiaryId`) REFERENCES `beneficiaries`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -405,12 +405,6 @@
             "columnName": "beneficiaryId",
             "affinity": "INTEGER",
             "notNull": false
-          },
-          {
-            "fieldPath": "action",
-            "columnName": "action",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -438,7 +432,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '95edb958daf53c443a8f60fe26ce4f62')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8943f9e5c9d849cc90ef129f13bb5357')"
     ]
   }
 }
