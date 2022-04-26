@@ -102,7 +102,7 @@
 #    static <1>$$serializer INSTANCE;
 #}
 
--keep class cz.applifting.humansis.model.** { *; }
+-keep class cz.applifting.humansis.**.** { *; }
 -keep class cz.applifting.humansis.misc.CryptoKt
 
 -keep class com.squareup.okhttp.** { *; }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 23,
-    "identityHash": "7e2b5639886bc50e896e33c7b2a58da6",
+    "identityHash": "8a54f9b0c78b8582a0ce2fe1f98f8be6",
     "entities": [
       {
         "tableName": "User",
@@ -368,7 +368,7 @@
       },
       {
         "tableName": "errors",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `location` TEXT NOT NULL, `params` TEXT NOT NULL, `code` INTEGER NOT NULL, `errorMessage` TEXT NOT NULL, `beneficiaryId` INTEGER, `action` TEXT, FOREIGN KEY(`beneficiaryId`) REFERENCES `beneficiaries`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `location` TEXT NOT NULL, `params` TEXT NOT NULL, `code` INTEGER NOT NULL, `errorMessage` TEXT NOT NULL, `beneficiaryId` INTEGER, `syncErrorAction` TEXT, FOREIGN KEY(`beneficiaryId`) REFERENCES `beneficiaries`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
         "fields": [
           {
             "fieldPath": "id",
@@ -407,8 +407,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "action",
-            "columnName": "action",
+            "fieldPath": "syncErrorAction",
+            "columnName": "syncErrorAction",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -438,7 +438,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7e2b5639886bc50e896e33c7b2a58da6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8a54f9b0c78b8582a0ce2fe1f98f8be6')"
     ]
   }
 }

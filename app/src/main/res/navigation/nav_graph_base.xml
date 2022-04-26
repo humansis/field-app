@@ -44,9 +44,6 @@
         <argument
                 android:name="email"
                 app:argType="string" />
-        <action
-                android:id="@+id/action_mainFragment_to_loginFragment"
-                app:destination="@id/loginFragment" />
     </fragment>
 
     <action

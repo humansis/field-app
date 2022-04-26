@@ -17,16 +17,24 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.model.db.SyncErrorActionEnum
-import cz.applifting.humansis.repositories.*
+import cz.applifting.humansis.repositories.BeneficiariesRepository
+import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.ErrorsRepository
+import cz.applifting.humansis.repositories.LogsRepository
+import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -88,10 +96,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     true
                 ) == true
             ) {
-                val host = ApiEnvironments.valueOf(
-                    sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
-                        ?: ApiEnvironments.STAGE.name
-                )
+                val host = try {
+                    ApiEnvironments.valueOf(
+                        sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
+                    )
+                } catch (e: Exception) {
+                    ApiEnvironments.STAGE
+                }
                 hostUrlInterceptor.setHost(host)
             }
 
@@ -113,25 +124,29 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 it: BeneficiaryLocal,
                 action: SyncErrorActionEnum
             ) {
-                val errBody = "${e.response()?.errorBody()?.toString()}"
-                Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
+                CoroutineScope(Dispatchers.IO).launch {
+                    runCatching {
+                        val errBody = "${e.response()?.errorBody()?.string()}"
+                        Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
-                // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.assistanceId)
-                val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
-                val beneficiaryName = "${it.givenName} ${it.familyName}"
+                        // Mark conflicts in DB
+                        val distributionName = distributionsRepository.getNameById(it.assistanceId)
+                        val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
+                        val beneficiaryName = "${it.givenName} ${it.familyName}"
 
-                val syncError = SyncError(
-                    id = it.id,
-                    location = "[$action] $projectName → $distributionName → $beneficiaryName",
-                    params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
-                    code = e.code(),
-                    errorMessage = "${e.code()}: $errBody",
-                    beneficiaryId = it.id,
-                    action = action
-                )
+                        val syncError = SyncError(
+                            id = it.id,
+                            location = "[$action] $projectName → $distributionName → $beneficiaryName",
+                            params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                            code = e.code(),
+                            errorMessage = "${e.code()}: $errBody",
+                            beneficiaryId = it.id,
+                            syncErrorAction = action
+                        )
 
-                syncErrors.add(syncError)
+                        syncErrors.add(syncError)
+                    }
+                }
             }
 
             val assignedBeneficiaries =
@@ -267,7 +282,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 params = "",
                 code = 0,
                 errorMessage = "Sync was stopped by work manager",
-                action = action
+                syncErrorAction = action
             )
         )
         return finishWork()
@@ -325,8 +340,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         resourceName: String,
         action: SyncErrorActionEnum
     ): SyncError {
-        e.printStackTrace()
-        Log.e(TAG, "Failed downloading $resourceName: ${e.message}")
+        Log.e(TAG, e, "Failed downloading $resourceName")
 
         return when (e) {
             is HttpException -> {
@@ -336,7 +350,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code(),
-                    action = action
+                    syncErrorAction = action
                 )
             }
             else -> {
@@ -346,7 +360,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0,
-                    action = action
+                    syncErrorAction = action
                 )
             }
         }
@@ -357,8 +371,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         resourceName: String,
         action: SyncErrorActionEnum
     ): SyncError {
-        e.printStackTrace()
-        Log.e(TAG, "Failed uploading $resourceName: ${e.message}")
+        Log.e(TAG, e, "Failed uploading $resourceName")
 
         return when (e) {
             is HttpException -> {
@@ -368,7 +381,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code(),
-                    action = action
+                    syncErrorAction = action
                 )
             }
             else -> {
@@ -378,7 +391,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0,
-                    action = action
+                    syncErrorAction = action
                 )
             }
         }
