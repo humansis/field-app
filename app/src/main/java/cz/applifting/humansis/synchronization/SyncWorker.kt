@@ -27,6 +27,7 @@ import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
