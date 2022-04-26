@@ -96,10 +96,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     true
                 ) == true
             ) {
-                val host = ApiEnvironments.valueOf(
-                    sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
-                        ?: ApiEnvironments.STAGE.name
-                )
+                val host = try {
+                    ApiEnvironments.valueOf(
+                        sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
+                    )
+                } catch (e: Exception) {
+                    ApiEnvironments.STAGE
+                }
                 hostUrlInterceptor.setHost(host)
             }
 
@@ -138,7 +141,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                             code = e.code(),
                             errorMessage = "${e.code()}: $errBody",
                             beneficiaryId = it.id,
-                            action = action
+                            syncErrorAction = action
                         )
 
                         syncErrors.add(syncError)
@@ -279,7 +282,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 params = "",
                 code = 0,
                 errorMessage = "Sync was stopped by work manager",
-                action = action
+                syncErrorAction = action
             )
         )
         return finishWork()
@@ -347,7 +350,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code(),
-                    action = action
+                    syncErrorAction = action
                 )
             }
             else -> {
@@ -357,7 +360,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0,
-                    action = action
+                    syncErrorAction = action
                 )
             }
         }
@@ -378,7 +381,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.error_server),
                     errorMessage = getErrorMessageByCode(e.code()),
                     code = e.code(),
-                    action = action
+                    syncErrorAction = action
                 )
             }
             else -> {
@@ -388,7 +391,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     params = applicationContext.getString(R.string.unknwon_error),
                     errorMessage = e.message ?: "",
                     code = 0,
-                    action = action
+                    syncErrorAction = action
                 )
             }
         }

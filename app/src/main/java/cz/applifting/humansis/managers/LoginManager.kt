@@ -2,6 +2,7 @@ package cz.applifting.humansis.managers
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.commonsware.cwac.saferoom.BuildConfig
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
@@ -44,7 +45,7 @@ class LoginManager @Inject constructor(
         val defaultCountry = userResponse.availableCountries?.firstOrNull() ?: ""
 
         if (retrieveUser()?.invalidPassword == true) {
-            // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekyed using the new one.
+            // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekeyed using the new one.
             val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null)
                 ?: throw IllegalStateException("DB password lost")
             val oldDecryptedPassword = decryptUsingKeyStoreKey(
@@ -150,7 +151,7 @@ class LoginManager @Inject constructor(
     }
 
     private fun encryptDefault() {
-        if (dbProvider.isInitialized()) {
+        if (dbProvider.isInitialized() && !BuildConfig.DEBUG) {
             try {
                 SafeHelperFactory.rekey(db.openHelper.readableDatabase, "default".toCharArray())
             } catch (e: SQLiteException) {

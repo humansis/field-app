@@ -169,6 +169,7 @@ class MainFragment : BaseFragment() {
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
 
             if (it == null) {
+                Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
                 return@Observer
             } else if (checkIfTokenValid(it.token) && it.token != viewModel.authToken) {
@@ -258,6 +259,7 @@ class MainFragment : BaseFragment() {
 
     private fun checkIfTokenValid(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
+            Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
             sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             viewModel.logout()
             false

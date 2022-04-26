@@ -2,6 +2,7 @@ package cz.applifting.humansis.db
 
 import android.content.Context
 import androidx.room.Room
+import com.commonsware.cwac.saferoom.BuildConfig
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import javax.inject.Singleton
 
@@ -16,14 +17,24 @@ class DbProvider(val context: Context) {
     lateinit var db: HumansisDB
 
     fun init(password: ByteArray, oldPass: ByteArray? = null) {
-        val factory = SafeHelperFactory(if (oldPass != null) String(oldPass).toCharArray() else String(password).toCharArray())
-
         if (!::db.isInitialized) {
             db = Room.databaseBuilder(
                 context,
                 HumansisDB::class.java, DB_NAME
             )
-                .openHelperFactory(factory)
+                .apply {
+                    if (!BuildConfig.DEBUG) {
+                        openHelperFactory(
+                            SafeHelperFactory(
+                                if (oldPass != null) {
+                                    String(oldPass).toCharArray()
+                                } else {
+                                    String(password).toCharArray()
+                                }
+                            )
+                        )
+                    }
+                }
                 .addMigrations(
                     HumansisDB.MIGRATION_20_21
                 )
@@ -31,7 +42,7 @@ class DbProvider(val context: Context) {
                 .build()
         }
 
-        if (oldPass != null) {
+        if (oldPass != null && !BuildConfig.DEBUG) {
             SafeHelperFactory.rekey(db.openHelper.readableDatabase, String(password).toCharArray())
         }
     }

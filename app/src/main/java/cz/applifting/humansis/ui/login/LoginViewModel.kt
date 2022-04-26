@@ -47,9 +47,13 @@ class LoginViewModel @Inject constructor(
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
-        val host = ApiEnvironments.valueOf(
-            sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-        )
+        val host = try {
+            ApiEnvironments.valueOf(
+                sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
+            )
+        } catch (e: Exception) {
+            ApiEnvironments.STAGE
+        }
         hostUrlInterceptor.setHost(host)
         return host
     }

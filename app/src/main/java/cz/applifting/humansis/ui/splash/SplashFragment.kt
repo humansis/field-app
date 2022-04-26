@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
 import kotlinx.coroutines.*
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -40,13 +41,16 @@ class SplashFragment : Fragment(), CoroutineScope {
         super.onActivityCreated(savedInstanceState)
 
         if (!viewModel.initDB()) {
+            Log.v(TAG, "DB not initialized ")
             goToLoginScreen()
         } else {
+            Log.v(TAG, "DB initialized")
             viewModel.getUser()
         }
 
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
+                Log.v(TAG, "Application navigated to login screen because userLD.value == null.")
                 goToLoginScreen()
                 return@Observer
             }
@@ -65,5 +69,9 @@ class SplashFragment : Fragment(), CoroutineScope {
             val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
             findNavController().navigate(action)
         }
+    }
+
+    companion object {
+        private val TAG = SplashFragment::class.java.simpleName
     }
 }
