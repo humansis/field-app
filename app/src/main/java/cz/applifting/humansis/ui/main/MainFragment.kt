@@ -259,7 +259,7 @@ class MainFragment : BaseFragment() {
 
     private fun checkIfTokenValid(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
-            Log.d(TAG, getString(R.string.token_missing_or_expired))
+            Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
             sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             viewModel.logout()
             false
