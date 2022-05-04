@@ -11,36 +11,62 @@ import retrofit2.http.*
 interface HumansisService {
 
     @POST("v2/login")
-    suspend fun postLogin(@Body loginRequest: LoginRequest): LoginResponse
+    suspend fun postLogin(
+        @Body loginRequest: LoginRequest
+    ): LoginResponse
 
     @GET("v1/projects")
     suspend fun getProjects(): List<Project>
 
     @GET("v1/projects/{projectId}/distributions")
-    suspend fun getDistributions(@Path("projectId") projectId: Int): List<Distribution>
+    suspend fun getDistributions(
+        @Path("projectId") projectId: Int)
+            : List<Distribution>
 
     @GET("v3/assistances/{assistanceId}/targets/beneficiaries")
-    suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<DistributionBeneficiary>
+    suspend fun getDistributionBeneficiaries(
+        @Path("assistanceId") assistanceId: Int
+    ): PagedApiEntity<DistributionBeneficiary>
 
-    @POST("v1/distributions/generalrelief/distributed")
-    suspend fun setDistributedRelief(@Body distributedReliefRequest: DistributedReliefRequest)
+    @PUT("v1/assistances/relief-packages/distribute")
+    suspend fun setReliefPackagesDistributed(
+        @Body distributedReliefPackages: List<DistributedReliefPackages>
+    )
 
     @POST("v1/booklets/assign/{assistanceId}/{beneficiaryId}")
-    suspend fun assignBooklet(@Path("beneficiaryId") beneficiaryId: Int, @Path("assistanceId") assistanceId: Int, @Body assingBookletRequest: AssingBookletRequest)
+    suspend fun assignBooklet(
+        @Path("beneficiaryId") beneficiaryId: Int,
+        @Path("assistanceId") assistanceId: Int,
+        @Body assignBookletRequest: AssignBookletRequest
+    )
 
     @POST("v1/beneficiaries/{beneficiaryId}")
-    suspend fun updateBeneficiaryReferral(@Path("beneficiaryId") beneficiaryId: Int, @Body beneficiary: BeneficiaryForReferralUpdate)
+    suspend fun updateBeneficiaryReferral(
+        @Path("beneficiaryId") beneficiaryId: Int,
+        @Body beneficiary: BeneficiaryForReferralUpdate
+    )
 
     @POST("v1/smartcards")
-    suspend fun assignSmartcard(@Body assignSmartcardRequest: AssignSmartcardRequest)
+    suspend fun assignSmartcard(
+        @Body assignSmartcardRequest: AssignSmartcardRequest
+    )
 
     @PATCH("v1/smartcards/{serialNumber}")
-    suspend fun deactivateSmartcard(@Path("serialNumber") serialNumber: String, @Body deactivateSmartcardRequest: DeactivateSmartcardRequest)
+    suspend fun deactivateSmartcard(
+        @Path("serialNumber") serialNumber: String,
+        @Body deactivateSmartcardRequest: DeactivateSmartcardRequest
+    )
 
     @POST("v4/smartcards/{serialNumber}/deposit")
-    suspend fun distributeSmartcard(@Path("serialNumber") serialNumber: String, @Body distributeSmartcardRequest: DistributeSmartcardRequest)
+    suspend fun distributeSmartcard(
+        @Path("serialNumber") serialNumber: String,
+        @Body distributeSmartcardRequest: DistributeSmartcardRequest
+    )
 
     @Multipart
     @POST("v1/users/{id}/logs")
-    suspend fun postLogs(@Path("id") userId: Long, @Part logfile: MultipartBody.Part): Response<Unit>
+    suspend fun postLogs(
+        @Path("id") userId: Long,
+        @Part logfile: MultipartBody.Part
+    ): Response<Unit>
 }

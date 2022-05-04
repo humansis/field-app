@@ -18,6 +18,9 @@ interface DistributionsDao {
     @Query("SELECT * FROM distributions WHERE id = :assistanceId")
     suspend fun getById(assistanceId: Int): DistributionLocal?
 
+    @Query("SELECT * FROM distributions WHERE id = :assistanceId")
+    suspend fun getByIds(assistanceId: List<Int>): List<DistributionLocal>
+
     @Query("DELETE FROM distributions WHERE projectId = :projectId")
     suspend fun deleteByProject(projectId: Int)
 
