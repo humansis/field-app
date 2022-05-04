@@ -19,19 +19,15 @@ interface HumansisService {
     suspend fun getProjects(): List<Project>
 
     @GET("v1/projects/{projectId}/distributions")
-    suspend fun getDistributions(
-        @Path("projectId") projectId: Int
-    ): List<Distribution>
+    suspend fun getDistributions(@Path("projectId") projectId: Int): List<Distribution>
 
     @GET("v3/assistances/{assistanceId}/targets/beneficiaries")
     suspend fun getDistributionBeneficiaries(
         @Path("assistanceId") assistanceId: Int
     ): PagedApiEntity<DistributionBeneficiary>
 
-    @PATCH("v1/assistances/relief-packages/distribute")
-    suspend fun setReliefPackagesDistributed(
-        @Body distributedReliefPackages: List<DistributedReliefPackages>
-    )
+    @POST("v1/distributions/generalrelief/distributed")
+    suspend fun setDistributedRelief(@Body distributedReliefRequest: DistributedReliefRequest)
 
     @POST("v1/booklets/assign/{assistanceId}/{beneficiaryId}")
     suspend fun assignBooklet(
