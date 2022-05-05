@@ -3,6 +3,7 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
+import kotlinx.coroutines.delay
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 class LogsRepository @Inject constructor(val service: HumansisService, val context: Context) {
 
     suspend fun postLogs(vendorId: Long) {
+        delay(LOGS_DELAY_CONST)
         val zipOfLogs = getZipOfLogs(context, 48)
         service.postLogs(
             vendorId,
@@ -37,5 +39,9 @@ class LogsRepository @Inject constructor(val service: HumansisService, val conte
                 throw HttpException(response)
             }
         }
+    }
+
+    companion object {
+        private const val LOGS_DELAY_CONST = 6000L
     }
 }

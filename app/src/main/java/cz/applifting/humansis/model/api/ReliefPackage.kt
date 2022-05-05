@@ -5,7 +5,7 @@ package cz.applifting.humansis.model.api
  */
 data class ReliefPackage(
     val id: Int,
-    val modalityType: ModalityType,
+    val modalityType: String,
     val amountToDistribute: Double,
     val amountDistributed: Double,
     val unit: String,
