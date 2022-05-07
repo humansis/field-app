@@ -104,7 +104,7 @@ class AppModule {
                                             logRequestBody(request.method(), it)
                                         }
 
-                                        if (hostUrlInterceptor.getShouldLogHeaders())  {
+                                        if (hostUrlInterceptor.getShouldLogHeaders()) {
                                             logResponseHeaders(this.headers())
                                             hostUrlInterceptor.setShouldLogHeaders(false)
                                         }
