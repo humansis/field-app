@@ -103,6 +103,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     ApiEnvironments.STAGE
                 }
                 hostUrlInterceptor.setHost(host)
+                hostUrlInterceptor.setShouldLogHeaders(true)
             }
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()

@@ -10,8 +10,19 @@ class HostUrlInterceptor : Interceptor {
     @Volatile
     private var host: ApiEnvironments? = null
 
+    @Volatile
+    private var shouldLogHeaders: Boolean = false
+
     fun setHost(host: ApiEnvironments?) {
         this.host = host
+    }
+
+    fun setShouldLogHeaders(shouldLogHeaders: Boolean) {
+        this.shouldLogHeaders = shouldLogHeaders
+    }
+
+    fun getShouldLogHeaders(): Boolean {
+        return shouldLogHeaders
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
