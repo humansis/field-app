@@ -18,11 +18,11 @@ object ApiUtilities {
     }
 
     fun logRequestHeaders(headers: Headers) {
-        Log.d("OkHttp","--> HEADERS: $headers")
+        Log.d("OkHttp", "--> HEADERS: $headers")
     }
 
     fun logResponseHeaders(headers: Headers) {
-         Log.d("OkHttp","<-- HEADERS: $headers")
+        Log.d("OkHttp", "<-- HEADERS: $headers")
     }
 
     fun logRequestBody(requestMethod: String, requestBody: RequestBody) {
