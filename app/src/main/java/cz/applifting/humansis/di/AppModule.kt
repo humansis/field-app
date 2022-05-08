@@ -4,17 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.BuildConfig
-import cz.applifting.humansis.api.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.interceptor.HeadersInterceptor
+import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_COUNTRY
-import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
-import cz.applifting.humansis.misc.ApiUtilities.logRequestHeaders
-import cz.applifting.humansis.misc.ApiUtilities.logRequestBody
-import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
-import cz.applifting.humansis.misc.ApiUtilities.logResponseHeaders
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -23,12 +19,12 @@ import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
-import quanti.com.kotlinlog.Log
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -58,82 +54,61 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideHeadersInterceptor(
+        loginManager: LoginManager,
+        sp: SharedPreferences
+    ): HeadersInterceptor {
+        return HeadersInterceptor(
+            loginManager,
+            sp
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoggingInterceptor(): LoggingInterceptor {
+        return LoggingInterceptor()
+    }
+
+    @Provides
+    @Singleton
     fun retrofitProvider(
         @Named(BASE_URL) baseUrl: String,
-        loginManager: LoginManager,
         context: Context,
-        sp: SharedPreferences,
-        hostUrlInterceptor: HostUrlInterceptor
+        hostUrlInterceptor: HostUrlInterceptor,
+        headersInterceptor: HeadersInterceptor,
+        loggingInterceptor: LoggingInterceptor
     ): HumansisService {
-
-        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
-
-        logging.level = HttpLoggingInterceptor.Level.BASIC
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
             .callTimeout(5, TimeUnit.MINUTES)
             .readTimeout(5, TimeUnit.MINUTES)
             .addInterceptor(hostUrlInterceptor)
+            .addInterceptor(headersInterceptor)
             .addInterceptor { chain ->
 
-                val oldRequest = chain.request()
+                val request = chain.request()
 
                 if (context.isNetworkConnected()) {
                     try {
-                        runBlocking {
-                            val headersBuilder = oldRequest.headers().newBuilder()
-                            loginManager.getAuthToken()?.let {
-                                headersBuilder.add("Authorization", "Bearer $it")
-                            }
-                            sp.getString(SP_COUNTRY, "SYR")
-                                ?.let { headersBuilder.add("Country", it) }
-                            headersBuilder.add("Version-Name", BuildConfig.VERSION_NAME)
-                            headersBuilder.add("Build-Number", BuildConfig.BUILD_NUMBER.toString())
-                            headersBuilder.add("Build-Type", BuildConfig.BUILD_TYPE)
-
-                            val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
-                            withContext(Dispatchers.IO) {
-                                chain.proceed(request).apply {
-                                    if (BuildConfig.DEBUG) {
-                                        if (hostUrlInterceptor.getShouldLogHeaders()) {
-                                            logRequestHeaders(request.headers())
-                                        }
-
-                                        request.body()?.let {
-                                            logRequestBody(request.method(), it)
-                                        }
-
-                                        if (hostUrlInterceptor.getShouldLogHeaders()) {
-                                            logResponseHeaders(this.headers())
-                                            hostUrlInterceptor.setShouldLogHeaders(false)
-                                        }
-                                    }
-
-                                    if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
-                                        this.body()?.let {
-                                            logResponseBody(this.headers(), it)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        chain.proceed(request)
                     } catch (e: Exception) {
                         buildErrorResponse(
-                            oldRequest,
+                            request,
                             HttpURLConnection.HTTP_UNAVAILABLE,
                             "Service unavailable"
                         )
                     }
                 } else {
                     buildErrorResponse(
-                        oldRequest,
+                        request,
                         HttpURLConnection.HTTP_UNAVAILABLE,
                         "No internet connection"
                     )
                 }
             }
-            .addInterceptor(logging)
+            .addInterceptor(loggingInterceptor)
             .build()
 
         return Retrofit.Builder()

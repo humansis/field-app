@@ -7,7 +7,8 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
-import cz.applifting.humansis.api.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
@@ -73,6 +74,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     @Inject
     lateinit var hostUrlInterceptor: HostUrlInterceptor
 
+    @Inject
+    lateinit var loggingInterceptor: LoggingInterceptor
+
     private val reason = Data.Builder()
     private val syncErrors = arrayListOf<SyncError>()
     private val syncStats = SyncStats()
@@ -103,7 +107,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     ApiEnvironments.STAGE
                 }
                 hostUrlInterceptor.setHost(host)
-                hostUrlInterceptor.setShouldLogHeaders(true)
+                loggingInterceptor.setShouldLogHeaders(true)
             }
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
