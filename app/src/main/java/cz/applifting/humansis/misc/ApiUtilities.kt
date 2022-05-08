@@ -17,14 +17,6 @@ object ApiUtilities {
         return (code - 200 >= 0) && (code - 300 < 0)
     }
 
-    fun logRequestHeaders(headers: Headers) {
-        Log.d("OkHttp", "--> HEADERS: $headers")
-    }
-
-    fun logResponseHeaders(headers: Headers) {
-        Log.d("OkHttp", "<-- HEADERS: $headers")
-    }
-
     fun logRequestBody(requestMethod: String, requestBody: RequestBody) {
         val buffer = Buffer()
         requestBody.writeTo(buffer)
@@ -35,7 +27,8 @@ object ApiUtilities {
         }
         val body = buffer.readString(charset)
         if (!body.contains(forbiddenRegex)) {
-            Log.d("OkHttp", "--> BODY: $body")
+            Log.d("OkHttp", "")
+            Log.d("OkHttp", body)
             Log.d(
                 "OkHttp",
                 "--> END " + requestMethod + " (" + requestBody.contentLength() + "-byte body)"
@@ -69,7 +62,8 @@ object ApiUtilities {
             }
             val body = buffer.clone().readString(charset)
             if (!body.contains(forbiddenRegex)) {
-                Log.d("OkHttp", "<-- BODY: $body")
+                Log.d("OkHttp", "")
+                Log.d("OkHttp", body)
             }
         }
         if (gzippedLength != null) {

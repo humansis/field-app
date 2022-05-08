@@ -11,10 +11,8 @@ import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_COUNTRY
 import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
-import cz.applifting.humansis.misc.ApiUtilities.logRequestHeaders
 import cz.applifting.humansis.misc.ApiUtilities.logRequestBody
 import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
-import cz.applifting.humansis.misc.ApiUtilities.logResponseHeaders
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -96,20 +94,10 @@ class AppModule {
                             withContext(Dispatchers.IO) {
                                 chain.proceed(request).apply {
                                     if (BuildConfig.DEBUG) {
-                                        if (hostUrlInterceptor.getShouldLogHeaders()) {
-                                            logRequestHeaders(request.headers())
-                                        }
-
                                         request.body()?.let {
                                             logRequestBody(request.method(), it)
                                         }
-
-                                        if (hostUrlInterceptor.getShouldLogHeaders()) {
-                                            logResponseHeaders(this.headers())
-                                            hostUrlInterceptor.setShouldLogHeaders(false)
-                                        }
                                     }
-
                                     if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
                                         this.body()?.let {
                                             logResponseBody(this.headers(), it)
