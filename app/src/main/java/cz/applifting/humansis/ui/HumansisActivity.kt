@@ -68,16 +68,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
             window.statusBarColor = Color.BLACK
         }
 
-        if (BuildConfig.DEBUG) {
-            StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build()
-            )
-        }
-
         (application as App).appComponent.inject(this)
 
         setUpObservers()
