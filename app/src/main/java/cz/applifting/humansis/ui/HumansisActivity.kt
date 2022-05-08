@@ -7,7 +7,6 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
