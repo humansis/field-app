@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.interceptor.LoggingInterceptor
