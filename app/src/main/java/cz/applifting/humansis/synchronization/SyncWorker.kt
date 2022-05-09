@@ -94,20 +94,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             )
 
             Log.d(TAG, "Started Sync")
-            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(
-                    BuildConfig.DEMO_ACCOUNT,
-                    true
-                ) == true
-            ) {
-                val host = try {
-                    ApiEnvironments.valueOf(
-                        sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-                    )
-                } catch (e: Exception) {
-                    ApiEnvironments.STAGE
-                }
+
+            val host = try {
+                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+            } catch (e: Exception) {
+                null
+            }
+            if (host != null) {
                 hostUrlInterceptor.setHost(host)
                 loggingInterceptor.setShouldLogHeaders(true)
+            } else {
+                Log.d(TAG, "Password marked invalid, because of unknown environment.")
+                loginManager.markInvalidPassword()
             }
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
