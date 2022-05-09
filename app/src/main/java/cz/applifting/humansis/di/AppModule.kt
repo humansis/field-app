@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.BuildConfig
-import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.interceptor.ConnectionInterceptor
 import cz.applifting.humansis.api.interceptor.HeadersInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
@@ -19,16 +19,10 @@ import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -66,6 +60,16 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideConnectionInterceptor(
+        context: Context
+    ): ConnectionInterceptor {
+        return ConnectionInterceptor(
+            context
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideLoggingInterceptor(): LoggingInterceptor {
         return LoggingInterceptor()
     }
@@ -74,9 +78,9 @@ class AppModule {
     @Singleton
     fun retrofitProvider(
         @Named(BASE_URL) baseUrl: String,
-        context: Context,
         hostUrlInterceptor: HostUrlInterceptor,
         headersInterceptor: HeadersInterceptor,
+        connectionInterceptor: ConnectionInterceptor,
         loggingInterceptor: LoggingInterceptor
     ): HumansisService {
 
@@ -86,28 +90,7 @@ class AppModule {
             .readTimeout(5, TimeUnit.MINUTES)
             .addInterceptor(hostUrlInterceptor)
             .addInterceptor(headersInterceptor)
-            .addInterceptor { chain ->
-
-                val request = chain.request()
-
-                if (context.isNetworkConnected()) {
-                    try {
-                        chain.proceed(request)
-                    } catch (e: Exception) {
-                        buildErrorResponse(
-                            request,
-                            HttpURLConnection.HTTP_UNAVAILABLE,
-                            "Service unavailable"
-                        )
-                    }
-                } else {
-                    buildErrorResponse(
-                        request,
-                        HttpURLConnection.HTTP_UNAVAILABLE,
-                        "No internet connection"
-                    )
-                }
-            }
+            .addInterceptor(connectionInterceptor)
             .addInterceptor(loggingInterceptor)
             .build()
 
@@ -120,20 +103,6 @@ class AppModule {
             )
             .client(client)
             .build().create()
-    }
-
-    private fun buildErrorResponse(
-        oldRequest: Request,
-        errorCode: Int,
-        errorMessage: String
-    ): Response {
-        return Response.Builder()
-            .protocol(Protocol.HTTP_2)
-            .request(oldRequest)
-            .code(errorCode)
-            .message(errorMessage)
-            .body(ResponseBody.create(MediaType.parse("text/plain"), errorMessage))
-            .build()
     }
 
     @Provides
