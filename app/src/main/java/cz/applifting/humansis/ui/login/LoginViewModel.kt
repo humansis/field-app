@@ -3,7 +3,7 @@ package cz.applifting.humansis.ui.login
 import android.content.SharedPreferences
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.api.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager

@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
-import cz.applifting.humansis.api.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
@@ -73,6 +73,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     @Inject
     lateinit var hostUrlInterceptor: HostUrlInterceptor
 
+    @Inject
+    lateinit var loggingInterceptor: LoggingInterceptor
+
     private val reason = Data.Builder()
     private val syncErrors = arrayListOf<SyncError>()
     private val syncStats = SyncStats()
@@ -90,19 +93,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             )
 
             Log.d(TAG, "Started Sync")
-            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(
-                    BuildConfig.DEMO_ACCOUNT,
-                    true
-                ) == true
-            ) {
-                val host = try {
-                    ApiEnvironments.valueOf(
-                        sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-                    )
-                } catch (e: Exception) {
-                    ApiEnvironments.STAGE
-                }
+
+            val host = try {
+                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+            } catch (e: Exception) {
+                null
+            }
+            if (host != null) {
                 hostUrlInterceptor.setHost(host)
+                loggingInterceptor.setShouldLogHeaders(true)
+            } else {
+                Log.d(TAG, "Password marked invalid, because of unknown environment.")
+                loginManager.markInvalidPassword()
             }
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()

@@ -1,4 +1,4 @@
-package cz.applifting.humansis.api
+package cz.applifting.humansis.api.interceptor
 
 import cz.applifting.humansis.misc.ApiEnvironments
 import okhttp3.Interceptor
