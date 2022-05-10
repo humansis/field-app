@@ -13,10 +13,17 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.ApiEnvironments
-import cz.applifting.humansis.misc.ApiUtilities.getDefaultEnvironment
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.App
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.btn_login
+import kotlinx.android.synthetic.main.fragment_login.envTextView
+import kotlinx.android.synthetic.main.fragment_login.et_password
+import kotlinx.android.synthetic.main.fragment_login.et_username
+import kotlinx.android.synthetic.main.fragment_login.loginLogo
+import kotlinx.android.synthetic.main.fragment_login.pb_loading
+import kotlinx.android.synthetic.main.fragment_login.settingsImageView
+import kotlinx.android.synthetic.main.fragment_login.tv_error
+import kotlinx.android.synthetic.main.fragment_login.verTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,7 +46,11 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         viewModelFactory
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -106,7 +117,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
     }
 
     private fun settingsButtonInit() {
-        changeEnvironment(viewModel.loadHostFromSaved() ?: getDefaultEnvironment())
+        changeEnvironment(viewModel.loadHostFromSaved())
 
         settingsImageView.setOnClickListener {
             Log.d(TAG, "Settings button clicked")
