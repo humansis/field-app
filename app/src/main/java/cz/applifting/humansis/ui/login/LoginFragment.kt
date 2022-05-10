@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiUtilities.getDefaultEnvironment
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -105,8 +106,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
     }
 
     private fun settingsButtonInit() {
-        val host = viewModel.loadHostFromSaved()
-        envTextView.text = host.name
+        changeEnvironment(viewModel.loadHostFromSaved() ?: getDefaultEnvironment())
 
         settingsImageView.setOnClickListener {
             Log.d(TAG, "Settings button clicked")
@@ -123,8 +123,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
             popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
             popup.setOnMenuItemClickListener { item ->
-                val env = ApiEnvironments.values().find { it.id == item?.itemId }
-                changeEnvironment(env)
+                ApiEnvironments.values().find { it.id == item?.itemId }?.let {
+                    changeEnvironment(it)
+                }
                 true
             }
             popup.show()
@@ -134,7 +135,6 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             settingsImageView.visibility = View.VISIBLE
             envTextView.visibility = View.VISIBLE
         } else {
-            changeEnvironment(ApiEnvironments.FRONT)
             settingsImageView.visibility = View.INVISIBLE
             envTextView.visibility = View.INVISIBLE
 
@@ -151,10 +151,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         viewModel.viewStateLD.value = LoginViewState()
     }
 
-    private fun changeEnvironment(env: ApiEnvironments?) {
-        val newEnv = env ?: ApiEnvironments.STAGE
-        envTextView.text = newEnv.name
-        viewModel.changeHostUrl(newEnv)
+    private fun changeEnvironment(env: ApiEnvironments) {
+        envTextView.text = env.name
+        viewModel.changeHostUrl(env)
     }
 
     override fun finishLogin(enableButton: Boolean) {

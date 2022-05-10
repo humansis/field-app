@@ -18,6 +18,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 import javax.inject.Inject
 
 /**
@@ -76,12 +77,11 @@ class MainViewModel @Inject constructor(
 
     fun getHostUrl(): ApiEnvironments {
         return try {
-            ApiEnvironments.valueOf(
-                sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-            )
+            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
         } catch (e: Exception) {
-            ApiEnvironments.STAGE
-        }
+            Log.e(TAG, e)
+            null
+        } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
     fun logout() {
@@ -89,5 +89,9 @@ class MainViewModel @Inject constructor(
             loginManager.logout()
             userLD.postValue(null)
         }
+    }
+
+    companion object {
+        private val TAG = MainViewModel::class.java.simpleName
     }
 }
