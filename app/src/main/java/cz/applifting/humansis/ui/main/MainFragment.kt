@@ -105,12 +105,9 @@ class MainFragment : BaseFragment() {
         tvAppVersion.text = appVersion
 
         val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
-        if (BuildConfig.DEBUG) {
-            tvEnvironment.text = getString(
-                R.string.environment,
-                viewModel.environmentLD.value
-            )
-        } else {
+
+        tvEnvironment.text = getString(R.string.environment, viewModel.environmentLD.value)
+        if (!BuildConfig.DEBUG && viewModel.environmentLD.value == ApiEnvironments.FRONT.name) {
             tvEnvironment.visibility = View.GONE
         }
 

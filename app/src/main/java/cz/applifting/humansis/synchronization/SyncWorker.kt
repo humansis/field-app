@@ -97,15 +97,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             val host = try {
                 sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
             } catch (e: Exception) {
+                Log.e(TAG, e)
                 null
-            }
-            if (host != null) {
-                hostUrlInterceptor.setHost(host)
-                loggingInterceptor.setShouldLogHeaders(true)
-            } else {
-                Log.d(TAG, "Password marked invalid, because of unknown environment.")
-                loginManager.markInvalidPassword()
-            }
+            } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
+
+            hostUrlInterceptor.setHost(host)
+            loggingInterceptor.setShouldLogHeaders(true)
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 
