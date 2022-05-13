@@ -28,7 +28,7 @@ interface HumansisService {
         @Path("assistanceId") assistanceId: Int
     ): PagedApiEntity<DistributionBeneficiary>
 
-    @PUT("v1/assistances/relief-packages/distribute")
+    @PATCH("v1/assistances/relief-packages/distribute")
     suspend fun setReliefPackagesDistributed(
         @Body distributedReliefPackages: List<DistributedReliefPackages>
     )
