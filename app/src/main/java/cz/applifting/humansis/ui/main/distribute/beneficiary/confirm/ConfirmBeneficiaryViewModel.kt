@@ -3,12 +3,14 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.orNullIfEmpty
+import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 class ConfirmBeneficiaryViewModel @Inject constructor(
@@ -74,27 +76,35 @@ class ConfirmBeneficiaryViewModel @Inject constructor(
 
     private fun confirm(onlyReferral: Boolean) {
         launch {
-            val beneficiary = beneficiaryLD.value!!
+            beneficiaryLD.value?.let { beneficiary ->
+                if (onlyReferral) {
+                    val updatedBeneficiary = beneficiary.copy(
+                        referralType = referralTypeLD.value,
+                        referralNote = referralNoteLD.value.orNullIfEmpty()
+                    )
 
-            if (onlyReferral) {
-                val updatedBeneficiary = beneficiary.copy(
-                    referralType = referralTypeLD.value,
-                    referralNote = referralNoteLD.value.orNullIfEmpty()
-                )
+                    beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
+                    beneficiaryLD.value = updatedBeneficiary
+                } else {
+                    val updatedBeneficiary = beneficiary.copy(
+                        distributed = beneficiary.isAssigning,
+                        edited = beneficiary.isAssigning,
+                        referralType = referralTypeLD.value,
+                        referralNote = referralNoteLD.value.orNullIfEmpty()
+                    ).let {
+                        if (it.distributed) {
+                            it.copy(
+                                distributedAt = convertTimeForApiRequestBody(Date())
+                            )
+                        } else {
+                            it
+                        }
+                    }
 
-                beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
-                beneficiaryLD.value = updatedBeneficiary
-            } else {
-                val updatedBeneficiary = beneficiary.copy(
-                    distributed = beneficiary.isAssigning,
-                    edited = beneficiary.isAssigning,
-                    referralType = referralTypeLD.value,
-                    referralNote = referralNoteLD.value.orNullIfEmpty()
-                )
-
-                beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-                beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
-                beneficiaryLD.value = updatedBeneficiary
+                    beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+                    beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
+                    beneficiaryLD.value = updatedBeneficiary
+                }
             }
         }
     }
