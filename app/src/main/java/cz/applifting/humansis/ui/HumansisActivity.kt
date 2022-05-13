@@ -146,8 +146,10 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     private fun checkAppVersion() {
         val lastVersion = sp.getString(LAST_VERSION_KEY, "unknown")
         val currentVersion = BuildConfig.VERSION_NAME
-        Log.d(TAG, "App updated from $lastVersion to $currentVersion")
-        sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
+        if (currentVersion != lastVersion) {
+            Log.d(TAG, "App updated from $lastVersion to $currentVersion")
+            sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
+        }
     }
 
     private fun enqueueSynchronization() {
