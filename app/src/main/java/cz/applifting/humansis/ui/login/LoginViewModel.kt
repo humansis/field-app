@@ -3,11 +3,12 @@ package cz.applifting.humansis.ui.login
 import android.content.SharedPreferences
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiUtilities
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
@@ -41,21 +42,17 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun changeHostUrl(host: ApiEnvironments?) {
+    fun changeHostUrl(host: ApiEnvironments) {
         hostUrlInterceptor.setHost(host)
-        sp.edit()?.putString(SP_ENVIRONMENT, host?.name)?.apply()
+        sp.edit().putString(SP_ENVIRONMENT, host.name).apply()
     }
 
     fun loadHostFromSaved(): ApiEnvironments {
-        val host = try {
-            ApiEnvironments.valueOf(
-                sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-            )
+        return try {
+            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
         } catch (e: Exception) {
-            ApiEnvironments.STAGE
-        }
-        hostUrlInterceptor.setHost(host)
-        return host
+            null
+        } ?: ApiUtilities.getDefaultEnvironment()
     }
 
     fun login(username: String, password: String, loginFinishCallback: LoginFinishCallback) {

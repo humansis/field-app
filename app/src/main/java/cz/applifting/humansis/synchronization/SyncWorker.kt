@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
-import cz.applifting.humansis.api.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
@@ -26,6 +26,8 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
@@ -71,6 +73,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     @Inject
     lateinit var hostUrlInterceptor: HostUrlInterceptor
 
+    @Inject
+    lateinit var loggingInterceptor: LoggingInterceptor
+
     private val reason = Data.Builder()
     private val syncErrors = arrayListOf<SyncError>()
     private val syncStats = SyncStats()
@@ -88,20 +93,16 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             )
 
             Log.d(TAG, "Started Sync")
-            if (BuildConfig.DEBUG || loginManager.retrieveUser()?.username?.equals(
-                    BuildConfig.DEMO_ACCOUNT,
-                    true
-                ) == true
-            ) {
-                val host = try {
-                    ApiEnvironments.valueOf(
-                        sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name) ?: ApiEnvironments.STAGE.name
-                    )
-                } catch (e: Exception) {
-                    ApiEnvironments.STAGE
-                }
-                hostUrlInterceptor.setHost(host)
-            }
+
+            val host = try {
+                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+            } catch (e: Exception) {
+                Log.e(TAG, e)
+                null
+            } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
+
+            hostUrlInterceptor.setHost(host)
+            loggingInterceptor.setShouldLogHeaders(true)
 
             sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 
@@ -121,25 +122,27 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 it: BeneficiaryLocal,
                 action: SyncErrorActionEnum
             ) {
-                val errBody = "${e.response()?.errorBody()?.string()}"
-                Log.d(TAG, e, "Failed uploading [$action]: ${it.id}: $errBody")
+                CoroutineScope(Dispatchers.IO).runCatching {
+                    val errBody = "${e.response()?.errorBody()?.string()}"
+                    Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
-                // Mark conflicts in DB
-                val distributionName = distributionsRepository.getNameById(it.assistanceId)
-                val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
-                val beneficiaryName = "${it.givenName} ${it.familyName}"
+                    // Mark conflicts in DB
+                    val distributionName = distributionsRepository.getNameById(it.assistanceId)
+                    val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
+                    val beneficiaryName = "${it.givenName} ${it.familyName}"
 
-                val syncError = SyncError(
-                    id = it.id,
-                    location = "[$action] $projectName → $distributionName → $beneficiaryName",
-                    params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
-                    code = e.code(),
-                    errorMessage = "${e.code()}: $errBody",
-                    beneficiaryId = it.id,
-                    syncErrorAction = action
-                )
+                    val syncError = SyncError(
+                        id = it.id,
+                        location = "[$action] $projectName → $distributionName → $beneficiaryName",
+                        params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                        code = e.code(),
+                        errorMessage = "${e.code()}: $errBody",
+                        beneficiaryId = it.id,
+                        syncErrorAction = action
+                    )
 
-                syncErrors.add(syncError)
+                    syncErrors.add(syncError)
+                }
             }
 
             val assignedBeneficiaries =

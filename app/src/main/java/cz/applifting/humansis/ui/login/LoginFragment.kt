@@ -15,7 +15,15 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.App
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.btn_login
+import kotlinx.android.synthetic.main.fragment_login.envTextView
+import kotlinx.android.synthetic.main.fragment_login.et_password
+import kotlinx.android.synthetic.main.fragment_login.et_username
+import kotlinx.android.synthetic.main.fragment_login.loginLogo
+import kotlinx.android.synthetic.main.fragment_login.pb_loading
+import kotlinx.android.synthetic.main.fragment_login.settingsImageView
+import kotlinx.android.synthetic.main.fragment_login.tv_error
+import kotlinx.android.synthetic.main.fragment_login.verTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,7 +46,11 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         viewModelFactory
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -105,8 +117,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
     }
 
     private fun settingsButtonInit() {
-        val host = viewModel.loadHostFromSaved()
-        envTextView.text = host.name
+        changeEnvironment(viewModel.loadHostFromSaved())
 
         settingsImageView.setOnClickListener {
             Log.d(TAG, "Settings button clicked")
@@ -123,8 +134,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
             popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
             popup.setOnMenuItemClickListener { item ->
-                val env = ApiEnvironments.values().find { it.id == item?.itemId }
-                changeEnvironment(env)
+                ApiEnvironments.values().find { it.id == item?.itemId }?.let {
+                    changeEnvironment(it)
+                }
                 true
             }
             popup.show()
@@ -134,7 +146,6 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             settingsImageView.visibility = View.VISIBLE
             envTextView.visibility = View.VISIBLE
         } else {
-            changeEnvironment(ApiEnvironments.FRONT)
             settingsImageView.visibility = View.INVISIBLE
             envTextView.visibility = View.INVISIBLE
 
@@ -151,10 +162,9 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         viewModel.viewStateLD.value = LoginViewState()
     }
 
-    private fun changeEnvironment(env: ApiEnvironments?) {
-        val newEnv = env ?: ApiEnvironments.STAGE
-        envTextView.text = newEnv.name
-        viewModel.changeHostUrl(newEnv)
+    private fun changeEnvironment(env: ApiEnvironments) {
+        envTextView.text = env.name
+        viewModel.changeHostUrl(env)
     }
 
     override fun finishLogin(enableButton: Boolean) {

@@ -4,15 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.BuildConfig
-import cz.applifting.humansis.api.HostUrlInterceptor
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.interceptor.ConnectionInterceptor
+import cz.applifting.humansis.api.interceptor.HeadersInterceptor
+import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
+import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_COUNTRY
-import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
-import cz.applifting.humansis.misc.ApiUtilities.logRequestBody
-import cz.applifting.humansis.misc.ApiUtilities.logResponseBody
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -21,16 +19,10 @@ import cz.quanti.android.nfc.PINFacade
 import cz.quanti.android.nfc_io_libray.types.NfcUtil
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
-import quanti.com.kotlinlog.Log
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -56,72 +48,50 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideHeadersInterceptor(
+        loginManager: LoginManager,
+        sp: SharedPreferences
+    ): HeadersInterceptor {
+        return HeadersInterceptor(
+            loginManager,
+            sp
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectionInterceptor(
+        context: Context
+    ): ConnectionInterceptor {
+        return ConnectionInterceptor(
+            context
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoggingInterceptor(): LoggingInterceptor {
+        return LoggingInterceptor()
+    }
+
+    @Provides
+    @Singleton
     fun retrofitProvider(
         @Named(BASE_URL) baseUrl: String,
-        loginManager: LoginManager,
-        context: Context,
-        sp: SharedPreferences,
-        hostUrlInterceptor: HostUrlInterceptor
+        hostUrlInterceptor: HostUrlInterceptor,
+        headersInterceptor: HeadersInterceptor,
+        connectionInterceptor: ConnectionInterceptor,
+        loggingInterceptor: LoggingInterceptor
     ): HumansisService {
-
-        val logging = HttpLoggingInterceptor { message -> Log.d("OkHttp", message) }
-
-        logging.level = HttpLoggingInterceptor.Level.BASIC
 
         val client: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.MINUTES)
             .callTimeout(5, TimeUnit.MINUTES)
             .readTimeout(5, TimeUnit.MINUTES)
             .addInterceptor(hostUrlInterceptor)
-            .addInterceptor { chain ->
-
-                val oldRequest = chain.request()
-
-                if (context.isNetworkConnected()) {
-                    try {
-                        runBlocking {
-                            val headersBuilder = oldRequest.headers().newBuilder()
-                            loginManager.getAuthToken()?.let {
-                                headersBuilder.add("Authorization", "Bearer $it")
-                            }
-                            sp.getString(SP_COUNTRY, "SYR")
-                                ?.let { headersBuilder.add("Country", it) }
-                            headersBuilder.add("Version-Name", BuildConfig.VERSION_NAME)
-                            headersBuilder.add("Build-Number", BuildConfig.BUILD_NUMBER.toString())
-                            headersBuilder.add("Build-Type", BuildConfig.BUILD_TYPE)
-
-                            val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
-                            withContext(Dispatchers.IO) {
-                                chain.proceed(request).apply {
-                                    if (BuildConfig.DEBUG) {
-                                        request.body()?.let {
-                                            logRequestBody(request.method(), it)
-                                        }
-                                    }
-                                    if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
-                                        this.body()?.let {
-                                            logResponseBody(this.headers(), it)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (e: Exception) {
-                        buildErrorResponse(
-                            oldRequest,
-                            HttpURLConnection.HTTP_UNAVAILABLE,
-                            "Service unavailable"
-                        )
-                    }
-                } else {
-                    buildErrorResponse(
-                        oldRequest,
-                        HttpURLConnection.HTTP_UNAVAILABLE,
-                        "No internet connection"
-                    )
-                }
-            }
-            .addInterceptor(logging)
+            .addInterceptor(headersInterceptor)
+            .addInterceptor(connectionInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
 
         return Retrofit.Builder()
@@ -133,20 +103,6 @@ class AppModule {
             )
             .client(client)
             .build().create()
-    }
-
-    private fun buildErrorResponse(
-        oldRequest: Request,
-        errorCode: Int,
-        errorMessage: String
-    ): Response {
-        return Response.Builder()
-            .protocol(Protocol.HTTP_2)
-            .request(oldRequest)
-            .code(errorCode)
-            .message(errorMessage)
-            .body(ResponseBody.create(MediaType.parse("text/plain"), errorMessage))
-            .build()
     }
 
     @Provides

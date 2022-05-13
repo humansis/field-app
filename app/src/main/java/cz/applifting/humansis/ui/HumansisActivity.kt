@@ -7,7 +7,6 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.work.*
 import com.google.android.material.navigation.NavigationView
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.isWifiConnected
@@ -32,7 +32,6 @@ import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
-import quanti.com.kotlinlog.BuildConfig
 import quanti.com.kotlinlog.Log
 import java.util.*
 import javax.inject.Inject
@@ -68,16 +67,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
             window.statusBarColor = Color.BLACK
         }
 
-        if (BuildConfig.DEBUG) {
-            StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build()
-            )
-        }
-
         (application as App).appComponent.inject(this)
 
         setUpObservers()
@@ -86,6 +75,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart")
+        checkAppVersion()
     }
 
     override fun onResume() {
@@ -150,6 +140,15 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
             drawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
+        }
+    }
+
+    private fun checkAppVersion() {
+        val lastVersion = sp.getString(LAST_VERSION_KEY, "unknown")
+        val currentVersion = BuildConfig.VERSION_NAME
+        if (currentVersion != lastVersion) {
+            Log.d(TAG, "App updated from $lastVersion to $currentVersion")
+            sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
         }
     }
 
@@ -332,5 +331,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     companion object {
         private val TAG = HumansisActivity::class.java.simpleName
+        private const val LAST_VERSION_KEY = "last-version-key"
     }
 }
