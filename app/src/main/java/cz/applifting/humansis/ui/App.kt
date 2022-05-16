@@ -1,10 +1,11 @@
 package cz.applifting.humansis.ui
 
 import android.app.Application
+import android.content.SharedPreferences
 import cz.applifting.humansis.BuildConfig
-import cz.applifting.humansis.R
 import cz.applifting.humansis.di.AppComponent
 import cz.applifting.humansis.di.DaggerAppComponent
+import cz.applifting.humansis.managers.SP_USERNAME
 import cz.quanti.android.nfc.logger.NfcLogger
 import quanti.com.kotlinlog.Log
 import quanti.com.kotlinlog.android.AndroidLogger
@@ -13,6 +14,7 @@ import quanti.com.kotlinlog.base.LogLevel
 import quanti.com.kotlinlog.base.LoggerBundle
 import quanti.com.kotlinlog.file.FileLogger
 import quanti.com.kotlinlog.file.bundle.CircleLogBundle
+import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -21,16 +23,21 @@ import quanti.com.kotlinlog.file.bundle.CircleLogBundle
 class App : Application() {
     lateinit var appComponent: AppComponent
 
+    @Inject
+    lateinit var sp: SharedPreferences
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
-
-        initLogger()
 
         appComponent = DaggerAppComponent.builder()
             .app(this)
             .context(this)
             .build()
+
+        appComponent.inject(this)
+
+        initLogger()
     }
 
     private fun initLogger() {
@@ -42,8 +49,11 @@ class App : Application() {
         NfcLogger.registerListener(Logger())
         MetadataLogger.customMetadataLambda = {
             val metadata: MutableList<Pair<String, String>> = mutableListOf()
-            metadata.add(Pair("VERSION:", getString(R.string.version, BuildConfig.VERSION_NAME)))
+            metadata.add(Pair("VERSION:", BuildConfig.VERSION_NAME))
             metadata.add(Pair("BUILD_NUMBER:", BuildConfig.BUILD_NUMBER.toString()))
+            sp.getString(SP_USERNAME, null)?.let { username ->
+                metadata.add(Pair("USERNAME:", username))
+            }
             metadata
         }
     }

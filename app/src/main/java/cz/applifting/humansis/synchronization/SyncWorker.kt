@@ -90,7 +90,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 SyncErrorActionEnum.BEFORE_INITIALIZATION
             )
 
-            Log.d(TAG, "Started Sync")
+            Log.d(TAG, "Started Sync as ${loginManager.retrieveUser()?.username}")
 
             val host = try {
                 sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
