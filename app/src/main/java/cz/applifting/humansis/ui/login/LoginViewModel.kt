@@ -15,6 +15,7 @@ import cz.applifting.humansis.model.api.LoginRequest
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -72,13 +73,16 @@ class LoginViewModel @Inject constructor(
 
                 val user = loginManager.login(userResponse, password.toByteArray())
                 loginLD.value = user
+                Log.d(TAG, "Logged in as ${user.username}")
             } catch (e: HumansisError) {
                 viewStateLD.value = createViewStateErrorOnLogin(e.message)
                 loginFinishCallback.finishLogin(true)
+                Log.d(TAG, "Log in error ${e.message}")
             } catch (e: HttpException) {
                 val message = parseError(e, getApplication())
                 viewStateLD.value = createViewStateErrorOnLogin(message)
                 loginFinishCallback.finishLogin(true)
+                Log.d(TAG, "Log in error $message")
             }
             loginFinishCallback.finishLogin(true)
         }
@@ -89,4 +93,8 @@ class LoginViewModel @Inject constructor(
         LoginViewState(errorMessage = errorMessage).let { state ->
             loginLD.value?.let { state.copy(etUsernameIsEnabled = true) } ?: state
         }
+
+    companion object {
+        private val TAG = LoginViewModel::class.java.simpleName
+    }
 }
