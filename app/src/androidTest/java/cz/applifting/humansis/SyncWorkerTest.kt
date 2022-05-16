@@ -258,7 +258,7 @@ class SyncWorkerTest {
         nonfoodLimit = null,
         cashbackLimit = null,
         balance = null,
-        originalBalance = null,
+        originalBalance = null
     )
 
     private fun anyHttpException() =
