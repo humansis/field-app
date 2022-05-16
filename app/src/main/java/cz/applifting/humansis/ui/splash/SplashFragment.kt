@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
+import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import kotlinx.coroutines.*
 import quanti.com.kotlinlog.Log
@@ -41,32 +41,44 @@ class SplashFragment : Fragment(), CoroutineScope {
         super.onActivityCreated(savedInstanceState)
 
         if (!viewModel.initDB()) {
-            Log.v(TAG, "DB not initialized ")
+            Log.d(TAG, "DB not initialized ")
             goToLoginScreen()
         } else {
-            Log.v(TAG, "DB initialized")
+            Log.d(TAG, "DB initialized")
             viewModel.getUser()
         }
 
-        viewModel.userLD.observe(viewLifecycleOwner, Observer {
+        viewModel.userLD.observe(viewLifecycleOwner) {
             if (it == null) {
-                Log.v(TAG, "Application navigated to login screen because userLD.value == null.")
+                Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 goToLoginScreen()
-                return@Observer
+            } else {
+                if (it.token == null) {
+                    Log.d(TAG, "Application navigated to login screen because token == null.")
+                    goToLoginScreen()
+                } else {
+                    Log.d(TAG, "Application navigated to main screen because user ${it.username} has active session")
+                    goToMainScreen(it)
+                }
             }
-
-            val action = SplashFragmentDirections.actionSplashFragmentToMainFragment(
-                it.username,
-                it.email
-            )
-            this.findNavController().navigate(action)
-        })
+        }
     }
 
     private fun goToLoginScreen() {
         launch {
             delay(1000)
             val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun goToMainScreen(user: User) {
+        launch {
+            delay(1000)
+            val action = SplashFragmentDirections.actionSplashFragmentToMainFragment(
+                user.username,
+                user.email
+            )
             findNavController().navigate(action)
         }
     }
