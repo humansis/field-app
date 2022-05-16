@@ -25,6 +25,8 @@ import javax.inject.Singleton
 @Component(modules = [AppModule::class, ViewModelModule::class, ParamsModule::class])
 interface AppComponent {
 
+    fun inject(app: App)
+
     fun inject(humansisActivity: HumansisActivity)
 
     fun inject(baseFragment: BaseFragment)
