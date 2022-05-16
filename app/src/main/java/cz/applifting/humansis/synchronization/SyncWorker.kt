@@ -296,7 +296,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             // Erase password to trigger re-authentication
             if (syncErrors.find { it.code == 403 } != null) {
-                loginManager.markInvalidPassword()
+                loginManager.invalidatePassword()
+                sp.setDate(LAST_DOWNLOAD_KEY, null)
             }
 
             Log.d(TAG, "Sync finished with failure")
