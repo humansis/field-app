@@ -94,10 +94,17 @@ class LoginManager @Inject constructor(
         encryptDefault()
     }
 
-    suspend fun markInvalidPassword() {
+    suspend fun invalidatePassword() {
         val user = retrieveUserDb()
         if (user != null) {
             db.userDao().update(user.copy(invalidPassword = true))
+        }
+    }
+
+    suspend fun invalidateToken() {
+        val user = retrieveUserDb()
+        if (user != null) {
+            db.userDao().update(user.copy(token = null))
         }
     }
 

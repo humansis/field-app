@@ -2,11 +2,11 @@ package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironments
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
-import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
@@ -37,7 +37,6 @@ class MainViewModel @Inject constructor(
 
     val userLD = MutableLiveData<User>()
     val environmentLD = MutableLiveData<String>()
-    var authToken: JWToken? = null
 
     val readBalanceResult = SingleLiveEvent<UserPinBalance>()
     val readBalanceError = SingleLiveEvent<Throwable>()
@@ -48,7 +47,6 @@ class MainViewModel @Inject constructor(
         launch {
             val user = loginManager.retrieveUser()
             userLD.value = user
-            authToken = user?.token
         }
         launch {
             environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
@@ -82,6 +80,14 @@ class MainViewModel @Inject constructor(
             Log.e(TAG, e)
             null
         } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
+    }
+
+    fun invalidateToken() {
+        launch(Dispatchers.IO) {
+            loginManager.invalidateToken()
+            sp.setDate(LAST_DOWNLOAD_KEY, null)
+            userLD.postValue(null)
+        }
     }
 
     fun logout() {
