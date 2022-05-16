@@ -34,7 +34,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     assistanceId = assistanceId,
                     distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(it.booklets) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
-                    reliefIDs = parseReliefPackages(it.reliefPackages),
+                    reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
                     smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
@@ -197,8 +197,10 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         ))
     }
 
-    private fun parseReliefPackages(reliefPackages: List<ReliefPackage>): List<Int> {
-        return reliefPackages.map { it.id }
+    private fun parseGeneralReliefPackages(reliefPackages: List<ReliefPackage>): List<Int> {
+        return reliefPackages
+            .filter { it.modalityType != CommodityType.SMARTCARD || it.modalityType != CommodityType.QR_VOUCHER }
+            .map { it.id }
     }
 
     private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
