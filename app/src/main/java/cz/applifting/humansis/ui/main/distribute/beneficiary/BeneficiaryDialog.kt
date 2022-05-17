@@ -24,6 +24,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
+import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
@@ -47,7 +48,6 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import quanti.com.kotlinlog.Log
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -734,10 +734,5 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 dismiss()
             }
             .show()
-    }
-
-    private fun convertTimeForApiRequestBody(date: Date): String {
-        return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
-            .format(date)
     }
 }

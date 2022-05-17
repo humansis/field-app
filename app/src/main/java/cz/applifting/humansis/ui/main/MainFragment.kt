@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -163,19 +162,15 @@ class MainFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.userLD.observe(viewLifecycleOwner, Observer {
-
+        viewModel.userLD.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-                return@Observer
-            } else if (checkIfTokenValid(it.token) && it.token != viewModel.authToken) {
-                viewModel.authToken = it.token
+            } else if (validateToken(it.token)) {
+                val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+                tvUsername.text = it.username
             }
-
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
-            tvUsername.text = it.username
-        })
+        }
     }
 
     override fun onPause() {
@@ -244,25 +239,29 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (checkIfTokenValid(viewModel.authToken)) {
+                if (validateToken(viewModel.userLD.value?.token)) {
                     mainNavController.navigate(R.id.uploadDialog)
-                    return true
                 }
+                return true
             }
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    private fun checkIfTokenValid(token: JWToken?): Boolean {
+    private fun validateToken(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
-            Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
-            sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
-            viewModel.logout()
+            invalidateToken()
             false
         } else {
             true
         }
+    }
+
+    private fun invalidateToken() {
+        Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
+        sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
+        viewModel.invalidateToken()
     }
 
     private fun setUpBackground() {
