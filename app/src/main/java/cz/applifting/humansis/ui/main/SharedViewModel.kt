@@ -19,7 +19,11 @@ import cz.applifting.humansis.model.db.SyncErrorActionEnum
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
-import cz.applifting.humansis.synchronization.*
+import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
+import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
+import cz.applifting.humansis.synchronization.SYNC_WORKER
+import cz.applifting.humansis.synchronization.SyncWorker
+import cz.applifting.humansis.synchronization.SyncWorkerState
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -174,7 +178,7 @@ class SharedViewModel @Inject constructor(
     }
 
     private fun isLoading(workInfos: List<WorkInfo>): Boolean {
-        if (workInfos.isNullOrEmpty()) {
+        if (workInfos.isEmpty()) {
             return false
         }
         launch { Log.d(TAG, "Worker state: ${workInfos.first().state}") }
@@ -183,7 +187,8 @@ class SharedViewModel @Inject constructor(
 
     private suspend fun logsUploadFailedOnly(): Boolean {
         val errors = errorsRepository.getAll().first()
-        val logUploadErrorActions = listOf(SyncErrorActionEnum.LOGS_UPLOAD_NEW, SyncErrorActionEnum.LOGS_UPLOAD)
+        val logUploadErrorActions =
+            setOf(SyncErrorActionEnum.LOGS_UPLOAD_NEW, SyncErrorActionEnum.LOGS_UPLOAD)
         return errors.size == 1 && logUploadErrorActions.contains(errors.single().syncErrorAction)
     }
 

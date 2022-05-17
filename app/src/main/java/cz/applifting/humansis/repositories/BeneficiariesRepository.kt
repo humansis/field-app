@@ -5,11 +5,19 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
 import cz.applifting.humansis.model.CommodityType
-import cz.applifting.humansis.model.api.*
+import cz.applifting.humansis.model.api.AssignBookletRequest
+import cz.applifting.humansis.model.api.AssignSmartcardRequest
+import cz.applifting.humansis.model.api.BeneficiaryForReferralUpdate
+import cz.applifting.humansis.model.api.Booklet
+import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
+import cz.applifting.humansis.model.api.DistributeSmartcardRequest
+import cz.applifting.humansis.model.api.DistributedReliefPackages
+import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
 import kotlinx.coroutines.flow.Flow
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +25,11 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Singleton
-class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
+class BeneficiariesRepository @Inject constructor(
+    val service: HumansisService,
+    val dbProvider: DbProvider,
+    val context: Context
+) {
 
     suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
@@ -32,7 +44,9 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     givenName = it.beneficiary.localGivenName,
                     familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(it.booklets) || it.distributedAt != null,
+                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(
+                        it.booklets
+                    ) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
                     reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
@@ -60,13 +74,16 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun updateBeneficiaryReferralOnline(beneficiary: BeneficiaryLocal) {
-        service.updateBeneficiaryReferral(beneficiary.beneficiaryId, BeneficiaryForReferralUpdate(
-            id = beneficiary.beneficiaryId,
-            referralType = beneficiary.referralType,
-            referralNote = beneficiary.referralNote
-        ))
+        service.updateBeneficiaryReferral(
+            beneficiary.beneficiaryId, BeneficiaryForReferralUpdate(
+                id = beneficiary.beneficiaryId,
+                referralType = beneficiary.referralType,
+                referralNote = beneficiary.referralNote
+            )
+        )
         // prevent upload again if the sync fails
-        dbProvider.get().beneficiariesDao().updateReferralOfMultiple(beneficiary.beneficiaryId, null, null)
+        dbProvider.get().beneficiariesDao()
+            .updateReferralOfMultiple(beneficiary.beneficiaryId, null, null)
     }
 
     fun arePendingChanges(): Flow<List<BeneficiaryLocal>> {
@@ -102,11 +119,16 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun updateReferralOfMultiple(beneficiary: BeneficiaryLocal) {
-        dbProvider.get().beneficiariesDao().updateReferralOfMultiple(beneficiary.beneficiaryId, beneficiary.referralType, beneficiary.referralNote)
+        dbProvider.get().beneficiariesDao().updateReferralOfMultiple(
+            beneficiary.beneficiaryId,
+            beneficiary.referralType,
+            beneficiary.referralNote
+        )
     }
 
     suspend fun isAssignedInOtherDistribution(beneficiary: BeneficiaryLocal): Boolean {
-        return dbProvider.get().beneficiariesDao().countDuplicateAssignedBeneficiaries(beneficiary.beneficiaryId) > 1
+        return dbProvider.get().beneficiariesDao()
+            .countDuplicateAssignedBeneficiaries(beneficiary.beneficiaryId) > 1
     }
 
     suspend fun getAllReferralChangesOffline(): List<BeneficiaryLocal> {
@@ -126,7 +148,11 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
-            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.assistanceId)
+            assignBooklet(
+                beneficiaryLocal.qrBooklets.first(),
+                beneficiaryLocal.beneficiaryId,
+                beneficiaryLocal.assistanceId
+            )
         }
 
         if (beneficiaryLocal.newSmartcard != null) {
@@ -186,20 +212,30 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    private suspend fun distributeSmartcard(code: String, assistanceId: Int, value: Double, date: String, beneficiaryId: Int, balanceBefore: Double?, balanceAfter: Double) {
-        service.distributeSmartcard(code, DistributeSmartcardRequest(
-            assistanceId = assistanceId,
-            value = value,
-            createdAt = date,
-            beneficiaryId = beneficiaryId,
-            balanceBefore = balanceBefore,
-            balanceAfter = balanceAfter
-        ))
+    private suspend fun distributeSmartcard(
+        code: String,
+        assistanceId: Int,
+        value: Double,
+        date: String,
+        beneficiaryId: Int,
+        balanceBefore: Double?,
+        balanceAfter: Double
+    ) {
+        service.distributeSmartcard(
+            code, DistributeSmartcardRequest(
+                assistanceId = assistanceId,
+                value = value,
+                createdAt = date,
+                beneficiaryId = beneficiaryId,
+                balanceBefore = balanceBefore,
+                balanceAfter = balanceAfter
+            )
+        )
     }
 
     private fun parseGeneralReliefPackages(reliefPackages: List<ReliefPackage>): List<Int> {
         return reliefPackages
-            .filter { it.modalityType != CommodityType.SMARTCARD || it.modalityType != CommodityType.QR_VOUCHER }
+            .filterGeneralReliefs()
             .map { it.id }
     }
 
@@ -207,7 +243,10 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return booklets.map { it.code }
     }
 
-    private fun parseCommodities(booklets: List<Booklet>, commodities: List<CommodityLocal>?): List<CommodityLocal> {
+    private fun parseCommodities(
+        booklets: List<Booklet>,
+        commodities: List<CommodityLocal>?
+    ): List<CommodityLocal> {
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
@@ -245,5 +284,10 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         }
 
         return true
+    }
+
+    private fun List<ReliefPackage>.filterGeneralReliefs(): List<ReliefPackage> {
+        val nonGeneralTypes = setOf(CommodityType.SMARTCARD, CommodityType.QR_VOUCHER)
+        return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
     }
 }

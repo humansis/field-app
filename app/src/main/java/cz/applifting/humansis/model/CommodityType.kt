@@ -24,5 +24,8 @@ enum class CommodityType(val drawableResId: Int) {
     @SerializedName("Dignity kit") DIGNITY_KIT(R.drawable.ic_commodity_dignity),
     @SerializedName("Smartcard") SMARTCARD(R.drawable.ic_smartcard),
     @SerializedName("Mobile Money") MOBILE_MONEY(0),
+    @SerializedName("Winterization Kit")WINTERIZATION_KIT(0),
+    @SerializedName("Activity item")ACTIVITY_ITEM(0),
+    @SerializedName("Business Grant")BUSINESS_GRANT(0),
     UNKNOWN(R.drawable.ic_commodity_unknown)
 }
