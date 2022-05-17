@@ -11,9 +11,7 @@ import retrofit2.http.*
 interface HumansisService {
 
     @POST("v2/login")
-    suspend fun postLogin(
-        @Body loginRequest: LoginRequest
-    ): LoginResponse
+    suspend fun postLogin(@Body loginRequest: LoginRequest): LoginResponse
 
     @GET("v1/projects")
     suspend fun getProjects(): List<Project>
@@ -24,20 +22,16 @@ interface HumansisService {
     ): List<Distribution>
 
     @GET("v3/assistances/{assistanceId}/targets/beneficiaries")
-    suspend fun getDistributionBeneficiaries(
-        @Path("assistanceId") assistanceId: Int
-    ): PagedApiEntity<DistributionBeneficiary>
+    suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<DistributionBeneficiary>
 
-    @PATCH("v1/assistances/relief-packages/distribute")
-    suspend fun setReliefPackagesDistributed(
-        @Body distributedReliefPackages: List<DistributedReliefPackages>
-    )
+    @POST("v1/distributions/generalrelief/distributed")
+    suspend fun setDistributedRelief(@Body distributedReliefRequest: DistributedReliefRequest)
 
     @POST("v1/booklets/assign/{assistanceId}/{beneficiaryId}")
     suspend fun assignBooklet(
         @Path("beneficiaryId") beneficiaryId: Int,
         @Path("assistanceId") assistanceId: Int,
-        @Body assignBookletRequest: AssignBookletRequest
+        @Body assingBookletRequest: AssignBookletRequest
     )
 
     @POST("v1/beneficiaries/{beneficiaryId}")
@@ -47,9 +41,7 @@ interface HumansisService {
     )
 
     @POST("v1/smartcards")
-    suspend fun assignSmartcard(
-        @Body assignSmartcardRequest: AssignSmartcardRequest
-    )
+    suspend fun assignSmartcard(@Body assignSmartcardRequest: AssignSmartcardRequest)
 
     @PATCH("v1/smartcards/{serialNumber}")
     suspend fun deactivateSmartcard(
