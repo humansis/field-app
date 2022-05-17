@@ -166,7 +166,7 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-            } else if (checkIfTokenValid(it.token)) {
+            } else if (validateToken(it.token)) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
             }
@@ -239,7 +239,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (checkIfTokenValid(viewModel.userLD.value?.token)) {
+                if (validateToken(viewModel.userLD.value?.token)) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
@@ -249,7 +249,7 @@ class MainFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun checkIfTokenValid(token: JWToken?): Boolean {
+    private fun validateToken(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
             invalidateToken()
             false
