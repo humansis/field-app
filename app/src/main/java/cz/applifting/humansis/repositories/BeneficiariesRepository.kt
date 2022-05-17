@@ -3,7 +3,6 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -32,9 +31,9 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
                     givenName = it.beneficiary.localGivenName,
                     familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(it.booklets) || it.distributedAt != null,
+                    distributed = isReliefDistributed(it.generalReliefItems) || isBookletDistributed(it.booklets) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
-                    reliefIDs = parseReliefPackages(it.reliefPackages),
+                    reliefIDs = parseReliefs(it.generalReliefItems),
                     qrBooklets = parseQRBooklets(it.booklets),
                     smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
@@ -119,10 +118,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
 
     suspend fun distribute(beneficiaryLocal: BeneficiaryLocal) {
         if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
-            setDistributedRelief(
-                beneficiaryLocal.reliefIDs,
-                beneficiaryLocal.distributedAt ?: convertTimeForApiRequestBody(Date())
-            )
+            setDistributedRelief(beneficiaryLocal.reliefIDs)
         }
 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
@@ -168,10 +164,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return false
     }
 
-    private suspend fun setDistributedRelief(ids: List<Int>, distributedAt: String) {
-        service.setReliefPackagesDistributed(
-            ids.map { DistributedReliefPackages(it, distributedAt) }.toList()
-        )
+    private suspend fun setDistributedRelief(ids: List<Int>) {
+        service.setDistributedRelief(DistributedReliefRequest(ids))
     }
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, assistanceId: Int) {
@@ -197,8 +191,8 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         ))
     }
 
-    private fun parseReliefPackages(reliefPackages: List<ReliefPackage>): List<Int> {
-        return reliefPackages.map { it.id }
+    private fun parseReliefs(reliefs: List<Relief>): List<Int> {
+        return reliefs.map { it.id }
     }
 
     private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
@@ -217,13 +211,13 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return commodities ?: mutableListOf()
     }
 
-    private fun areReliefPackagesDistributed(reliefPackages: List<ReliefPackage>): Boolean {
-        if (reliefPackages.isEmpty()) {
+    private fun isReliefDistributed(reliefs: List<Relief>): Boolean {
+        if (reliefs.isEmpty()) {
             return false
         }
 
-        reliefPackages.forEach {
-            if (it.amountDistributed != it.amountToDistribute) {
+        reliefs.forEach {
+            if (it.distributedAt == null) {
                 return false
             }
         }
@@ -231,7 +225,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return true
     }
 
-    private fun areBookletsDistributed(booklets: List<Booklet>): Boolean {
+    private fun isBookletDistributed(booklets: List<Booklet>): Boolean {
         if (booklets.isEmpty()) {
             return false
         }
