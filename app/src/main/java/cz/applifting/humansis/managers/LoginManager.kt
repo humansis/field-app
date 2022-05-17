@@ -27,6 +27,7 @@ const val SP_DB_PASS_KEY = "humansis-db"
 const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
 const val SP_COUNTRY = "country"
+const val SP_USERNAME = "username"
 const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
 
 class LoginManager @Inject constructor(
@@ -67,6 +68,7 @@ class LoginManager @Inject constructor(
                 base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context, spCrypto))
             putString(SP_DB_PASS_KEY, encryptedDbPass)
             putString(SP_COUNTRY, defaultCountry)
+            putString(SP_USERNAME, userResponse.username)
             suspendCommit()
         }
 
@@ -92,10 +94,17 @@ class LoginManager @Inject constructor(
         encryptDefault()
     }
 
-    suspend fun markInvalidPassword() {
+    suspend fun invalidatePassword() {
         val user = retrieveUserDb()
         if (user != null) {
             db.userDao().update(user.copy(invalidPassword = true))
+        }
+    }
+
+    suspend fun invalidateToken() {
+        val user = retrieveUserDb()
+        if (user != null) {
+            db.userDao().update(user.copy(token = null))
         }
     }
 

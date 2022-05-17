@@ -223,9 +223,14 @@ class SyncWorkerTest {
         numberOfBeneficiaries = 0,
         commodities = emptyList(),
         dateOfDistribution = "",
+        dateOfExpiration = null,
         projectId = 0,
         target = Target.FAMILY,
-        completed = false
+        completed = false,
+        remote = true,
+        foodLimit = null,
+        nonfoodLimit = null,
+        cashbackLimit = null
     )
 
     private fun anyBeneficiary() = BeneficiaryLocal(
@@ -235,7 +240,7 @@ class SyncWorkerTest {
         familyName = null,
         assistanceId = 0,
         distributed = false,
-        vulnerabilities = emptyList(),
+        distributedAt = null,
         reliefIDs = emptyList(),
         qrBooklets = emptyList(),
         edited = false,
@@ -246,7 +251,14 @@ class SyncWorkerTest {
         referralType = null,
         referralNote = null,
         smartcard = null,
-        newSmartcard = null
+        newSmartcard = null,
+        remote = true,
+        dateExpiration = null,
+        foodLimit = null,
+        nonfoodLimit = null,
+        cashbackLimit = null,
+        balance = null,
+        originalBalance = null
     )
 
     private fun anyHttpException() =

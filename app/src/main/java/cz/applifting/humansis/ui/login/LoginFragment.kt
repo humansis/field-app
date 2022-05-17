@@ -101,7 +101,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         }
 
         viewModel.loginLD.observe(viewLifecycleOwner) {
-            if (it != null && !it.invalidPassword) {
+            if (it?.token != null && !it.invalidPassword) {
                 val action =
                     LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
                 navController.navigate(action)
