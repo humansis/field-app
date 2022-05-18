@@ -45,8 +45,7 @@ class MainViewModel @Inject constructor(
 
     init {
         launch {
-            val user = loginManager.retrieveUser()
-            userLD.value = user
+            userLD.value = loginManager.retrieveUser()
         }
         launch {
             environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
