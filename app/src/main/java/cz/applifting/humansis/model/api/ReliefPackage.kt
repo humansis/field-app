@@ -1,3 +1,4 @@
+package cz.applifting.humansis.model.api
 
 import cz.applifting.humansis.model.CommodityType
 
