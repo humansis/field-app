@@ -149,7 +149,7 @@ upload_to_firebase:
   except:
     - tags
 
-upload_to_firebase_automatically:
+upload_to_firebase_automatically_tags:
   stage: firebase
   extends: .gradle_build
   script:
@@ -159,6 +159,17 @@ upload_to_firebase_automatically:
         app:assembleDebug app:appDistributionUploadDebug -PappTesterReleaseNotes="$RELEASE_NOTES"
   only:
     - tags
+
+upload_to_firebase_automatically_merge:
+  stage: firebase
+  extends: .gradle_build
+  script:
+    - MESSAGES=$(git log -5 --pretty=format:'%h %s')
+    - RELEASE_NOTES=$(echo -e "$CI_COMMIT_REF_NAME\n$MESSAGES")
+    - ./gradlew --build-cache clean
+        app:assembleDebug app:appDistributionUploadDebug -PappTesterReleaseNotes="$RELEASE_NOTES"   
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev" && $CI_COMMIT_TITLE =~ /Merge branch.*/
 
 # Build release and archive bundle automatically
 archive_release_bundle_job_automatically:
