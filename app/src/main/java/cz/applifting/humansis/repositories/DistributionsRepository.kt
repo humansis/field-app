@@ -15,14 +15,21 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Singleton
-class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
+class DistributionsRepository @Inject constructor(
+    val service: HumansisService,
+    val dbProvider: DbProvider,
+    val context: Context
+) {
 
     suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal> {
         val result = service
             .getDistributions(projectId)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
                 it.commodities.fold(true) { acc, commodity ->
-                    commodity.modalityType?.name != CommodityType.MOBILE_MONEY && acc
+                    commodity.modalityType?.name != CommodityType.MOBILE_MONEY &&
+                        commodity.modalityType?.name != CommodityType.ACTIVITY_ITEM &&
+                        commodity.modalityType?.name != CommodityType.BUSINESS_GRANT &&
+                        acc
                 }
             }
             .filter { it.validated && !it.archived && !it.completed }

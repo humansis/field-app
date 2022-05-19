@@ -23,9 +23,9 @@ enum class CommodityType(val drawableResId: Int) {
     @SerializedName("Hygiene kit") HYGIENE_KIT(R.drawable.ic_commodity_hygiene_kit),
     @SerializedName("Dignity kit") DIGNITY_KIT(R.drawable.ic_commodity_dignity),
     @SerializedName("Smartcard") SMARTCARD(R.drawable.ic_smartcard),
-    @SerializedName("Winterization Kit")WINTERIZATION_KIT(R.drawable.ic_commodity_unknown), // TODO GET ICON
+    @SerializedName("Winterization Kit") WINTERIZATION_KIT(R.drawable.ic_commodity_unknown), // TODO GET ICON
     @SerializedName("Mobile Money") MOBILE_MONEY(0), // NOT DISTRIBUTED BY APP
-    @SerializedName("Activity item")ACTIVITY_ITEM(R.drawable.ic_commodity_unknown), // TODO FIND OUT IF DISTRIBUTED BY APP
-    @SerializedName("Business Grant")BUSINESS_GRANT(R.drawable.ic_commodity_unknown), // TODO FIND OUT IF DISTRIBUTED BY APP
+    @SerializedName("Activity item") ACTIVITY_ITEM(0), // NOT DISTRIBUTED BY APP
+    @SerializedName("Business Grant") BUSINESS_GRANT(0), // NOT DISTRIBUTED BY APP
     UNKNOWN(R.drawable.ic_commodity_unknown)
 }
