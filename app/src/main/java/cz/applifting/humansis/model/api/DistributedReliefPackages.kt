@@ -5,5 +5,4 @@ data class DistributedReliefPackages(
     val dateDistributed: String,
     // Leave amountDistributed null or enter whole amountToDistribute if relief was distributed completely.
     val amountDistributed: Double? = null // TODO for future usages, such as partial distributions.
-
 )
