@@ -44,9 +44,7 @@ class BeneficiariesRepository @Inject constructor(
                     givenName = it.beneficiary.localGivenName,
                     familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(
-                        it.booklets
-                    ) || it.distributedAt != null,
+                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(it.booklets) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
                     reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
