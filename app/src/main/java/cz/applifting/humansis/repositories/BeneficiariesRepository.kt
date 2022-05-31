@@ -51,7 +51,7 @@ class BeneficiariesRepository @Inject constructor(
                     smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
                     edited = false,
-                    commodities = parseCommodities(it.booklets, distribution?.commodities),
+                    commodities = parseCommodities(it.booklets, it.reliefPackages),
                     remote = distribution?.remote ?: false,
                     dateExpiration = distribution?.dateOfExpiration,
                     foodLimit = distribution?.foodLimit,
@@ -243,7 +243,7 @@ class BeneficiariesRepository @Inject constructor(
 
     private fun parseCommodities(
         booklets: List<Booklet>,
-        commodities: List<CommodityLocal>?
+        reliefPackages: List<ReliefPackage>
     ): List<CommodityLocal> {
 
         if (booklets.isNotEmpty()) {
@@ -253,7 +253,13 @@ class BeneficiariesRepository @Inject constructor(
             }
         }
 
-        return commodities ?: mutableListOf()
+        return reliefPackages.map {
+            CommodityLocal(
+                it.modalityType,
+                it.amountToDistribute,
+                it.unit
+            )
+        }
     }
 
     private fun areReliefPackagesDistributed(reliefPackages: List<ReliefPackage>): Boolean {
