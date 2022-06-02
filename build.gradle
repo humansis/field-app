@@ -3,20 +3,20 @@
 buildscript {
     ext.kotlin_version = '1.4.31'
     ext.kotlin_logger_version = '2.2.6'
-    ext.nav_version = '2.3.5'
+    ext.nav_version = '2.4.1'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
 
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-appdistribution-gradle:2.1.1'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
     }

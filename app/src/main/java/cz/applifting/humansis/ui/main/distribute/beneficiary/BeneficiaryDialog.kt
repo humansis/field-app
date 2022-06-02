@@ -469,11 +469,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 { info ->
                     val tag = info.first
                     val cardContent = info.second
-                    val id = tag.id
-                    var cardId: String? = null
-                    id?.let {
-                        cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
-                    }
+                    val cardId = NfcUtil.toHexString(tag.id).uppercase(Locale.US)
                     viewModel.saveCard(
                         cardId,
                         convertTimeForApiRequestBody(Date()),
