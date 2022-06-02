@@ -37,7 +37,7 @@ def VERSION_PATCH = 0
 
 String APK_NAME = "field-app"
 String VERSION_NAME = "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
-String BUILD_NUMBER = "${gitVersionCode(true)}"
+String BUILD_NUMBER = "950"
 String VERSION_FULL_NAME_FILE = "${APK_NAME}-${VERSION_NAME}.${gitVersionCode(true)}"
 
 repositories {
