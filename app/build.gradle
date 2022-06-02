@@ -17,7 +17,7 @@ def gitVersionCode = { boolean isFileName ->
         standardOutput = stdout
     }
 
-    def count = stdout.toString().trim().toInteger()
+    def count = 950
 
     if (!isFileName)  {
         // Ugly code that needs to be here because previous devs create high version code in google play
