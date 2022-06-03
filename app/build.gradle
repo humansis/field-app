@@ -21,7 +21,10 @@ def gitVersionCode = { boolean isFileName ->
 
     if (!isFileName)  {
         // Ugly code that needs to be here because previous devs create high version code in google play
-        count+=2001000
+        count+=2001026
+    } else {
+        // Ugly code that needs to be here because squashing commits caused build number to be too low to perform an update. Remove else and lower the number to 200100 if new release has build number higher than 940
+        count+=26
     }
 
     println count
