@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 23,
-    "identityHash": "8a54f9b0c78b8582a0ce2fe1f98f8be6",
+    "identityHash": "4d97a77634be333d41e8159a91b76908",
     "entities": [
       {
         "tableName": "User",
@@ -264,7 +264,7 @@
       },
       {
         "tableName": "distributions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `numberOfBeneficiaries` INTEGER NOT NULL, `commodities` TEXT NOT NULL, `dateOfDistribution` TEXT, `dateOfExpiration` TEXT, `projectId` INTEGER NOT NULL, `target` TEXT NOT NULL, `completed` INTEGER NOT NULL, `remote` INTEGER NOT NULL, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, PRIMARY KEY(`id`), FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `numberOfBeneficiaries` INTEGER NOT NULL, `commodityTypes` TEXT NOT NULL, `dateOfDistribution` TEXT, `dateOfExpiration` TEXT, `projectId` INTEGER NOT NULL, `target` TEXT NOT NULL, `completed` INTEGER NOT NULL, `remote` INTEGER NOT NULL, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, PRIMARY KEY(`id`), FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -285,8 +285,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "commodities",
-            "columnName": "commodities",
+            "fieldPath": "commodityTypes",
+            "columnName": "commodityTypes",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -438,7 +438,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8a54f9b0c78b8582a0ce2fe1f98f8be6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d97a77634be333d41e8159a91b76908')"
     ]
   }
 }

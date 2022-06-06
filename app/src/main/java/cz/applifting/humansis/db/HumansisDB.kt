@@ -31,6 +31,11 @@ import cz.applifting.humansis.model.db.*
             from = 22,
             to = 23,
             spec = HumansisDB.AutoMigrationTo23::class
+        ),
+        AutoMigration(
+            from = 23,
+            to = 24,
+            spec = HumansisDB.AutoMigrationTo24::class
         )
     ]
 )
@@ -40,6 +45,7 @@ import cz.applifting.humansis.model.db.*
     DateConverter::class,
     IntListConverter::class,
     CommodityConverter::class,
+    CommodityTypeConverter::class,
     ReferralTypeConverter::class,
     CountryConverter::class
 )
@@ -78,6 +84,9 @@ abstract class HumansisDB : RoomDatabase() {
         columnName = "salted_password"
     )
     class AutoMigrationTo23 : AutoMigrationSpec
+
+    // TODO přemapovat list Commodities na list CommodityTypes
+    class AutoMigrationTo24 : AutoMigrationSpec
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.

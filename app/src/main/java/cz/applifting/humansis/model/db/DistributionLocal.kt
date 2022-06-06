@@ -23,7 +23,7 @@ data class DistributionLocal(
     @PrimaryKey val id: Int,
     val name: String,
     val numberOfBeneficiaries: Int,
-    val commodities: List<CommodityLocal>,
+    val commodityTypes: List<CommodityType>,
     val dateOfDistribution: String?,
     val dateOfExpiration: String?,
     val projectId: Int,
@@ -35,7 +35,7 @@ data class DistributionLocal(
     val cashbackLimit: Double?
 ) {
     val isQRVoucherDistribution: Boolean
-        get() = commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER }
+        get() = commodityTypes.any { it == CommodityType.QR_VOUCHER }
     val isSmartcardDistribution: Boolean
-        get() = commodities.any { commodity -> commodity.type == CommodityType.SMARTCARD }
+        get() = commodityTypes.any { it == CommodityType.SMARTCARD }
 }

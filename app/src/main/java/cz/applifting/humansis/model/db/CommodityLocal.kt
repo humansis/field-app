@@ -2,4 +2,4 @@ package cz.applifting.humansis.model.db
 
 import cz.applifting.humansis.model.CommodityType
 
-data class CommodityLocal(val type: CommodityType, val value: Double, val unit: String)
+data class CommodityLocal(val reliefPackageId: Int, val type: CommodityType, val value: Double, val unit: String)

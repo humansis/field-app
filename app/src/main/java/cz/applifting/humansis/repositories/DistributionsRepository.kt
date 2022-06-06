@@ -5,7 +5,6 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.Commodity
-import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -79,10 +78,9 @@ class DistributionsRepository @Inject constructor(
         return getById(assistanceId)?.name
     }
 
-    private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
+    private fun parseCommodities(commodities: List<Commodity>): List<CommodityType> {
         return commodities.map {
-            val commodityName: String = it.modalityType?.name?.name ?: CommodityType.UNKNOWN.name
-            CommodityLocal(CommodityType.valueOf(commodityName), it.value, it.unit)
+            CommodityType.valueOf(it.modalityType?.name?.name ?: CommodityType.UNKNOWN.name)
         }
     }
 }
