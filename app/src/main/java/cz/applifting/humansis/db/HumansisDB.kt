@@ -88,7 +88,7 @@ abstract class HumansisDB : RoomDatabase() {
 
                     val distributionId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     val commoditiesSerialized = cursor.getString(cursor.getColumnIndexOrThrow("commodities"))
-                    val commodities : List<CommodityLocal> = CommodityConverter().toList(commoditiesSerialized)
+                    val commodities: List<CommodityLocal> = CommodityConverter().toList(commoditiesSerialized)
                     val commodityTypes = commodities.map { it.type }
                     val commodityTypesSerialized = CommodityTypeConverter().toString(commodityTypes)
                     val contentValues = ContentValues()
@@ -104,8 +104,6 @@ abstract class HumansisDB : RoomDatabase() {
                     cursor.moveToNext()
                 }
                 cursor.close()
-
-                // TODO pripsat automigraci 24_25, ktera smazne column commodities, zvednout verzi db na 25
             }
         }
     }

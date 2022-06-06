@@ -81,13 +81,13 @@ class DistributionsAdapter(
             tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llComoditiesHolder.removeAllViews()
 
-            commodities.forEach {
+            commodityTypes.forEach {
                 try {
                     val commodityImage = ImageView(context)
                     commodityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                     try {
-                        val commodityDrawable = it.type.drawableResId
+                        val commodityDrawable = it.drawableResId
 
                         commodityImage.simpleDrawable(commodityDrawable)
                         llComoditiesHolder.addView(commodityImage)

@@ -10,8 +10,8 @@
     <string name="log_out">Вихід</string>
     <string name="projects">Проєкти</string>
     <string name="unnamed_project">Проєкти без назви</string>
-    <string name="date_of_distribution">Старт</string>
-    <string name="beneficiaries">Отримувачі</string>
+    <string name="date_of_distribution">Старт: %1$s</string>
+    <string name="beneficiaries">Отримувачі: %1$d</string>
     <string name="commodities">Товари</string>
     <string name="households">Домогосподарства: %1$d</string>
     <string name="beneficiaries_title">Отримувачі</string>
