@@ -1,5 +1,7 @@
 package cz.applifting.humansis.db
 
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
@@ -31,11 +33,6 @@ import cz.applifting.humansis.model.db.*
             from = 22,
             to = 23,
             spec = HumansisDB.AutoMigrationTo23::class
-        ),
-        AutoMigration(
-            from = 23,
-            to = 24,
-            spec = HumansisDB.AutoMigrationTo24::class
         )
     ]
 )
@@ -73,6 +70,39 @@ abstract class HumansisDB : RoomDatabase() {
                 database.execSQL("ALTER TABLE beneficiaries ADD balance REAL")
             }
         }
+
+        val MIGRATION_23_24 = object : Migration(23, 24) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                // TODO zkusit volat podobnou metodu pomoci tlacitka nekde v appce kde mam pristup k db, at nemusim pri testovani delat milion migraci
+
+                database.execSQL("ALTER TABLE distributions ADD commodityTypes TEXT")
+                val cursor = database.query("SELECT * FROM distributions")
+                cursor.moveToFirst()
+                while (!cursor.isAfterLast) {
+
+                    val distributionId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val commoditiesSerialized = cursor.getString(cursor.getColumnIndexOrThrow("commodities"))
+                    val commodities : List<CommodityLocal> = CommodityConverter().toList(commoditiesSerialized)
+                    val commodityTypes = commodities.map { it.type }
+                    val commodityTypesSerialized = CommodityTypeConverter().toString(commodityTypes)
+                    val contentValues = ContentValues()
+                    contentValues.put("commodityTypes", commodityTypesSerialized)
+                    database.update(
+                        "distributions",
+                        SQLiteDatabase.CONFLICT_NONE,
+                        contentValues,
+                        "id = ?s",
+                        arrayOf(distributionId)
+                    )
+
+                    cursor.moveToNext()
+                }
+                cursor.close()
+
+                // TODO pripsat automigraci 24_25, ktera smazne column commodities, zvednout verzi db na 25
+            }
+        }
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
@@ -84,9 +114,6 @@ abstract class HumansisDB : RoomDatabase() {
         columnName = "salted_password"
     )
     class AutoMigrationTo23 : AutoMigrationSpec
-
-    // TODO přemapovat list Commodities na list CommodityTypes
-    class AutoMigrationTo24 : AutoMigrationSpec
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.
