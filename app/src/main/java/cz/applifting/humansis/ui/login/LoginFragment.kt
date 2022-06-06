@@ -146,7 +146,6 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             settingsImageView.visibility = View.VISIBLE
             envTextView.visibility = View.VISIBLE
         } else {
-            changeEnvironment(ApiEnvironments.FRONT)
             settingsImageView.visibility = View.INVISIBLE
             envTextView.visibility = View.INVISIBLE
 
