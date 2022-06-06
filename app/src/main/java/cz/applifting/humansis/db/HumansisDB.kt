@@ -21,7 +21,7 @@ import cz.applifting.humansis.model.db.*
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 23,
+    version = 25,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -33,6 +33,11 @@ import cz.applifting.humansis.model.db.*
             from = 22,
             to = 23,
             spec = HumansisDB.AutoMigrationTo23::class
+        ),
+        AutoMigration(
+            from = 24,
+            to = 25,
+            spec = HumansisDB.AutoMigrationTo25::class
         )
     ]
 )
@@ -114,6 +119,12 @@ abstract class HumansisDB : RoomDatabase() {
         columnName = "salted_password"
     )
     class AutoMigrationTo23 : AutoMigrationSpec
+
+    @DeleteColumn(
+        tableName = "distributions",
+        columnName = "commodities"
+    )
+    class AutoMigrationTo25 : AutoMigrationSpec
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.
