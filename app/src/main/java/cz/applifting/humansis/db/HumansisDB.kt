@@ -82,9 +82,6 @@ abstract class HumansisDB : RoomDatabase() {
         val MIGRATION_23_24 = object : Migration(23, 24) {
             override fun migrate(database: SupportSQLiteDatabase) {
 
-                // TODO zkusit volat podobnou metodu pomoci tlacitka nekde v appce kde mam pristup k db, at nemusim pri testovani delat milion migraci
-                // TODO debug
-
                 Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 23 TO 24")
 
                 database.execSQL("ALTER TABLE distributions ADD commodityTypes TEXT")
@@ -99,13 +96,15 @@ abstract class HumansisDB : RoomDatabase() {
                     val commodityTypesSerialized = CommodityTypeConverter().toString(commodityTypes)
                     val contentValues = ContentValues()
                     contentValues.put("commodityTypes", commodityTypesSerialized)
-                    database.update(
+                    val affectedRows = database.update(
                         "distributions",
-                        SQLiteDatabase.CONFLICT_NONE,
+                        SQLiteDatabase.CONFLICT_FAIL,
                         contentValues,
-                        "id = ?s",
+                        "id=?",
                         arrayOf(distributionId)
                     )
+
+                    Log.d(TAG, if (affectedRows > 0) "Distribution $distributionId migrated!" else "Migration of Distribution $distributionId failed!")
 
                     cursor.moveToNext()
                 }
