@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.applifting.humansis.db.converters.*
 import cz.applifting.humansis.db.dao.*
 import cz.applifting.humansis.model.db.*
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -59,6 +60,8 @@ abstract class HumansisDB : RoomDatabase() {
     abstract fun errorsDao(): ErrorDao
 
     companion object {
+        private const val TAG = "HumansisDB"
+
         val MIGRATION_20_21 = object : Migration(20, 21) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE distributions ADD remote INTEGER NOT NULL DEFAULT 0")
@@ -80,6 +83,9 @@ abstract class HumansisDB : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
 
                 // TODO zkusit volat podobnou metodu pomoci tlacitka nekde v appce kde mam pristup k db, at nemusim pri testovani delat milion migraci
+                // TODO debug
+
+                Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 23 TO 24")
 
                 database.execSQL("ALTER TABLE distributions ADD commodityTypes TEXT")
                 val cursor = database.query("SELECT * FROM distributions")
@@ -88,7 +94,7 @@ abstract class HumansisDB : RoomDatabase() {
 
                     val distributionId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     val commoditiesSerialized = cursor.getString(cursor.getColumnIndexOrThrow("commodities"))
-                    val commodities: List<CommodityLocal> = CommodityConverter().toList(commoditiesSerialized)
+                    val commodities = CommodityConverter().toList(commoditiesSerialized)
                     val commodityTypes = commodities.map { it.type }
                     val commodityTypesSerialized = CommodityTypeConverter().toString(commodityTypes)
                     val contentValues = ContentValues()
@@ -104,6 +110,8 @@ abstract class HumansisDB : RoomDatabase() {
                     cursor.moveToNext()
                 }
                 cursor.close()
+
+                Log.d(TAG, "DATABASE MIGRATION FROM 23 TO 24 FINISHED SUCCESSFULLY")
             }
         }
     }
@@ -122,7 +130,11 @@ abstract class HumansisDB : RoomDatabase() {
         tableName = "distributions",
         columnName = "commodities"
     )
-    class AutoMigrationTo25 : AutoMigrationSpec
+    class AutoMigrationTo25 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            Log.d(TAG, "DATABASE MIGRATION FROM 24 TO 25 FINISHED SUCCESSFULLY")
+        }
+    }
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.
