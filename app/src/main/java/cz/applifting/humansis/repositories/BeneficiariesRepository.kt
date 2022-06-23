@@ -48,7 +48,7 @@ class BeneficiariesRepository @Inject constructor(
                     distributedAt = it.distributedAt,
                     reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
+                    smartcard = it.currentSmartcardSerialNumber?.uppercase(Locale.US),
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, it.reliefPackages),
@@ -162,18 +162,22 @@ class BeneficiariesRepository @Inject constructor(
                 }
             }
 
-            val value = beneficiaryLocal.commodities
+            val lastSmartCardDistribution = beneficiaryLocal.commodities
                 ?.findLast { it.type == CommodityType.SMARTCARD }
-                ?.value ?: 1.0
+
+            val value = lastSmartCardDistribution?.value ?: 1.0
+            val reliefPackageId = lastSmartCardDistribution?.reliefPackageId ?: 0
 
             distributeSmartcard(
                 beneficiaryLocal.newSmartcard,
-                beneficiaryLocal.assistanceId,
-                value,
-                time,
-                beneficiaryLocal.beneficiaryId,
-                beneficiaryLocal.originalBalance,
-                beneficiaryLocal.balance ?: 1.0
+                DistributeSmartcardRequest(
+                    reliefPackageId,
+                    value,
+                    time,
+                    beneficiaryLocal.beneficiaryId,
+                    beneficiaryLocal.originalBalance,
+                    beneficiaryLocal.balance ?: 1.0
+                )
             )
         }
 
@@ -212,23 +216,9 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun distributeSmartcard(
         code: String,
-        assistanceId: Int,
-        value: Double,
-        date: String,
-        beneficiaryId: Int,
-        balanceBefore: Double?,
-        balanceAfter: Double
+        distributeSmartcardRequest: DistributeSmartcardRequest
     ) {
-        service.distributeSmartcard(
-            code, DistributeSmartcardRequest(
-                assistanceId = assistanceId,
-                value = value,
-                createdAt = date,
-                beneficiaryId = beneficiaryId,
-                balanceBefore = balanceBefore,
-                balanceAfter = balanceAfter
-            )
-        )
+        service.distributeSmartcard(code, distributeSmartcardRequest)
     }
 
     private fun parseGeneralReliefPackages(reliefPackages: List<ReliefPackage>): List<Int> {
@@ -249,12 +239,13 @@ class BeneficiariesRepository @Inject constructor(
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
                 val bookletValue = booklet.voucherValues.sum().toDouble()
-                CommodityLocal(CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
+                CommodityLocal(0, CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
             }
         }
 
         return reliefPackages.map {
             CommodityLocal(
+                it.id,
                 it.modalityType,
                 it.amountToDistribute,
                 it.unit

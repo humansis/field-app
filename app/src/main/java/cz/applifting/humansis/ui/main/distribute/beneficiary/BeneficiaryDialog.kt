@@ -261,8 +261,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
         var value = 0.0
         var currency = ""
+        var reliefPackageId = 0
         beneficiary.commodities?.forEach {
             if (it.type == CommodityType.SMARTCARD) {
+                reliefPackageId = it.reliefPackageId
                 value = it.value
                 currency = it.unit
             }

@@ -49,18 +49,18 @@ class DistributionsFragment : BaseFragment() {
 
         lc_distributions.init(viewAdapter)
 
-        viewModel.distributionsLD.observe(viewLifecycleOwner, {
+        viewModel.distributionsLD.observe(viewLifecycleOwner) {
             viewAdapter.updateDistributions(it)
-        })
+        }
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, {
+        sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
             if (!it.isLoading) {
                 viewModel.getDistributions(args.projectId)
             }
-        })
+        }
 
         viewModel.init(args.projectId)
     }

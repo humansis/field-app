@@ -54,19 +54,19 @@ class BeneficiariesFragment : BaseFragment() {
 
         lc_beneficiaries.init(viewAdapter)
 
-        viewModel.searchResultsLD.observe(viewLifecycleOwner, {
+        viewModel.searchResultsLD.observe(viewLifecycleOwner) {
             viewAdapter.update(it)
-        })
+        }
 
-        viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner, {
+        viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner) {
             lc_beneficiaries.setState(it)
             showControls(!it.isRetrieving)
-        })
+        }
 
-        viewModel.statsLD.observe(viewLifecycleOwner, {
+        viewModel.statsLD.observe(viewLifecycleOwner) {
             val (reachedBeneficiaries, totalBeneficiaries) = it
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
-        })
+        }
 
         cmp_search_beneficiary.onTextChanged(viewModel::search)
         cmp_search_beneficiary.onSort {
@@ -74,22 +74,22 @@ class BeneficiariesFragment : BaseFragment() {
             lc_beneficiaries.scrollToTop()
         }
 
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner, {
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner) {
             cmp_search_beneficiary.clearSearch()
-        })
+        }
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-        viewModel.currentSort.observe(viewLifecycleOwner, {
+        viewModel.currentSort.observe(viewLifecycleOwner) {
             viewModel.setSortedBeneficiaries(viewModel.searchResultsLD.value)
             cmp_search_beneficiary.changeSortIcon(it)
-        })
+        }
 
         viewModel.init(args.assistanceId)
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, {
+        sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
-        })
+        }
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }

@@ -51,7 +51,7 @@ interface HumansisService {
         @Body deactivateSmartcardRequest: DeactivateSmartcardRequest
     )
 
-    @POST("v4/smartcards/{serialNumber}/deposit")
+    @POST("v5/smartcards/{serialNumber}/deposit")
     suspend fun distributeSmartcard(
         @Path("serialNumber") serialNumber: String,
         @Body distributeSmartcardRequest: DistributeSmartcardRequest
