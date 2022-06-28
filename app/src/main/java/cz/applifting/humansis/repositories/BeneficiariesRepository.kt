@@ -48,7 +48,7 @@ class BeneficiariesRepository @Inject constructor(
                     distributedAt = it.distributedAt,
                     reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.currentSmartcardSerialNumber?.uppercase(Locale.US),
+                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                     newSmartcard = null,
                     edited = false,
                     commodities = parseCommodities(it.booklets, it.reliefPackages),
