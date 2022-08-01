@@ -173,10 +173,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:2.1.2"
+    def nfc_library_version = "2.1.5"
+    implementation "cz.quanti.android:nfc:$nfc_library_version"
 
     // DI
-    ext.dagger2_version = '2.23.2'
+    def dagger2_version = '2.23.2'
     implementation "com.google.dagger:dagger:$dagger2_version"
     kapt "com.google.dagger:dagger-compiler:$dagger2_version"
 
@@ -226,6 +227,7 @@ dependencies {
     implementation "android.arch.lifecycle:reactivestreams:1.0.0-beta2"
 
     // Kotlin logger
+    def kotlin_logger_version = '2.2.6'
     implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
     // ktlint

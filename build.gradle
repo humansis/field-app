@@ -2,7 +2,6 @@
 
 buildscript {
     ext.kotlin_version = '1.4.31'
-    ext.kotlin_logger_version = '2.2.6'
     ext.nav_version = '2.3.5'
     repositories {
         google()
