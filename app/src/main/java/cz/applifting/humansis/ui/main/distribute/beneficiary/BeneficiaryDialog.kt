@@ -625,7 +625,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         displayedScanCardDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.let {
             it.isEnabled = false
         }
-
     }
 
     override fun handleResult(rawResult: Result?) {
