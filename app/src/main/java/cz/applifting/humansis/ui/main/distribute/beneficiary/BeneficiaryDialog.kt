@@ -278,10 +278,34 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         tv_smartcard.setValue(newSmartcard ?: getString(R.string.none))
         tv_old_smartcard.setValue(beneficiary.smartcard ?: getString(R.string.none))
 
-        btn_scan_smartcard.setOnClickListener {
-            Log.d(TAG, "Scan smartcard button clicked")
-            btn_scan_smartcard.isEnabled = false
-            if (NfcInitializer.initNfc(requireActivity())) {
+        if (newSmartcard == null) {
+            if (beneficiary.distributed) {
+                btn_scan_smartcard.visibility = View.GONE
+                btn_scan_smartcard.isEnabled = false
+                btn_change_pin.visibility = View.VISIBLE
+                btn_change_pin.isEnabled = true
+
+                setChangePinOnClickListener(beneficiary)
+            } else {
+                btn_scan_smartcard.visibility = View.VISIBLE
+                btn_scan_smartcard.isEnabled = true
+                btn_change_pin.visibility = View.GONE
+                btn_change_pin.isEnabled = false
+
+                setScanSmartcardOnClickListener(beneficiary, value, currency)
+            }
+        } else {
+            btn_scan_smartcard.visibility = View.GONE
+            btn_change_pin.visibility = View.VISIBLE
+            setChangePinOnClickListener(beneficiary)
+        }
+    }
+
+    private fun setScanSmartcardOnClickListener(beneficiary: BeneficiaryLocal, value: Double, currency: String) {
+        if (NfcInitializer.initNfc(requireActivity())) {
+            btn_scan_smartcard.setOnClickListener {
+                Log.d(TAG, "Scan smartcard button clicked")
+                btn_scan_smartcard.isEnabled = false
                 val pin = generateRandomPin()
                 writeBalanceOnCard(
                     pin,
@@ -297,43 +321,28 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     ),
                     showScanCardDialog(btn_scan_smartcard)
                 )
-            } else {
-                btn_scan_smartcard.text = getString(R.string.no_nfc_available)
-                btn_scan_smartcard.isEnabled = true
             }
+        } else {
+            btn_scan_smartcard.text = getString(R.string.no_nfc_available)
+            btn_scan_smartcard.isEnabled = false
         }
+    }
 
-        btn_change_pin.setOnClickListener {
-            Log.d(TAG, "Change pin button clicked")
-            btn_change_pin.isEnabled = false
-            if (NfcInitializer.initNfc(requireActivity())) {
+    private fun setChangePinOnClickListener(beneficiary: BeneficiaryLocal) {
+        if (NfcInitializer.initNfc(requireActivity())) {
+            btn_change_pin.setOnClickListener {
+                Log.d(TAG, "Change pin button clicked")
+                btn_change_pin.isEnabled = false
                 val pin = generateRandomPin()
                 changePinOnCard(
                     beneficiary,
                     pin,
                     showScanCardDialog(btn_change_pin)
                 )
-            } else {
-                btn_change_pin.text = getString(R.string.no_nfc_available)
-                btn_change_pin.isEnabled = true
-            }
-        }
-
-        if (newSmartcard == null) {
-            if (beneficiary.distributed) {
-                btn_scan_smartcard.visibility = View.GONE
-                btn_scan_smartcard.isEnabled = false
-                btn_change_pin.visibility = View.VISIBLE
-                btn_change_pin.isEnabled = true
-            } else {
-                btn_scan_smartcard.visibility = View.VISIBLE
-                btn_scan_smartcard.isEnabled = true
-                btn_change_pin.visibility = View.GONE
-                btn_change_pin.isEnabled = false
             }
         } else {
-            btn_scan_smartcard.visibility = View.GONE
-            btn_change_pin.visibility = View.VISIBLE
+            btn_change_pin.text = getString(R.string.no_nfc_available)
+            btn_change_pin.isEnabled = false
         }
     }
 
@@ -464,7 +473,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             "writeBalanceOnCard: pin: $pin, remote: $remote, deposit: $deposit"
         )
         disposable?.dispose()
-        disposable = viewModel.depositMoneyToCard(pin, remote, deposit)
+        disposable = viewModel.depositMoneyToCard(pin, remote, deposit, ::tagFoundCallBack)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 { info ->
                     val tag = info.first
@@ -564,7 +573,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         scanCardDialog: AlertDialog
     ) {
         disposable?.dispose()
-        disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId)
+        disposable = viewModel.changePinForCard(pin, beneficiary.beneficiaryId, ::tagFoundCallBack)
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                 { info ->
                     val cardContent = info.second
@@ -612,6 +621,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             )
     }
 
+    private fun tagFoundCallBack() {
+        displayedScanCardDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.let {
+            it.isEnabled = false
+        }
+    }
+
     override fun handleResult(rawResult: Result?) {
         qr_scanner_holder?.visibility = View.GONE
         val scannedId = rawResult.toString()
@@ -643,6 +658,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         super.onStop()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,

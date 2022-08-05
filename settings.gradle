@@ -1,1 +1,3 @@
+rootProject.name='Field app'
+
 include ':app'
