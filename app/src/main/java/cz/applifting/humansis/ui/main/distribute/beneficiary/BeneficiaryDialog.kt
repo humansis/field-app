@@ -43,13 +43,38 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dialog_card_message.view.*
-import kotlinx.android.synthetic.main.fragment_beneficiary.*
-import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
+import kotlinx.android.synthetic.main.dialog_card_message.view.message
+import kotlinx.android.synthetic.main.dialog_card_message.view.pin
+import kotlinx.android.synthetic.main.fragment_beneficiary.btn_action
+import kotlinx.android.synthetic.main.fragment_beneficiary.btn_change_pin
+import kotlinx.android.synthetic.main.fragment_beneficiary.btn_scan_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.qr_scanner
+import kotlinx.android.synthetic.main.fragment_beneficiary.qr_scanner_holder
+import kotlinx.android.synthetic.main.fragment_beneficiary.tv_booklet
+import kotlinx.android.synthetic.main.fragment_beneficiary.tv_old_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.tv_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_close
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.qr_scanner
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_booklet
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_distribution
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_humansis_id
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_national_id
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_old_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_project
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_referral_note
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_referral_type
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_screen_subtitle
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_screen_title
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_status
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import quanti.com.kotlinlog.Log
-import java.util.*
-import javax.inject.Inject
+
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -301,7 +326,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun setScanSmartcardOnClickListener(beneficiary: BeneficiaryLocal, value: Double, currency: String) {
+    private fun setScanSmartcardOnClickListener(
+        beneficiary: BeneficiaryLocal,
+        value: Double,
+        currency: String
+    ) {
         if (NfcInitializer.initNfc(requireActivity())) {
             btn_scan_smartcard.setOnClickListener {
                 Log.d(TAG, "Scan smartcard button clicked")
@@ -622,8 +651,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun tagFoundCallBack() {
-        displayedScanCardDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.let {
-            it.isEnabled = false
+        requireActivity().runOnUiThread {
+            displayedScanCardDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)?.let {
+                it.isEnabled = false
+            }
         }
     }
 
