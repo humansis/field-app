@@ -75,7 +75,6 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_status
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import quanti.com.kotlinlog.Log
 
-
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 9. 9. 2019
