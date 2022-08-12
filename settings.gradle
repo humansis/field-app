@@ -1,4 +1,3 @@
 rootProject.name='Field App'
 
 include ':app'
-
