@@ -100,11 +100,11 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun saveCard(cardId: String?, date: String, originalBalance: Double?, balance: Double) {
+    fun saveCard(cardId: String, date: String, originalBalance: Double?, balance: Double) {
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
-                    newSmartcard = cardId?.toUpperCase(Locale.US),
+                    newSmartcard = cardId.toUpperCase(Locale.US),
                     edited = true,
                     distributed = true,
                     distributedAt = date,

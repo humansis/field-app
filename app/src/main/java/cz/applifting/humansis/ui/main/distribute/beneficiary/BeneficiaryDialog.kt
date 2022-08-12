@@ -285,8 +285,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
         var value = 0.0
         var currency = ""
+        var reliefPackageId = 0
         beneficiary.commodities?.forEach {
             if (it.type == CommodityType.SMARTCARD) {
+                reliefPackageId = it.reliefPackageId
                 value = it.value
                 currency = it.unit
             }
@@ -506,11 +508,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 { info ->
                     val tag = info.first
                     val cardContent = info.second
-                    val id = tag.id
-                    var cardId: String? = null
-                    id?.let {
-                        cardId = NfcUtil.toHexString(id).toUpperCase(Locale.US)
-                    }
+                    val cardId = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
                     viewModel.saveCard(
                         cardId,
                         convertTimeForApiRequestBody(Date()),

@@ -34,7 +34,7 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 3
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 5
+def VERSION_MINOR = 6
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
 def VERSION_PATCH = 1
 
@@ -70,9 +70,9 @@ android {
 
         buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
 
-        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL\""
+        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL_NEW\""
         buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
-        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
+        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL_NEW\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
         buildConfigField "String", "DEV1_API_URL", "\"$DEV1_API_URL\""
         buildConfigField "String", "DEV2_API_URL", "\"$DEV2_API_URL\""
