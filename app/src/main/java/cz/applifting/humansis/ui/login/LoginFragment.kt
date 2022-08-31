@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.App
 import kotlinx.android.synthetic.main.fragment_login.btn_login
@@ -67,7 +67,7 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
             val username = et_username.text.toString()
             btn_login.isEnabled = false
             if (username.equals(BuildConfig.DEMO_ACCOUNT, true)) {
-                changeEnvironment(ApiEnvironments.STAGE)
+                changeEnvironment(ApiEnvironment.Stage)
             }
             viewModel.login(username, et_password.text.toString(), this)
         }
@@ -125,16 +125,13 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
                 ContextThemeWrapper(requireContext(), R.style.PopupMenuTheme)
             val popup = PopupMenu(contextThemeWrapper, settingsImageView)
             popup.inflate(R.menu.api_urls_menu)
-            popup.menu.add(0, ApiEnvironments.FRONT.id, 0, "FRONT API")
-            popup.menu.add(0, ApiEnvironments.DEMO.id, 0, "DEMO API")
-            popup.menu.add(0, ApiEnvironments.STAGE.id, 0, "STAGE API")
-            popup.menu.add(0, ApiEnvironments.DEV1.id, 0, "DEV1 API")
-            popup.menu.add(0, ApiEnvironments.DEV2.id, 0, "DEV2 API")
-            popup.menu.add(0, ApiEnvironments.DEV3.id, 0, "DEV3 API")
-            popup.menu.add(0, ApiEnvironments.TEST.id, 0, "TEST API")
-            popup.menu.add(0, ApiEnvironments.LOCAL.id, 0, "LOCAL API")
+            val environments = ApiEnvironment.createEnvironments(requireContext())
+            environments.forEach {
+                popup.menu.add(0, it.id, 0, it.title)
+            }
+
             popup.setOnMenuItemClickListener { item ->
-                ApiEnvironments.values().find { it.id == item?.itemId }?.let {
+                environments.find { it.id == item?.itemId }?.let {
                     changeEnvironment(it)
                 }
                 true
@@ -162,8 +159,8 @@ class LoginFragment : Fragment(), CoroutineScope, LoginFinishCallback {
         viewModel.viewStateLD.value = LoginViewState()
     }
 
-    private fun changeEnvironment(env: ApiEnvironments) {
-        envTextView.text = env.name
+    private fun changeEnvironment(env: ApiEnvironment) {
+        envTextView.text = env.title
         viewModel.changeHostUrl(env)
     }
 
