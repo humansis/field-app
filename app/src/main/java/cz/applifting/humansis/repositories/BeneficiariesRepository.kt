@@ -12,14 +12,15 @@ import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
+import cz.applifting.humansis.model.api.LegacyDistributeSmartcardRequest
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
-import kotlinx.coroutines.flow.Flow
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
@@ -44,7 +45,9 @@ class BeneficiariesRepository @Inject constructor(
                     givenName = it.beneficiary.localGivenName,
                     familyName = it.beneficiary.localFamilyName,
                     assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(it.booklets) || it.distributedAt != null,
+                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(
+                        it.booklets
+                    ) || it.distributedAt != null,
                     distributedAt = it.distributedAt,
                     reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
                     qrBooklets = parseQRBooklets(it.booklets),
@@ -166,19 +169,32 @@ class BeneficiariesRepository @Inject constructor(
                 ?.findLast { it.type == CommodityType.SMARTCARD }
 
             val value = lastSmartCardDistribution?.value ?: 1.0
-            val reliefPackageId = lastSmartCardDistribution?.reliefPackageId ?: 0
 
-            distributeSmartcard(
-                beneficiaryLocal.newSmartcard,
-                DistributeSmartcardRequest(
-                    reliefPackageId,
-                    value,
-                    time,
-                    beneficiaryLocal.beneficiaryId,
-                    beneficiaryLocal.originalBalance,
-                    beneficiaryLocal.balance ?: 1.0
+            lastSmartCardDistribution?.reliefPackageId?.let { reliefPackageId ->
+                distributeSmartcard(
+                    beneficiaryLocal.newSmartcard,
+                    DistributeSmartcardRequest(
+                        reliefPackageId,
+                        value,
+                        time,
+                        beneficiaryLocal.beneficiaryId,
+                        beneficiaryLocal.originalBalance,
+                        beneficiaryLocal.balance ?: 1.0
+                    )
                 )
-            )
+            } ?: run {
+                legacyDistributeSmartcard(
+                    beneficiaryLocal.newSmartcard,
+                    LegacyDistributeSmartcardRequest(
+                        beneficiaryLocal.assistanceId,
+                        value,
+                        time,
+                        beneficiaryLocal.beneficiaryId,
+                        beneficiaryLocal.originalBalance,
+                        beneficiaryLocal.balance ?: 1.0
+                    )
+                )
+            }
         }
 
         updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
@@ -212,6 +228,14 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun deactivateSmartcard(code: String, date: String) {
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
+    }
+
+    // Can be removed in v 3.8.0
+    private suspend fun legacyDistributeSmartcard(
+        code: String,
+        distributeSmartcardRequest: LegacyDistributeSmartcardRequest
+    ) {
+        service.legacyDistributeSmartcard(code, distributeSmartcardRequest)
     }
 
     private suspend fun distributeSmartcard(
