@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "1075203125993",
+    "firebase_url": "https://offline-app-39475.firebaseio.com",
+    "project_id": "offline-app-39475",
+    "storage_bucket": "offline-app-39475.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075203125993:android:e6616d8f23331ac2cb3678",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdqzDsz04c54xVjsFfeLfSIjG0b26s87k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075203125993:android:0aceeba3ba3ab47fcb3678",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdqzDsz04c54xVjsFfeLfSIjG0b26s87k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075203125993:android:e006eb76ccb415cdcb3678",
+        "android_client_info": {
+          "package_name": "org.humansis.app.user.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdqzDsz04c54xVjsFfeLfSIjG0b26s87k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1075203125993-6epvv7v8gppf3groqsn1lt5a5umnsej8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
