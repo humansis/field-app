@@ -38,6 +38,9 @@ class App : Application() {
         appComponent.inject(this)
 
         initLogger()
+
+        // init files dir
+        getExternalFilesDir(null)
     }
 
     private fun initLogger() {
