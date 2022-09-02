@@ -230,7 +230,7 @@ class BeneficiariesRepository @Inject constructor(
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    // Can be removed in v 3.8.0
+    // Can be removed after v3.7.0 release
     private suspend fun legacyDistributeSmartcard(
         code: String,
         distributeSmartcardRequest: LegacyDistributeSmartcardRequest
