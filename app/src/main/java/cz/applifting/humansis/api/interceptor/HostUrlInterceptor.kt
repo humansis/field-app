@@ -19,7 +19,7 @@ class HostUrlInterceptor : Interceptor {
         host?.let { host ->
             val newUrl = request.url().newBuilder()
                 .scheme(if (host.secure) HTTPS_SCHEME else HTTP_SCHEME)
-                .host(host.url)
+                .host(host.url.trim())
                 .port(host.port ?: HTTPS_PORT)
                 .build()
             request = request.newBuilder()
