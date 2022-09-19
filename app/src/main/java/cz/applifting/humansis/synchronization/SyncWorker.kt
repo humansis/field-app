@@ -12,7 +12,7 @@ import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
@@ -95,11 +95,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             Log.d(TAG, "Started Sync as ${loginManager.retrieveUser()?.username}")
 
             val host = try {
-                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
             } catch (e: Exception) {
                 Log.e(TAG, e)
                 null
-            } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
+            } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
 
             hostUrlInterceptor.setHost(host)
             loggingInterceptor.setShouldLogHeaders(true)

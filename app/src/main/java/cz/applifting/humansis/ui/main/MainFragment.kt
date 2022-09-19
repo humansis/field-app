@@ -24,7 +24,7 @@ import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.model.JWToken
@@ -106,7 +106,7 @@ class MainFragment : BaseFragment() {
         val tvEnvironment = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_environment)
 
         tvEnvironment.text = getString(R.string.environment, viewModel.environmentLD.value)
-        if (!BuildConfig.DEBUG && viewModel.environmentLD.value == ApiEnvironments.FRONT.name) {
+        if (!BuildConfig.DEBUG && viewModel.environmentLD.value == ApiEnvironment.Front.title) {
             tvEnvironment.visibility = View.GONE
         }
 
@@ -274,16 +274,16 @@ class MainFragment : BaseFragment() {
     private fun getBackgroundColor(): Int {
         return if (BuildConfig.DEBUG) {
             when (viewModel.getHostUrl().id) {
-                ApiEnvironments.DEV1.id, ApiEnvironments.DEV2.id, ApiEnvironments.DEV3.id -> {
+                ApiEnvironment.Dev1.id, ApiEnvironment.Dev2.id, ApiEnvironment.Dev3.id -> {
                     ContextCompat.getColor(requireContext(), R.color.dev)
                 }
-                ApiEnvironments.TEST.id -> {
+                ApiEnvironment.Test.id -> {
                     ContextCompat.getColor(requireContext(), R.color.test)
                 }
-                ApiEnvironments.STAGE.id -> {
+                ApiEnvironment.Stage.id -> {
                     ContextCompat.getColor(requireContext(), R.color.stage)
                 }
-                ApiEnvironments.DEMO.id -> {
+                ApiEnvironment.Demo.id -> {
                     ContextCompat.getColor(requireContext(), R.color.demo)
                 }
                 else -> {

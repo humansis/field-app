@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.User
@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
     @Inject
     lateinit var pinFacade: OfflineFacade
 
-    val userLD = MutableLiveData<User>()
+    val userLD = MutableLiveData<User?>()
     val environmentLD = MutableLiveData<String>()
 
     val readBalanceResult = SingleLiveEvent<UserPinBalance>()
@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(
             userLD.value = loginManager.retrieveUser()
         }
         launch {
-            environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironments.STAGE.name)
+            environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironment.Stage.title)
         }
     }
 
@@ -72,13 +72,13 @@ class MainViewModel @Inject constructor(
         })
     }
 
-    fun getHostUrl(): ApiEnvironments {
+    fun getHostUrl(): ApiEnvironment {
         return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
         } catch (e: Exception) {
             Log.e(TAG, e)
             null
-        } ?: ApiEnvironments.STAGE // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
+        } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
     fun invalidateToken() {

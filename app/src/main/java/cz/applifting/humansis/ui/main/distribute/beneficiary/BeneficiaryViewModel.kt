@@ -70,9 +70,11 @@ class BeneficiaryViewModel @Inject constructor(
     fun depositMoneyToCard(
         pin: String,
         remote: Boolean,
-        deposit: Deposit
+        deposit: Deposit,
+        tagFoundCallback: () -> Unit
     ): Single<Pair<Tag, UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
+            tagFoundCallback.invoke()
             if (remote) {
                 nfcFacade.rewriteBalanceForUser(tag, deposit).map {
                     Pair(tag, it)
@@ -85,19 +87,24 @@ class BeneficiaryViewModel @Inject constructor(
         }
     }
 
-    fun changePinForCard(pin: String, ownerId: Int): Single<Pair<Tag, UserPinBalance>> {
+    fun changePinForCard(
+        pin: String,
+        ownerId: Int,
+        tagFoundCallback: () -> Unit
+    ): Single<Pair<Tag, UserPinBalance>> {
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
+            tagFoundCallback.invoke()
             nfcFacade.changePinForCard(tag, ownerId, pin).map {
                 Pair(tag, it)
             }
         }
     }
 
-    fun saveCard(cardId: String?, date: String, originalBalance: Double?, balance: Double) {
+    fun saveCard(cardId: String, date: String, originalBalance: Double?, balance: Double) {
         launch {
             beneficiaryLD.value?.let {
                 val beneficiary = it.copy(
-                    newSmartcard = cardId?.toUpperCase(Locale.US),
+                    newSmartcard = cardId.toUpperCase(Locale.US),
                     edited = true,
                     distributed = true,
                     distributedAt = date,

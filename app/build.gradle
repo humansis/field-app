@@ -21,10 +21,7 @@ def gitVersionCode = { boolean isFileName ->
 
     if (!isFileName)  {
         // Ugly code that needs to be here because previous devs create high version code in google play
-        count+=2001026
-    } else {
-        // Ugly code that needs to be here because squashing commits caused build number to be too low to perform an update. Remove else and lower the number to 200100 if new release has build number higher than 940
-        count+=26
+        count+=2001000
     }
 
     println count
@@ -34,7 +31,7 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 3
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 5
+def VERSION_MINOR = 7
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
 def VERSION_PATCH = 0
 
@@ -70,9 +67,9 @@ android {
 
         buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
 
-        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL\""
+        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL_NEW\""
         buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
-        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL\""
+        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL_NEW\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
         buildConfigField "String", "DEV1_API_URL", "\"$DEV1_API_URL\""
         buildConfigField "String", "DEV2_API_URL", "\"$DEV2_API_URL\""
@@ -173,10 +170,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    implementation "cz.quanti.android:nfc:2.1.2"
+    def nfc_library_version = "2.1.5"
+    implementation "cz.quanti.android:nfc:$nfc_library_version"
 
     // DI
-    ext.dagger2_version = '2.23.2'
+    def dagger2_version = '2.23.2'
     implementation "com.google.dagger:dagger:$dagger2_version"
     kapt "com.google.dagger:dagger-compiler:$dagger2_version"
 
@@ -226,6 +224,7 @@ dependencies {
     implementation "android.arch.lifecycle:reactivestreams:1.0.0-beta2"
 
     // Kotlin logger
+    def kotlin_logger_version = '2.2.6'
     implementation "com.github.Qase:KotlinLogger:$kotlin_logger_version"
 
     // ktlint

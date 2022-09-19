@@ -227,7 +227,7 @@ upload_stable_debug:
   stage: upload_aws
   variables:
     APP_NAME: field-app
-    APK: $ARTIFACT_RELEASE_PATH
+    APK: $ARTIFACT_DEBUG_PATH
   extends: .release_stable_debug
   when: manual
   environment:

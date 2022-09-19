@@ -7,7 +7,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.ApiUtilities
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.model.User
@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
 ) : BaseViewModel(app) {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
-    val loginLD = MutableLiveData<User>()
+    val loginLD = MutableLiveData<User?>()
 
     init {
         loginLD.value = null
@@ -43,14 +43,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun changeHostUrl(host: ApiEnvironments) {
+    fun changeHostUrl(host: ApiEnvironment) {
         hostUrlInterceptor.setHost(host)
-        sp.edit().putString(SP_ENVIRONMENT, host.name).apply()
+        sp.edit().putString(SP_ENVIRONMENT, host.title).apply()
     }
 
-    fun loadHostFromSaved(): ApiEnvironments {
+    fun loadHostFromSaved(): ApiEnvironment {
         return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironments.valueOf(it) }
+            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
         } catch (e: Exception) {
             null
         } ?: ApiUtilities.getDefaultEnvironment()

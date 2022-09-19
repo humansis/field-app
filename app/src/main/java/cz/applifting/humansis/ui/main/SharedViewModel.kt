@@ -52,7 +52,7 @@ class SharedViewModel @Inject constructor(
     app: App
 ) : BaseViewModel(app) {
 
-    val toastLD = MediatorLiveData<String>()
+    val toastLD = MediatorLiveData<String?>()
     private val pendingChangesLD = MutableLiveData<Boolean>()
     private val uploadIncompleteLD = sp.booleanLiveData(SP_SYNC_UPLOAD_INCOMPLETE, false)
     val syncNeededLD = MediatorLiveData<Boolean>()

@@ -9,7 +9,7 @@ object ApiUtilities {
         return (code - 200 >= 0) && (code - 300 < 0)
     }
 
-    fun getDefaultEnvironment(): ApiEnvironments {
-        return if (BuildConfig.DEBUG) ApiEnvironments.STAGE else ApiEnvironments.FRONT
+    fun getDefaultEnvironment(): ApiEnvironment {
+        return if (BuildConfig.DEBUG) ApiEnvironment.Stage else ApiEnvironment.Front
     }
 }

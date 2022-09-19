@@ -30,6 +30,14 @@ App is ready to work with docker swagger mock server with emulator. If you want 
 1. paste <domain includeSubdomains="true">1your_ip_address</domain> to res/xml/network_security_config.xml
 1. build, run and connect your smartphone to your hotspot
 
+## Redirect to custom server
+
+If you want to use any custom secure host:
+1. download and install app
+1. open device files explorer and open folder "Android\data\org.humansis.app.user.debug\files"
+1. insert a new file called "apiconfig.txt" that includes only one line with your prefered host (ie. "example.org")
+1. launch app and select CUSTOM api
+
 ## Smartcard Lifecycle 
 
 Every new smartcard is in `unassigned` state.

@@ -1,6 +1,6 @@
 package cz.applifting.humansis.api.interceptor
 
-import cz.applifting.humansis.misc.ApiEnvironments
+import cz.applifting.humansis.misc.ApiEnvironment
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -8,9 +8,9 @@ import okhttp3.Response
 class HostUrlInterceptor : Interceptor {
 
     @Volatile
-    private var host: ApiEnvironments? = null
+    private var host: ApiEnvironment? = null
 
-    fun setHost(host: ApiEnvironments?) {
+    fun setHost(host: ApiEnvironment?) {
         this.host = host
     }
 
@@ -19,7 +19,7 @@ class HostUrlInterceptor : Interceptor {
         host?.let { host ->
             val newUrl = request.url().newBuilder()
                 .scheme(if (host.secure) HTTPS_SCHEME else HTTP_SCHEME)
-                .host(host.url)
+                .host(host.url.trim())
                 .port(host.port ?: HTTPS_PORT)
                 .build()
             request = request.newBuilder()

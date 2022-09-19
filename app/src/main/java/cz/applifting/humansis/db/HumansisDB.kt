@@ -1,5 +1,7 @@
 package cz.applifting.humansis.db
 
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
@@ -7,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.applifting.humansis.db.converters.*
 import cz.applifting.humansis.db.dao.*
 import cz.applifting.humansis.model.db.*
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -19,7 +22,7 @@ import cz.applifting.humansis.model.db.*
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 23,
+    version = 25,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -31,6 +34,11 @@ import cz.applifting.humansis.model.db.*
             from = 22,
             to = 23,
             spec = HumansisDB.AutoMigrationTo23::class
+        ),
+        AutoMigration(
+            from = 24,
+            to = 25,
+            spec = HumansisDB.AutoMigrationTo25::class
         )
     ]
 )
@@ -40,6 +48,7 @@ import cz.applifting.humansis.model.db.*
     DateConverter::class,
     IntListConverter::class,
     CommodityConverter::class,
+    CommodityTypeConverter::class,
     ReferralTypeConverter::class,
     CountryConverter::class
 )
@@ -51,6 +60,8 @@ abstract class HumansisDB : RoomDatabase() {
     abstract fun errorsDao(): ErrorDao
 
     companion object {
+        private const val TAG = "HumansisDB"
+
         val MIGRATION_20_21 = object : Migration(20, 21) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE distributions ADD remote INTEGER NOT NULL DEFAULT 0")
@@ -67,6 +78,41 @@ abstract class HumansisDB : RoomDatabase() {
                 database.execSQL("ALTER TABLE beneficiaries ADD balance REAL")
             }
         }
+
+        val MIGRATION_23_24 = object : Migration(23, 24) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 23 TO 24")
+
+                database.execSQL("ALTER TABLE distributions ADD commodityTypes TEXT")
+                val cursor = database.query("SELECT * FROM distributions")
+                cursor.moveToFirst()
+                while (!cursor.isAfterLast) {
+
+                    val distributionId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val commoditiesSerialized = cursor.getString(cursor.getColumnIndexOrThrow("commodities"))
+                    val commodities = CommodityConverter().toList(commoditiesSerialized)
+                    val commodityTypes = commodities.map { it.type }
+                    val commodityTypesSerialized = CommodityTypeConverter().toString(commodityTypes)
+                    val contentValues = ContentValues()
+                    contentValues.put("commodityTypes", commodityTypesSerialized)
+                    val affectedRows = database.update(
+                        "distributions",
+                        SQLiteDatabase.CONFLICT_FAIL,
+                        contentValues,
+                        "id=?",
+                        arrayOf(distributionId)
+                    )
+
+                    Log.d(TAG, if (affectedRows > 0) "Distribution $distributionId migrated!" else "Migration of Distribution $distributionId failed!")
+
+                    cursor.moveToNext()
+                }
+                cursor.close()
+
+                Log.d(TAG, "DATABASE MIGRATION FROM 23 TO 24 FINISHED SUCCESSFULLY")
+            }
+        }
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
@@ -78,6 +124,16 @@ abstract class HumansisDB : RoomDatabase() {
         columnName = "salted_password"
     )
     class AutoMigrationTo23 : AutoMigrationSpec
+
+    @DeleteColumn(
+        tableName = "distributions",
+        columnName = "commodities"
+    )
+    class AutoMigrationTo25 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            Log.d(TAG, "DATABASE MIGRATION FROM 24 TO 25 FINISHED SUCCESSFULLY")
+        }
+    }
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.
