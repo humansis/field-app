@@ -12,7 +12,6 @@ import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
-import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
