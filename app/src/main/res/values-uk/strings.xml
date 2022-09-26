@@ -178,4 +178,12 @@
     <string name="logs">Журнали</string>
     <string name="card_empty">Ця картка порожня</string>
     <string name="logs_upload_failed">Помилка завантаження журналів. Ви хочете надіслати їх вручну?</string>
+    <string name="tax_number">ІПН</string>
+    <string name="passport">Паспорт для виїзду закордон</string>
+    <string name="family_registration">Свідоцтво про шлюб</string>
+    <string name="birth_certificate">Свідоцтво про народження</string>
+    <string name="drivers_license">Водійські права</string>
+    <string name="camp_id">ID табору</string>
+    <string name="social_service_card">Карта соціального обслуговування</string>
+    <string name="other">Інше</string>
 </resources>
