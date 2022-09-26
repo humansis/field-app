@@ -22,7 +22,7 @@ import quanti.com.kotlinlog.Log
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 25,
+    version = 26,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -113,6 +113,8 @@ abstract class HumansisDB : RoomDatabase() {
                 Log.d(TAG, "DATABASE MIGRATION FROM 23 TO 24 FINISHED SUCCESSFULLY")
             }
         }
+
+        // TODO MIGRATION_25_26 -> presunout nationalCardId do listu jako type.National_card_id
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
