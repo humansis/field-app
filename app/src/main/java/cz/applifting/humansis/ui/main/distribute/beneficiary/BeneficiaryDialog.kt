@@ -208,9 +208,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             tv_other.setValue(it.number)
                             tv_other.visible(true)
                         }
-                        else -> {
-                            // TODO remove Type.NONE
-                        }
+                        else -> { /* Type.NONE */ }
                     }
                 }
 

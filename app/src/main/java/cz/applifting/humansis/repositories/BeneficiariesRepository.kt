@@ -61,7 +61,7 @@ class BeneficiariesRepository @Inject constructor(
                     foodLimit = distribution?.foodLimit,
                     nonfoodLimit = distribution?.nonfoodLimit,
                     cashbackLimit = distribution?.cashbackLimit,
-                    nationalIds = it.beneficiary.nationalCardIds.filter { id -> id.type != NationalCardIdType.NONE }, // TODO try to remove Type.NONE
+                    nationalIds = it.beneficiary.nationalCardIds.filter { id -> id.type != NationalCardIdType.NONE },
                     originalReferralType = it.beneficiary.referralType,
                     originalReferralNote = it.beneficiary.referralComment,
                     referralType = it.beneficiary.referralType,

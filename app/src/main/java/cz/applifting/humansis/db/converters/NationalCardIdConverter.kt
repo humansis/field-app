@@ -11,7 +11,7 @@ import cz.applifting.humansis.model.api.NationalCardId
 class NationalCardIdConverter {
     @TypeConverter
     fun toList(value: String): List<NationalCardId> {
-        val listType = object : TypeToken<List<Int>>() {}.type
+        val listType = object : TypeToken<List<NationalCardId>>() {}.type
         return Gson().fromJson(value, listType)
     }
 
