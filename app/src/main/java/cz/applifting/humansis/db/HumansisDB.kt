@@ -8,6 +8,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.applifting.humansis.db.converters.*
 import cz.applifting.humansis.db.dao.*
+import cz.applifting.humansis.model.api.NationalCardId
+import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.*
 import quanti.com.kotlinlog.Log
 
@@ -22,7 +24,7 @@ import quanti.com.kotlinlog.Log
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -39,6 +41,11 @@ import quanti.com.kotlinlog.Log
             from = 24,
             to = 25,
             spec = HumansisDB.AutoMigrationTo25::class
+        ),
+        AutoMigration(
+            from = 26,
+            to = 27,
+            spec = HumansisDB.AutoMigrationTo27::class
         )
     ]
 )
@@ -89,7 +96,6 @@ abstract class HumansisDB : RoomDatabase() {
                 val cursor = database.query("SELECT * FROM distributions")
                 cursor.moveToFirst()
                 while (!cursor.isAfterLast) {
-
                     val distributionId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     val commoditiesSerialized = cursor.getString(cursor.getColumnIndexOrThrow("commodities"))
                     val commodities = CommodityConverter().toList(commoditiesSerialized)
@@ -115,7 +121,38 @@ abstract class HumansisDB : RoomDatabase() {
             }
         }
 
-        // TODO MIGRATION_25_26 -> presunout nationalCardId do listu jako type.National_card_id
+        val MIGRATION_25_26 = object : Migration(25,26) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 25 TO 26")
+
+                database.execSQL("ALTER TABLE beneficiaries ADD nationalIds TEXT")
+                val cursor = database.query("SELECT * FROM beneficiaries")
+                cursor.moveToFirst()
+                while (!cursor.isAfterLast) {
+                    val beneficiaryId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val nationalId = cursor.getString(cursor.getColumnIndexOrThrow("nationalId"))
+                    val nationalIds = listOf(NationalCardId(NationalCardIdType.NATIONAL_ID, nationalId))
+                    val nationalIdsSerialized = NationalCardIdConverter().toString(nationalIds)
+                    val contentValues = ContentValues()
+                    contentValues.put("nationalIds", nationalIdsSerialized)
+                    val affectedRows = database.update(
+                        "beneficiaries",
+                        SQLiteDatabase.CONFLICT_FAIL,
+                        contentValues,
+                        "id=?",
+                        arrayOf(beneficiaryId)
+                    )
+
+                    if (affectedRows == 0) Log.d(TAG, "Migration of Beneficiary $beneficiaryId failed!")
+
+                    cursor.moveToNext()
+                }
+                cursor.close()
+
+                Log.d(TAG, "DATABASE MIGRATION FROM 25 TO 26 FINISHED SUCCESSFULLY")
+            }
+        }
+
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
@@ -135,6 +172,16 @@ abstract class HumansisDB : RoomDatabase() {
     class AutoMigrationTo25 : AutoMigrationSpec {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             Log.d(TAG, "DATABASE MIGRATION FROM 24 TO 25 FINISHED SUCCESSFULLY")
+        }
+    }
+
+    @DeleteColumn(
+        tableName = "beneficiaries",
+        columnName = "nationalId"
+    )
+    class AutoMigrationTo27 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            Log.d(TAG, "DATABASE MIGRATION FROM 26 TO 27 FINISHED SUCCESSFULLY")
         }
     }
 

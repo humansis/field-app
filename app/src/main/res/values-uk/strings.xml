@@ -16,7 +16,6 @@
     <string name="households">Домогосподарства: %1$d</string>
     <string name="beneficiaries_title">Отримувачі</string>
     <string name="national_id">Ідентифікаційний номер</string>
-    <string name="national_id_format">Ідентифікаційний номер: %1$s</string>
     <string name="beneficiaries_reached">%1$d з %2$d досягнуто отримувачів</string>
     <string name="search_beneficiary_hint">Пошук по назві</string>
     <string name="beneficiary_name">%1$s %2$s</string>
