@@ -121,7 +121,7 @@ abstract class HumansisDB : RoomDatabase() {
             }
         }
 
-        val MIGRATION_25_26 = object : Migration(25,26) {
+        val MIGRATION_25_26 = object : Migration(25, 26) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 25 TO 26")
 
@@ -152,7 +152,6 @@ abstract class HumansisDB : RoomDatabase() {
                 Log.d(TAG, "DATABASE MIGRATION FROM 25 TO 26 FINISHED SUCCESSFULLY")
             }
         }
-
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
