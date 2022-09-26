@@ -25,9 +25,9 @@ class DistributionsRepository @Inject constructor(
             .getDistributions(projectId)
             .filter { // Skip all distributions distributing mobile money, as it is necessary to have a desktop for their distribution
                 it.commodities.fold(true) { acc, commodity ->
-                    commodity.modalityType?.name != CommodityType.MOBILE_MONEY &&
-                        commodity.modalityType?.name != CommodityType.ACTIVITY_ITEM &&
-                        commodity.modalityType?.name != CommodityType.BUSINESS_GRANT &&
+                    commodity.commodityType != CommodityType.MOBILE_MONEY &&
+                        commodity.commodityType != CommodityType.ACTIVITY_ITEM &&
+                        commodity.commodityType != CommodityType.BUSINESS_GRANT &&
                         acc
                 }
             }
@@ -80,7 +80,7 @@ class DistributionsRepository @Inject constructor(
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityType> {
         return commodities.map {
-            CommodityType.valueOf(it.modalityType?.name?.name ?: CommodityType.UNKNOWN.name)
+            CommodityType.valueOf(it.commodityType.name)
         }
     }
 }

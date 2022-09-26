@@ -7,7 +7,7 @@ import cz.applifting.humansis.model.CommodityType
  */
 data class ReliefPackage(
     val id: Int,
-    val modalityType: CommodityType,
+    val commodityType: CommodityType,
     val amountToDistribute: Double,
     val amountDistributed: Double,
     val unit: String,

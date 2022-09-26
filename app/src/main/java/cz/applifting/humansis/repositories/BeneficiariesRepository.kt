@@ -250,7 +250,7 @@ class BeneficiariesRepository @Inject constructor(
         return reliefPackages.map {
             CommodityLocal(
                 it.id,
-                it.modalityType,
+                it.commodityType,
                 it.amountToDistribute,
                 it.unit
             )
@@ -287,6 +287,6 @@ class BeneficiariesRepository @Inject constructor(
 
     private fun List<ReliefPackage>.filterGeneralReliefs(): List<ReliefPackage> {
         val nonGeneralTypes = setOf(CommodityType.SMARTCARD, CommodityType.QR_VOUCHER)
-        return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
+        return this.filterNot { nonGeneralTypes.contains(it.commodityType) }
     }
 }

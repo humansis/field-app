@@ -113,6 +113,8 @@ abstract class HumansisDB : RoomDatabase() {
                 Log.d(TAG, "DATABASE MIGRATION FROM 23 TO 24 FINISHED SUCCESSFULLY")
             }
         }
+
+        // TODO MIGRATION_27_28 because of v2/distributions changes
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
