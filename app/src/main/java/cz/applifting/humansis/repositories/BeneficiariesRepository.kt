@@ -12,7 +12,7 @@ import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
-import cz.applifting.humansis.model.api.LegacyDistributeSmartcardRequest
+import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -170,23 +170,11 @@ class BeneficiariesRepository @Inject constructor(
 
             val value = lastSmartCardDistribution?.value ?: 1.0
 
-            lastSmartCardDistribution?.reliefPackageId?.let { reliefPackageId ->
+            lastSmartCardDistribution?.let {
                 distributeSmartcard(
                     beneficiaryLocal.newSmartcard,
                     DistributeSmartcardRequest(
-                        reliefPackageId,
-                        value,
-                        time,
-                        beneficiaryLocal.beneficiaryId,
-                        beneficiaryLocal.originalBalance,
-                        beneficiaryLocal.balance ?: 1.0
-                    )
-                )
-            } ?: run {
-                legacyDistributeSmartcard(
-                    beneficiaryLocal.newSmartcard,
-                    LegacyDistributeSmartcardRequest(
-                        beneficiaryLocal.assistanceId,
+                        it.reliefPackageId,
                         value,
                         time,
                         beneficiaryLocal.beneficiaryId,
@@ -228,14 +216,6 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun deactivateSmartcard(code: String, date: String) {
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
-    }
-
-    // Can be removed after v3.7.0 release
-    private suspend fun legacyDistributeSmartcard(
-        code: String,
-        distributeSmartcardRequest: LegacyDistributeSmartcardRequest
-    ) {
-        service.legacyDistributeSmartcard(code, distributeSmartcardRequest)
     }
 
     private suspend fun distributeSmartcard(
