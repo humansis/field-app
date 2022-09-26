@@ -14,6 +14,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
@@ -76,8 +77,8 @@ class BeneficiariesAdapter(
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
             tvHumansisId.text = view.context.getString(R.string.humansis_id_formatted, beneficiaryLocal.beneficiaryId)
-            tvNationalId.visible(beneficiaryLocal.nationalId != null)
-            tvNationalId.text = view.context.getString(R.string.national_id_format, beneficiaryLocal.nationalId)
+            tvNationalId.visible(beneficiaryLocal.nationalIds.isNotEmpty())
+            tvNationalId.text = constructNationalIdText(beneficiaryLocal.nationalIds)
 
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
@@ -126,6 +127,16 @@ class BeneficiariesAdapter(
                 Log.d(TAG, "Beneficiary $beneficiaryLocal clicked")
                 if (clickable) onItemClick(beneficiaryLocal)
             }
+        }
+
+        private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
+            var text = String()
+            val size = nationalIds.size
+            nationalIds.forEachIndexed { index, nationalCardId ->
+                text += "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
+                if (index <= size) text += "\n"
+            }
+            return text
         }
     }
 
