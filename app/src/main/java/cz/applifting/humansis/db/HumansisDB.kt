@@ -50,7 +50,8 @@ import quanti.com.kotlinlog.Log
     CommodityConverter::class,
     CommodityTypeConverter::class,
     ReferralTypeConverter::class,
-    CountryConverter::class
+    CountryConverter::class,
+    NationalCardIdConverter::class
 )
 abstract class HumansisDB : RoomDatabase() {
     abstract fun userDao(): UserDao
