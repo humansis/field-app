@@ -130,13 +130,9 @@ class BeneficiariesAdapter(
         }
 
         private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
-            var text = String()
-            val size = nationalIds.size
-            nationalIds.forEachIndexed { index, nationalCardId ->
-                text += "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
-                if (index <= size) text += "\n"
+            return nationalIds.joinToString("\n") { nationalCardId ->
+                "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
             }
-            return text
         }
     }
 
