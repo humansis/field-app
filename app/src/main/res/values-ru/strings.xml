@@ -163,5 +163,6 @@
     <string name="humansis_id">Humansis ID</string>
     <string name="email">Электронная почта</string>
     <string name="national_id">Идентификационный номер</string>
+    <string name="amount_label">Количество</string>
 
 </resources>

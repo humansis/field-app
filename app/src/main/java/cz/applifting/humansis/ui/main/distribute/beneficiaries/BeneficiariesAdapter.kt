@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityString
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
@@ -99,26 +100,26 @@ class BeneficiariesAdapter(
                     2.2) it's a normal commodity - show commodity and value
              */
 
-            if (beneficiaryLocal.distributed) {
-                beneficiaryLocal.commodities?.forEach { commodity ->
-                    val row = TableRow(context)
+            beneficiaryLocal.commodities?.forEach { commodity ->
+                val row = TableRow(context)
 
-                    val commodityImage = ImageView(context)
-                    commodityImage.simpleDrawable(commodity.type.drawableResId)
-                    commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                val commodityImage = ImageView(context)
+                commodityImage.simpleDrawable(commodity.type.drawableResId)
+                commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
-                    val txtValue = TextView(context)
-                    if ((commodity.value % 1) == 0.0) {
-                        txtValue.text = context.getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
-                    } else {
-                        // This needs to be updated if Denars or Madagascar Ariaries are used in the future
-                        txtValue.text = context.getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
-                    }
+                val txtValue = TextView(context)
+                txtValue.text = context.getCommodityString(commodity.value, commodity.unit)
 
-                    row.addView(commodityImage)
-                    row.addView(txtValue)
-                    tlCommoditiesHolder.addView(row)
+                row.addView(commodityImage)
+                row.addView(txtValue)
+
+                if (beneficiaryLocal.distributed) {
+                    val distributedImage = ImageView(context)
+                    distributedImage.simpleDrawable(R.drawable.ic_baseline_check_circle_24)
+                    distributedImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    row.addView(distributedImage)
                 }
+                tlCommoditiesHolder.addView(row)
             }
 
             ivOffline.visible(beneficiaryLocal.edited)

@@ -21,6 +21,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityString
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
@@ -59,6 +60,7 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.tv_smartcard
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_close
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.qr_scanner
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_amount
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_booklet
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_distribution
@@ -117,7 +119,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun TitledTextView.setOptionalValue(value: String?) {
         visible(!value.isNullOrEmpty())
-        setValue(value)
+        value?.let { setValue(it) }
     }
 
     override fun onCreateView(
@@ -157,6 +159,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.beneficiaryLD.observe(viewLifecycleOwner) { beneficiary ->
             // Views
             view.apply {
+                tv_screen_title.text =
+                    getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
+                tv_screen_subtitle.text = getString(
+                    R.string.beneficiary_name,
+                    beneficiary.givenName,
+                    beneficiary.familyName
+                )
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
                 tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
@@ -167,12 +176,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
-                tv_screen_title.text =
-                    getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
-                tv_screen_subtitle.text = getString(
-                    R.string.beneficiary_name,
-                    beneficiary.givenName,
-                    beneficiary.familyName
+                tv_amount.setOptionalValue(
+                    beneficiary.commodities?.first()?.let { commodity ->
+                        context.getCommodityString(commodity.value, commodity.unit)
+                    }
                 )
                 tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let {
                     getString(
@@ -402,7 +409,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         tv_booklet.setStatus(beneficiary.distributed)
-        tv_booklet.setValue(
+        tv_booklet.setOptionalValue(
             when (booklet) {
                 INVALID_CODE -> getString(R.string.invalid_code)
                 ALREADY_ASSIGNED -> getString(R.string.already_assigned)

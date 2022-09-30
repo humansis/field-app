@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import cz.applifting.humansis.R
 
 fun Context.isNetworkConnected(): Boolean {
     val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -54,5 +55,14 @@ fun Fragment.tryNavigateFrom(@IdRes destinationId: Int, block: NavController.() 
 fun Fragment.tryNavigate(@IdRes destinationId: Int, directions: NavDirections) {
     tryNavigateFrom(destinationId) {
         navigate(directions)
+    }
+}
+
+fun Context.getCommodityString(commodityValue: Double, commodityUnit: String): String {
+    return if ((commodityValue % 1) == 0.0) {
+        getString(R.string.commodity_value, commodityValue.toInt(), commodityUnit)
+    } else {
+        // This needs to be updated if Denars or Madagascar Ariaries are used in the future
+        getString(R.string.commodity_value_decimal, commodityValue, commodityUnit)
     }
 }

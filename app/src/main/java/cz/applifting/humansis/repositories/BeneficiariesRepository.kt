@@ -272,7 +272,8 @@ class BeneficiariesRepository @Inject constructor(
                 it.id,
                 it.modalityType,
                 it.amountToDistribute,
-                it.unit
+                it.unit,
+                it.notes // TODO after resolving merge conflict and migrations
             )
         }
     }

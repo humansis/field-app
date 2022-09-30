@@ -179,4 +179,5 @@
     <string name="logs">Logs</string>
     <string name="card_empty">This card is empty</string>
     <string name="logs_upload_failed">Logs upload failed. Would you like to send them manually?</string>
+    <string name="amount_label">Amount</string>
 </resources>

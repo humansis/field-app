@@ -179,4 +179,5 @@
     <string name="logs">Журнали</string>
     <string name="card_empty">Ця картка порожня</string>
     <string name="logs_upload_failed">Помилка завантаження журналів. Ви хочете надіслати їх вручну?</string>
+    <string name="amount_label">Кількість</string>
 </resources>

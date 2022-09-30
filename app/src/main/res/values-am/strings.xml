@@ -147,5 +147,6 @@
     <string name="humansis_id">የሰው ልጅ መታወቂያ</string>
     <string name="email">ኢሜል</string>
     <string name="national_id">ብሔራዊ መታወቂያ</string>
+    <string name="amount_label">መጠን</string>
 
 </resources>
