@@ -81,8 +81,19 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun invalidateToken() {
+    fun validateToken(): Boolean {
+        val token = userLD.value?.token
+        return if (token == null || token.isExpired()) {
+            invalidateToken()
+            false
+        } else {
+            true
+        }
+    }
+
+    private fun invalidateToken() {
         launch(Dispatchers.IO) {
+            Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
             loginManager.invalidateToken()
             sp.setDate(LAST_DOWNLOAD_KEY, null)
             userLD.postValue(null)

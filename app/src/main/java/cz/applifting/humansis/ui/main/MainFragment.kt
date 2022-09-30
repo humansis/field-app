@@ -27,7 +27,6 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.SendLogDialogFragment
-import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -166,9 +165,11 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-            } else if (validateToken(it.token)) {
+            } else if (viewModel.validateToken()) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
+            } else {
+                sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             }
         }
     }
@@ -239,29 +240,16 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (validateToken(viewModel.userLD.value?.token)) {
+                if (viewModel.validateToken()) {
                     mainNavController.navigate(R.id.uploadDialog)
+                } else {
+                    sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
                 }
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun validateToken(token: JWToken?): Boolean {
-        return if (token == null || token.isExpired()) {
-            invalidateToken()
-            false
-        } else {
-            true
-        }
-    }
-
-    private fun invalidateToken() {
-        Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
-        sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
-        viewModel.invalidateToken()
     }
 
     private fun setUpBackground() {
