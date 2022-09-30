@@ -225,8 +225,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
                 tv_amount.setOptionalValue(
-                    beneficiary.commodities?.first()?.let { commodity ->
-                        context.getCommodityString(commodity.value, commodity.unit)
+                    beneficiary.commodities.firstOrNull()?.let { commodity -> // TODO asi ne null ale vsechny? joinToString?
+                        context.getCommodityString(commodity.value, commodity.unit) // TODO pridat note pro inKind
                     }
                 )
                 tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let {
@@ -340,7 +340,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
         var value = 0.0
         var currency = ""
-        beneficiary.commodities?.forEach {
+        beneficiary.commodities.forEach {
             if (it.type == CommodityType.SMARTCARD) { // TODO use .find instead of forEach with if?
                 value = it.value
                 currency = it.unit

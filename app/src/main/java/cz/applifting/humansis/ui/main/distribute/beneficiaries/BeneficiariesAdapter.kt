@@ -101,7 +101,7 @@ class BeneficiariesAdapter(
                     2.2) it's a normal commodity - show commodity and value
              */
 
-            beneficiaryLocal.commodities?.forEach { commodity ->
+            beneficiaryLocal.commodities.forEach { commodity ->
                 val row = TableRow(context)
 
                 val commodityImage = ImageView(context)

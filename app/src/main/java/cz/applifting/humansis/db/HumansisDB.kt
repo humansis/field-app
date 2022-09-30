@@ -24,7 +24,7 @@ import quanti.com.kotlinlog.Log
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 27,
+    version = 29,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -46,6 +46,11 @@ import quanti.com.kotlinlog.Log
             from = 26,
             to = 27,
             spec = HumansisDB.AutoMigrationTo27::class
+        ),
+        AutoMigration(
+            from = 28,
+            to = 29,
+            spec = HumansisDB.AutoMigrationTo29::class
         )
     ]
 )
@@ -152,6 +157,17 @@ abstract class HumansisDB : RoomDatabase() {
                 Log.d(TAG, "DATABASE MIGRATION FROM 25 TO 26 FINISHED SUCCESSFULLY")
             }
         }
+
+        val MIGRATION_27_28 = object : Migration(27, 28) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "RUNNING DATABASE MIGRATION FROM 27 TO 28")
+
+                database.execSQL("ALTER TABLE beneficiaries ADD commoditiesTmp TEXT NOT NULL DEFAULT \"\"")
+                database.execSQL("UPDATE beneficiaries SET commoditiesTmp = commodities WHERE commodities IS NOT NULL")
+
+                Log.d(TAG, "DATABASE MIGRATION FROM 27 TO 28 FINISHED SUCCESSFULLY")
+            }
+        }
     }
 
     @RenameColumn(tableName = "beneficiaries", fromColumnName = "distributionId", toColumnName = "assistanceId")
@@ -182,6 +198,19 @@ abstract class HumansisDB : RoomDatabase() {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             Log.d(TAG, "DATABASE MIGRATION FROM 26 TO 27 FINISHED SUCCESSFULLY")
         }
+    }
+
+    @DeleteColumn(
+        tableName = "beneficiaries",
+        columnName = "commodities"
+    )
+    @RenameColumn(
+        tableName = "beneficiaries",
+        fromColumnName = "commoditiesTmp",
+        toColumnName = "commodities"
+    )
+    class AutoMigrationTo29 : AutoMigrationSpec {
+
     }
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has

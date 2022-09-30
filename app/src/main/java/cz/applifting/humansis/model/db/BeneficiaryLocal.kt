@@ -37,7 +37,7 @@ data class BeneficiaryLocal(
     val smartcard: String?,
     val newSmartcard: String?,
     val edited: Boolean,
-    val commodities: List<CommodityLocal>?,
+    val commodities: List<CommodityLocal>,
     val remote: Boolean,
     val dateExpiration: String?,
     val foodLimit: Double?,
