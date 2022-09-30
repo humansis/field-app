@@ -21,7 +21,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.getCommodityString
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
@@ -33,6 +32,7 @@ import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.components.TitledTextView
@@ -225,9 +225,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
                 tv_amount.setOptionalValue(
-                    beneficiary.commodities.firstOrNull()?.let { commodity -> // TODO asi ne null ale vsechny? joinToString?
-                        context.getCommodityString(commodity.value, commodity.unit) // TODO pridat note pro inKind
-                    }
+                    beneficiary.commodities.constructCommoditiesText()
                 )
                 tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let {
                     getString(
@@ -831,5 +829,22 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 dismiss()
             }
             .show()
+    }
+
+    private fun List<CommodityLocal>.constructCommoditiesText(): String {
+        return this.joinToString("/n") { commodity ->
+            var string = if ((commodity.value % 1) == 0.0) {
+                requireContext().getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
+            } else {
+                // This needs to be updated if Denars or Madagascar Ariaries are used in the future
+                requireContext().getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
+            }
+
+            if (commodity.type !in listOf(CommodityType.CASH, CommodityType.SMARTCARD) && commodity.notes != null) {
+                string += " ${commodity.notes}"
+            }
+
+            string
+        }
     }
 }

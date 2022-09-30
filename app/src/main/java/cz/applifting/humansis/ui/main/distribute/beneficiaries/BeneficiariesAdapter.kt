@@ -11,12 +11,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.getCommodityString
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 import quanti.com.kotlinlog.Log
@@ -109,7 +109,7 @@ class BeneficiariesAdapter(
                 commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                 val txtValue = TextView(context)
-                txtValue.text = context.getCommodityString(commodity.value, commodity.unit)
+                txtValue.text = commodity.constructCommodityText()
 
                 row.addView(commodityImage)
                 row.addView(txtValue)
@@ -133,6 +133,15 @@ class BeneficiariesAdapter(
         private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
             return nationalIds.joinToString("\n") { nationalCardId ->
                 "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
+            }
+        }
+
+        private fun CommodityLocal.constructCommodityText(): String {
+            return if ((this.value % 1) == 0.0) {
+                context.getString(R.string.commodity_value, this.value.toInt(), this.unit)
+            } else {
+                // This needs to be updated if Denars or Madagascar Ariaries are used in the future
+                context.getString(R.string.commodity_value_decimal, this.value, this.unit)
             }
         }
     }
