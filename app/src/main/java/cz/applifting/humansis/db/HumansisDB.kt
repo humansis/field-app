@@ -210,7 +210,9 @@ abstract class HumansisDB : RoomDatabase() {
         toColumnName = "commodities"
     )
     class AutoMigrationTo29 : AutoMigrationSpec {
-
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            Log.d(TAG, "DATABASE MIGRATION FROM 28 TO 29 FINISHED SUCCESSFULLY")
+        }
     }
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
