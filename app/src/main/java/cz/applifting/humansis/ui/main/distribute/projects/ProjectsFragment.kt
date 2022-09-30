@@ -48,7 +48,7 @@ class ProjectsFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(
                 it.isLoading,
-                viewModel.projectsLD.value?.isEmpty() == false,
+                !viewModel.projectsLD.value.isNullOrEmpty(),
                 isFirstDownload = it.isFirstCountryDownload && !it.logsUploadFailedOnly
             )
             viewModel.showError(it.lastSyncFail != null && it.isFirstCountryDownload && !it.logsUploadFailedOnly)
