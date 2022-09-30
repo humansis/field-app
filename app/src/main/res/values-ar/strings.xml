@@ -11,7 +11,6 @@
     <string name="commodities">السلع: </string>
     <string name="households">العائلات: %1$d</string>
     <string name="beneficiaries_title">المستفيدين</string>
-    <string name="national_id_format">رقم الهوية الشخصية: %1$s</string>
     <string name="beneficiaries_reached">تم الوصول إلى %1$d من %2$d من المستفيدين</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">ابحث في الأسماء</string>
@@ -178,5 +177,13 @@
     <string name="upload_error">تعذر تحميل %1$s.</string>
     <string name="card_empty">هذه البطاقة فارغة</string>
     <string name="logs_upload_failed">فشل في رفع السجلات، هل ترغب في إرسالها يدوياً</string>
+    <string name="other">آخرى</string>
+    <string name="tax_number">الرقم الضريبي</string>
+    <string name="passport">"  جواز سفر"</string>
+    <string name="family_registration">بيان عائلي</string>
+    <string name="birth_certificate">"  شهادة الميلاد"</string>
+    <string name="drivers_license">"  رخصة القيادة"</string>
+    <string name="camp_id">بطاقة مخيم</string>
+    <string name="social_service_card">"  بطاقة الخدمة الاجتماعية"</string>
     <string name="amount_label">كمية</string>
 </resources>

@@ -13,6 +13,7 @@ import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
 import cz.applifting.humansis.model.api.LegacyDistributeSmartcardRequest
+import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -60,7 +61,7 @@ class BeneficiariesRepository @Inject constructor(
                     foodLimit = distribution?.foodLimit,
                     nonfoodLimit = distribution?.nonfoodLimit,
                     cashbackLimit = distribution?.cashbackLimit,
-                    nationalId = it.beneficiary.nationalCardId,
+                    nationalIds = it.beneficiary.nationalCardIds.filter { id -> id.type != NationalCardIdType.NONE },
                     originalReferralType = it.beneficiary.referralType,
                     originalReferralNote = it.beneficiary.referralComment,
                     referralType = it.beneficiary.referralType,

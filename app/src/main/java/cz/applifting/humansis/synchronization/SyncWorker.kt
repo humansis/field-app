@@ -134,7 +134,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     val syncError = SyncError(
                         id = it.id,
                         location = "[$action] $projectName → $distributionName → $beneficiaryName",
-                        params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                        params = "Humansis ID: ${it.beneficiaryId}\n${it.nationalIds}",
                         code = e.code(),
                         errorMessage = "${e.code()}: $errBody",
                         beneficiaryId = it.id,

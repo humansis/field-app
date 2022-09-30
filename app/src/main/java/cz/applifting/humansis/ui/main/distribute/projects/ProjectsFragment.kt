@@ -37,17 +37,21 @@ class ProjectsFragment : BaseFragment() {
 
         lc_projects.init(adapter)
 
-        viewModel.projectsLD.observe(viewLifecycleOwner, {
+        viewModel.projectsLD.observe(viewLifecycleOwner) {
             adapter.updateProjects(it)
-        })
+        }
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(
             lc_projects::setState
         ))
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner, {
-            viewModel.showRefreshing(it.isLoading, isFirstdownload = it.isFirstCountryDownload && !it.logsUploadFailedOnly)
+        sharedViewModel.syncState.observe(viewLifecycleOwner) {
+            viewModel.showRefreshing(
+                it.isLoading,
+                !viewModel.projectsLD.value.isNullOrEmpty(),
+                isFirstDownload = it.isFirstCountryDownload && !it.logsUploadFailedOnly
+            )
             viewModel.showError(it.lastSyncFail != null && it.isFirstCountryDownload && !it.logsUploadFailedOnly)
-        })
+        }
     }
 }

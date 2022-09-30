@@ -50,7 +50,7 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         itemAnimator.addDuration = 300
         rv_list.itemAnimator = itemAnimator
 
-        if (state.text != null && !state.isRetrieving && !state.isRetrieving) {
+        if (state.text != null && !state.isRetrieving) {
             tv_info.text = state.text
             tv_info.visible(true)
             rv_list.visible(false)
