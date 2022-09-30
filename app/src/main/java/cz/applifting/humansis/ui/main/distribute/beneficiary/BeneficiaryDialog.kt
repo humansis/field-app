@@ -832,7 +832,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun List<CommodityLocal>.constructCommoditiesText(): String {
-        return this.joinToString("/n") { commodity ->
+        return this.joinToString("\n") { commodity ->
             var string = if ((commodity.value % 1) == 0.0) {
                 requireContext().getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
             } else {
