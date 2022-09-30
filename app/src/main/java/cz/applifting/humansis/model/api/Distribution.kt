@@ -9,7 +9,7 @@ import cz.applifting.humansis.model.Target
 data class Distribution(
     val id: Int,
     val name: String,
-    @SerializedName("date_distribution")val dateDistribution: String?,
+    @SerializedName("date_distribution")val dateDistribution: String?, // TODO zmenit na non nullable
     @SerializedName("date_expiration")val dateExpiration: String?,
     val type: Target,
     val commodities: List<Commodity>,

@@ -37,7 +37,8 @@ class DbProvider(val context: Context) {
                 }
                 .addMigrations(
                     HumansisDB.MIGRATION_20_21,
-                    HumansisDB.MIGRATION_23_24
+                    HumansisDB.MIGRATION_23_24,
+                    HumansisDB.MIGRATION_25_26
                 )
                 .fallbackToDestructiveMigration()
                 .build()

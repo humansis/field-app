@@ -30,6 +30,7 @@ import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.model.CommodityType
+import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
@@ -60,18 +61,26 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_close
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.qr_scanner
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_birth_certificate
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_booklet
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_camp_id
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_distribution
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_drivers_license
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_family_registration
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_humansis_id
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_national_id
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_old_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_other
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_passport
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_project
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_referral_note
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_referral_type
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_screen_subtitle
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_screen_title
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_smartcard
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_social_service_card
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_status
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_tax_number
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import quanti.com.kotlinlog.Log
 
@@ -160,10 +169,49 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
                 tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
-                beneficiary.nationalId.let {
-                    tv_national_id.setValue("$it")
-                    tv_national_id.visible(it != null)
+
+                beneficiary.nationalIds.forEach {
+                    when (it.type) {
+                        NationalCardIdType.NATIONAL_ID -> {
+                            tv_national_id.setValue(it.number)
+                            tv_national_id.visible(true)
+                        }
+                        NationalCardIdType.TAX_NUMBER -> {
+                            tv_tax_number.setValue(it.number)
+                            tv_tax_number.visible(true)
+                        }
+                        NationalCardIdType.PASSPORT -> {
+                            tv_passport.setValue(it.number)
+                            tv_passport.visible(true)
+                        }
+                        NationalCardIdType.FAMILY -> {
+                            tv_family_registration.setValue(it.number)
+                            tv_family_registration.visible(true)
+                        }
+                        NationalCardIdType.BIRTH_CERTIFICATE -> {
+                            tv_birth_certificate.setValue(it.number)
+                            tv_birth_certificate.visible(true)
+                        }
+                        NationalCardIdType.DRIVERS_LICENSE -> {
+                            tv_drivers_license.setValue(it.number)
+                            tv_drivers_license.visible(true)
+                        }
+                        NationalCardIdType.CAMP_ID -> {
+                            tv_camp_id.setValue(it.number)
+                            tv_camp_id.visible(true)
+                        }
+                        NationalCardIdType.SOCIAL_SERVICE_ID -> {
+                            tv_social_service_card.setValue(it.number)
+                            tv_social_service_card.visible(true)
+                        }
+                        NationalCardIdType.OTHER -> {
+                            tv_other.setValue(it.number)
+                            tv_other.visible(true)
+                        }
+                        else -> { /* Type.NONE */ }
+                    }
                 }
+
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)

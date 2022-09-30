@@ -14,5 +14,5 @@ data class Beneficiary(
     val localFamilyName: String?,
     val referralType: ReferralType?,
     val referralComment: String?,
-    val nationalCardId: String?
+    val nationalCardIds: List<NationalCardId>
 )
