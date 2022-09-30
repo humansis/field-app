@@ -27,6 +27,8 @@ class ProjectsViewModel @Inject constructor(
 
     init {
         launch {
+            showRetrieving(true)
+
             distributionsRepository
                 .getAllDistributions()
                 .flatMapMerge { distributions ->
