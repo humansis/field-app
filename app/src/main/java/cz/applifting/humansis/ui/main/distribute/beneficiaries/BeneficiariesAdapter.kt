@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
@@ -109,7 +110,7 @@ class BeneficiariesAdapter(
                 commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                 val txtValue = TextView(context)
-                txtValue.text = commodity.constructCommodityText()
+                txtValue.text = commodity.value.getCommodityValueText(context, commodity.unit)
 
                 row.addView(commodityImage)
                 row.addView(txtValue)
@@ -133,15 +134,6 @@ class BeneficiariesAdapter(
         private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
             return nationalIds.joinToString("\n") { nationalCardId ->
                 "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
-            }
-        }
-
-        private fun CommodityLocal.constructCommodityText(): String {
-            return if ((this.value % 1) == 0.0) {
-                context.getString(R.string.commodity_value, this.value.toInt(), this.unit)
-            } else {
-                // This needs to be updated if Denars or Madagascar Ariaries are used in the future
-                context.getString(R.string.commodity_value_decimal, this.value, this.unit)
             }
         }
     }

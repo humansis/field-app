@@ -21,6 +21,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
@@ -833,12 +834,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun List<CommodityLocal>.constructCommoditiesText(): String {
         return this.joinToString("\n") { commodity ->
-            var string = if ((commodity.value % 1) == 0.0) {
-                requireContext().getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
-            } else {
-                // This needs to be updated if Denars or Madagascar Ariaries are used in the future
-                requireContext().getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
-            }
+            var string = commodity.value.getCommodityValueText(requireContext(), commodity.unit)
 
             if (commodity.type !in listOf(CommodityType.CASH, CommodityType.SMARTCARD) && commodity.notes != null) {
                 string += " ${commodity.notes}"
