@@ -17,7 +17,6 @@ import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 import quanti.com.kotlinlog.Log
