@@ -147,5 +147,6 @@
     <string name="email">ኢሜል</string>
     <string name="national_id">ብሔራዊ መታወቂያ</string>
     <string name="other">ሌላ</string>
+    <string name="amount_label">መጠን</string>
 
 </resources>

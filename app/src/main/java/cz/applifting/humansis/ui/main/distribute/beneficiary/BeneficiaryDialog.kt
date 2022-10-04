@@ -21,6 +21,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.DateUtil
@@ -32,6 +33,7 @@ import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.components.TitledTextView
@@ -60,6 +62,7 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.tv_smartcard
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_close
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.qr_scanner
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_amount
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_birth_certificate
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_booklet
@@ -126,7 +129,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun TitledTextView.setOptionalValue(value: String?) {
         visible(!value.isNullOrEmpty())
-        setValue(value)
+        value?.let { setValue(it) }
     }
 
     override fun onCreateView(
@@ -166,6 +169,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.beneficiaryLD.observe(viewLifecycleOwner) { beneficiary ->
             // Views
             view.apply {
+                tv_screen_title.text =
+                    getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
+                tv_screen_subtitle.text = getString(
+                    R.string.beneficiary_name,
+                    beneficiary.givenName,
+                    beneficiary.familyName
+                )
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
                 tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
@@ -215,12 +225,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
-                tv_screen_title.text =
-                    getString(if (beneficiary.distributed) R.string.detail else R.string.assign)
-                tv_screen_subtitle.text = getString(
-                    R.string.beneficiary_name,
-                    beneficiary.givenName,
-                    beneficiary.familyName
+                tv_amount.setOptionalValue(
+                    beneficiary.commodities.constructCommoditiesText()
                 )
                 tv_referral_type.setOptionalValue(beneficiary.referralType?.textId?.let {
                     getString(
@@ -333,7 +339,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
         var value = 0.0
         var currency = ""
-        beneficiary.commodities?.forEach {
+        beneficiary.commodities.forEach {
             if (it.type == CommodityType.SMARTCARD) { // TODO use .find instead of forEach with if?
                 value = it.value
                 currency = it.unit
@@ -450,7 +456,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
 
         tv_booklet.setStatus(beneficiary.distributed)
-        tv_booklet.setValue(
+        tv_booklet.setOptionalValue(
             when (booklet) {
                 INVALID_CODE -> getString(R.string.invalid_code)
                 ALREADY_ASSIGNED -> getString(R.string.already_assigned)
@@ -824,5 +830,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 dismiss()
             }
             .show()
+    }
+
+    private fun List<CommodityLocal>.constructCommoditiesText(): String {
+        return this.joinToString("\n") { commodity ->
+            var string = commodity.value.getCommodityValueText(requireContext(), commodity.unit)
+
+            if (commodity.type !in listOf(CommodityType.CASH, CommodityType.SMARTCARD) && commodity.notes != null) {
+                string += " ${commodity.notes}"
+            }
+
+            string
+        }
     }
 }

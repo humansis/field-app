@@ -170,5 +170,6 @@
     <string name="camp_id">ID лагеря</string>
     <string name="social_service_card">Карта социального обслуживания</string>
     <string name="other">Другое</string>
+    <string name="amount_label">Количество</string>
 
 </resources>

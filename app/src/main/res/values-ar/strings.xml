@@ -185,4 +185,5 @@
     <string name="drivers_license">"  رخصة القيادة"</string>
     <string name="camp_id">بطاقة مخيم</string>
     <string name="social_service_card">"  بطاقة الخدمة الاجتماعية"</string>
+    <string name="amount_label">كمية</string>
 </resources>

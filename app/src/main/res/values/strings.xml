@@ -186,4 +186,5 @@
     <string name="camp_id">Camp ID</string>
     <string name="social_service_card">Social Service Card</string>
     <string name="other">Other</string>
+    <string name="amount_label">Amount</string>
 </resources>

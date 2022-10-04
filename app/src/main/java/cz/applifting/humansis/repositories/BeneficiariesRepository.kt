@@ -264,7 +264,12 @@ class BeneficiariesRepository @Inject constructor(
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
                 val bookletValue = booklet.voucherValues.sum().toDouble()
-                CommodityLocal(0, CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
+                CommodityLocal(
+                    0,
+                    CommodityType.QR_VOUCHER,
+                    bookletValue,
+                    booklet.currency
+                )
             }
         }
 
@@ -273,7 +278,8 @@ class BeneficiariesRepository @Inject constructor(
                 it.id,
                 it.modalityType,
                 it.amountToDistribute,
-                it.unit
+                it.unit,
+                it.notes
             )
         }
     }
