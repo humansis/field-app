@@ -135,7 +135,7 @@ abstract class HumansisDB : RoomDatabase() {
                 cursor.moveToFirst()
                 while (!cursor.isAfterLast) {
                     val beneficiaryId = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                    val nationalId = cursor.getString(cursor.getColumnIndexOrThrow("nationalId"))
+                    val nationalId = cursor.getString(cursor.getColumnIndexOrThrow("nationalId")) ?: ""
                     val nationalIds = listOf(NationalCardId(NationalCardIdType.NATIONAL_ID, nationalId))
                     val nationalIdsSerialized = NationalCardIdConverter().toString(nationalIds)
                     val contentValues = ContentValues()
