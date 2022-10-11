@@ -129,6 +129,7 @@ class LoginManager @Inject constructor(
                 val db = dbProvider.get()
                 db.userDao().getUser()
             } catch (e: Exception) {
+                Log.e(TAG, e, "DB not initialized")
                 null
             }
         }
