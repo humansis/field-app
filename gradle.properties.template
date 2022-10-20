@@ -7,7 +7,6 @@ org.gradle.jvmargs=-Xmx2048M
 # NFC library variables
 MASTER_KEY=${MASTER_KEY}
 APP_ID=${APP_ID}
-APP_VERSION=${APP_VERSION}
 
 # Release
 RELEASE_STORE_FILE_PATH=${RELEASE_STORE_FILE_PATH}
