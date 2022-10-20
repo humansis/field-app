@@ -19,6 +19,7 @@ class LoggingInterceptor : Interceptor {
     @Volatile
     private var shouldLogHeaders: Boolean = false
 
+    // TODO neskryvat cele telo pokud obsahuje password nebo token, ale jen skryt hodnotu pomoci matcheru
     private val forbiddenRegex = Regex("(password|multipart/form-data|^<html>)")
 
     fun setShouldLogHeaders(shouldLogHeaders: Boolean) {

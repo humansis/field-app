@@ -10,6 +10,6 @@ object ApiUtilities {
     }
 
     fun getDefaultEnvironment(): ApiEnvironment {
-        return if (BuildConfig.DEBUG) ApiEnvironment.Stage else ApiEnvironment.Front
+        return if (BuildConfig.DEBUG) ApiEnvironment.Stage else ApiEnvironment.Prod
     }
 }

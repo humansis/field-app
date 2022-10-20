@@ -14,6 +14,6 @@ class ParamsModule {
     @Provides
     @Named(BASE_URL)
     fun baseUrl(): String {
-        return "https://" + BuildConfig.RELEASE_API_URL + "/api/jwt/offline-app/"
+        return "https://" + BuildConfig.PROD_API_URL + "/api/jwt/offline-app/"
     }
 }
