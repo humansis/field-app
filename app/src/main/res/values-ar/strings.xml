@@ -186,4 +186,5 @@
     <string name="camp_id">بطاقة مخيم</string>
     <string name="social_service_card">"  بطاقة الخدمة الاجتماعية"</string>
     <string name="amount_label">كمية</string>
+    <string name="civil_registration_record">قيد سجل مدني</string>
 </resources>

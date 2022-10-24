@@ -182,9 +182,10 @@
     <string name="passport">Passport</string>
     <string name="family_registration">Family Registration</string>
     <string name="birth_certificate">Birth Certificate</string>
-    <string name="drivers_license">Driver\'s License</string>
+    <string name="drivers_license">Driver’s License</string>
     <string name="camp_id">Camp ID</string>
     <string name="social_service_card">Social Service Card</string>
+    <string name="civil_registration_record">Civil Registration Record</string>
     <string name="other">Other</string>
     <string name="amount_label">Amount</string>
 </resources>
