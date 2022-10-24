@@ -20,9 +20,10 @@ enum class NationalCardIdType(val stringResource: Int) {
     @SerializedName("Passport") PASSPORT(R.string.passport),
     @SerializedName("Family Registration") FAMILY(R.string.family_registration),
     @SerializedName("Birth Certificate") BIRTH_CERTIFICATE(R.string.birth_certificate),
-    @SerializedName("Driver's License") DRIVERS_LICENSE(R.string.drivers_license),
+    @SerializedName("Driver’s License") DRIVERS_LICENSE(R.string.drivers_license),
     @SerializedName("Camp ID") CAMP_ID(R.string.camp_id),
     @SerializedName("Social Service Card") SOCIAL_SERVICE_ID(R.string.social_service_card),
+    @SerializedName("Civil registration record") CIVIL_REGISTRATION_RECORD(R.string.civil_registration_record),
     @SerializedName("Other") OTHER(R.string.other),
     @SerializedName("None") NONE(0)
 }
