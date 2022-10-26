@@ -24,6 +24,5 @@ enum class NationalCardIdType(val stringResource: Int) {
     @SerializedName("Camp ID") CAMP_ID(R.string.camp_id),
     @SerializedName("Social Service Card") SOCIAL_SERVICE_ID(R.string.social_service_card),
     @SerializedName("Civil registration record") CIVIL_REGISTRATION_RECORD(R.string.civil_registration_record),
-    @SerializedName("Other") OTHER(R.string.other),
-    @SerializedName("None") NONE(0)
+    @SerializedName("Other") OTHER(R.string.other)
 }
