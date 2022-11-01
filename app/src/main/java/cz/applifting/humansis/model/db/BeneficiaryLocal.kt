@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.equalsIgnoreEmpty
 import cz.applifting.humansis.model.ReferralType
+import cz.applifting.humansis.model.api.NationalCardId
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -36,13 +37,13 @@ data class BeneficiaryLocal(
     val smartcard: String?,
     val newSmartcard: String?,
     val edited: Boolean,
-    val commodities: List<CommodityLocal>?,
+    val commodities: List<CommodityLocal>,
     val remote: Boolean,
     val dateExpiration: String?,
     val foodLimit: Double?,
     val nonfoodLimit: Double?,
     val cashbackLimit: Double?,
-    val nationalId: String?,
+    val nationalIds: List<NationalCardId>,
     val originalReferralType: ReferralType?,
     val originalReferralNote: String?,
     val referralType: ReferralType? = null,
