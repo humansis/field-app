@@ -170,6 +170,7 @@ upload_to_firebase_automatically_merge:
         app:assembleDebug app:appDistributionUploadDebug -PappTesterReleaseNotes="$RELEASE_NOTES"   
   rules:
     - if: $CI_COMMIT_BRANCH == "dev" && $CI_COMMIT_TITLE =~ /Merge branch.*/
+    - if: $CI_COMMIT_BRANCH =~ /^release/ && $CI_COMMIT_TITLE =~ /Merge branch.*/
 
 # Build release and archive bundle automatically
 archive_release_bundle_job_automatically:
