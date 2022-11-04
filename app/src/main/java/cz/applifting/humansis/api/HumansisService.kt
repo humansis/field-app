@@ -51,7 +51,7 @@ interface HumansisService {
         @Body deactivateSmartcardRequest: DeactivateSmartcardRequest
     )
 
-    // Can be removed after v3.7.0 release
+    // TODO must be removed for v3.9.0 release
     @POST("v4/smartcards/{serialNumber}/deposit")
     suspend fun legacyDistributeSmartcard(
         @Path("serialNumber") serialNumber: String,
