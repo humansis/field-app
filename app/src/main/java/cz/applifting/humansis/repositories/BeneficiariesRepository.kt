@@ -166,7 +166,7 @@ class BeneficiariesRepository @Inject constructor(
             }
 
             val lastSmartCardDistribution = beneficiaryLocal.commodities
-                ?.findLast { it.type == CommodityType.SMARTCARD }
+                .findLast { it.type == CommodityType.SMARTCARD }
 
             val value = lastSmartCardDistribution?.value ?: 1.0
 
@@ -182,7 +182,7 @@ class BeneficiariesRepository @Inject constructor(
                         beneficiaryLocal.balance ?: 1.0
                     )
                 )
-            } ?: run {
+            } ?: run { // TODO must be removed for v3.9.0 release
                 legacyDistributeSmartcard(
                     beneficiaryLocal.newSmartcard,
                     LegacyDistributeSmartcardRequest(
@@ -230,7 +230,7 @@ class BeneficiariesRepository @Inject constructor(
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
-    // Can be removed after v3.7.0 release
+    // TODO must be removed for v3.9.0 release
     private suspend fun legacyDistributeSmartcard(
         code: String,
         distributeSmartcardRequest: LegacyDistributeSmartcardRequest
