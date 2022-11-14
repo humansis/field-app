@@ -13,7 +13,6 @@
     <string name="households">Домохозяйства: %1$d</string>
     <string name="beneficiaries_title">Бенефициары</string>
     <string name="beneficiaries_reached">%1$d из %2$d бенефициаров достигнуто</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Поиск по имени.</string>
     <string name="distributions">Выдачи</string>
     <string name="unknown">Неизвестно</string>

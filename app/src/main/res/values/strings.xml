@@ -17,7 +17,6 @@
     <string name="beneficiaries_title">Beneficiaries</string>
     <string name="national_id">National ID</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d of %2$d beneficiaries reached</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>

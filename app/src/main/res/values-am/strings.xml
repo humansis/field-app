@@ -15,7 +15,6 @@
     <string name="households">ቤተሰቦች-%1$d</string>
     <string name="beneficiaries_title">ተጠቃሚዎች</string>
     <string name="beneficiaries_reached">%1$d ከ%2$d ተጠቃሚዎች ደርሷል</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">ስሞችን ይፈልጉ</string>
     <string name="distributions">ስርጭቶች</string>
     <string name="unknown">ያልታወቀ</string>
