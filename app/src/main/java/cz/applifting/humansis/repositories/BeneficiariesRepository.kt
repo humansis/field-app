@@ -12,7 +12,6 @@ import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
-import cz.applifting.humansis.model.api.LegacyDistributeSmartcardRequest
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -182,18 +181,6 @@ class BeneficiariesRepository @Inject constructor(
                         beneficiaryLocal.balance ?: 1.0
                     )
                 )
-            } ?: run { // TODO must be removed for v3.9.0 release
-                legacyDistributeSmartcard(
-                    beneficiaryLocal.newSmartcard,
-                    LegacyDistributeSmartcardRequest(
-                        beneficiaryLocal.assistanceId,
-                        value,
-                        time,
-                        beneficiaryLocal.beneficiaryId,
-                        beneficiaryLocal.originalBalance,
-                        beneficiaryLocal.balance ?: 1.0
-                    )
-                )
             }
         }
 
@@ -228,14 +215,6 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun deactivateSmartcard(code: String, date: String) {
         service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
-    }
-
-    // TODO must be removed for v3.9.0 release
-    private suspend fun legacyDistributeSmartcard(
-        code: String,
-        distributeSmartcardRequest: LegacyDistributeSmartcardRequest
-    ) {
-        service.legacyDistributeSmartcard(code, distributeSmartcardRequest)
     }
 
     private suspend fun distributeSmartcard(
