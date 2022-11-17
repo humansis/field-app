@@ -16,10 +16,8 @@
     <string name="households">Домогосподарства: %1$d</string>
     <string name="beneficiaries_title">Отримувачі</string>
     <string name="national_id">Ідентифікаційний номер</string>
-    <string name="national_id_format">Ідентифікаційний номер: %1$s</string>
     <string name="beneficiaries_reached">%1$d з %2$d досягнуто отримувачів</string>
     <string name="search_beneficiary_hint">Пошук по назві</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="camera_permission_dialog_title">Дозволите доступ до камери</string>
     <string name="camera_permission_dialog_message">Для скануваня QR коду потрібен доступ до камери</string>
     <string name="camera_permission_dialog_positive_btn_label">Ок</string>
@@ -50,8 +48,6 @@
     <string name="country">Країна</string>
     <string name="settings_country_update_success">Інформація про країну оновлена</string>
     <string name="settings_country_update_error">Інформація про країну не оновлена</string>
-    <string name="commodity_value">%1$d %2$s</string>
-    <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="error_invalid_username">Невірне ім\'я користувача</string>
     <string name="error_invalid_password">Невірний пароль</string>
     <string name="error_no_internet_connection">Відсутнє інтернет з\'єднання</string>
@@ -179,4 +175,13 @@
     <string name="logs">Журнали</string>
     <string name="card_empty">Ця картка порожня</string>
     <string name="logs_upload_failed">Помилка завантаження журналів. Ви хочете надіслати їх вручну?</string>
+    <string name="tax_number">ІПН</string>
+    <string name="passport">Паспорт для виїзду закордон</string>
+    <string name="family_registration">Свідоцтво про шлюб</string>
+    <string name="birth_certificate">Свідоцтво про народження</string>
+    <string name="drivers_license">Водійські права</string>
+    <string name="camp_id">ID табору</string>
+    <string name="social_service_card">Карта соціального обслуговування</string>
+    <string name="other">Інше</string>
+    <string name="amount_label">Кількість</string>
 </resources>

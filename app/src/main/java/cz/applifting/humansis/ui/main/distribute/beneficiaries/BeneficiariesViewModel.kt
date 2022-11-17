@@ -78,11 +78,11 @@ class BeneficiariesViewModel @Inject constructor(
             val familyName = beneficiary.familyName?.normalize() ?: ""
             val givenName = beneficiary.givenName?.normalize() ?: ""
             val beneficiaryId = beneficiary.beneficiaryId.toString()
-            val nationalId = beneficiary.nationalId
+            val nationalIdNumbers = beneficiary.nationalIds.map { id -> id.number }
 
             val fullName = "$givenName $familyName"
             val fullNameReversed = "$familyName $givenName"
-            fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalId?.startsWith(query) == true
+            fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalIdNumbers.any { number -> number.startsWith(query) }
         })
     }
 

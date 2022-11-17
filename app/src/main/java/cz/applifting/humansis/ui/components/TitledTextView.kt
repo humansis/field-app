@@ -36,19 +36,11 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun setValue(value: String?) {
-        if (value == null) {
-            tv_value.text = "?"
+    fun setValue(value: String) {
+        tv_value.text = value
 
-            if (isBookled) {
-                btn_action.visibility = View.GONE
-            }
-        } else {
-            tv_value.text = value
-
-            if (isBookled) {
-                btn_action.visibility = View.VISIBLE
-            }
+        if (isBookled) {
+            btn_action.visibility = View.VISIBLE
         }
     }
 

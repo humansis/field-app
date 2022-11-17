@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,9 +24,9 @@ abstract class BaseListViewModel(
         _listStateLD.value = ListComponentState()
     }
 
-    fun showRefreshing(show: Boolean, hasData: Boolean = true, isFirstdownload: Boolean = false) {
-        _listStateLD.value = if (isFirstdownload) {
-            _listStateLD.value?.copy(isRefreshing = show, text = getApplication<Application>().applicationContext.getString(R.string.downloading))
+    fun showRefreshing(show: Boolean, hasData: Boolean = true, isFirstDownload: Boolean = false) {
+        _listStateLD.value = if (isFirstDownload || (show && !hasData)) {
+            _listStateLD.value?.copy(isRefreshing = show, text = (getApplication() as Context).getString(R.string.downloading))
         } else {
             _listStateLD.value?.copy(isRefreshing = show, text = getText(hasData))
         }

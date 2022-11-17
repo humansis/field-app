@@ -31,7 +31,7 @@ def gitVersionCode = { boolean isFileName ->
 // Major updates are non-compatible, meaning consumers can not upgrade without changing their software where applicable.
 def VERSION_MAJOR = 3
 // Minor updates are backward compatible, meaning consumers can upgrade freely. Main for non-breaking new functionality.
-def VERSION_MINOR = 7
+def VERSION_MINOR = 8
 // Patch updates are interchangeable, meaning consumers can upgrade or downgrade freely. Mainly for bugfixing.
 def VERSION_PATCH = 0
 
@@ -65,20 +65,17 @@ android {
 
         buildConfigField "short", "BUILD_NUMBER", "$BUILD_NUMBER"
 
-        buildConfigField "String", "RELEASE_API_URL", "\"$PROD_RELEASE_API_URL\""
+        buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
+        buildConfigField "String", "APP_ID", "\"$APP_ID\""
 
-        buildConfigField "String", "FRONT_API_URL", "\"$FRONT_API_URL_NEW\""
+        buildConfigField "String", "PROD_API_URL", "\"$PROD_API_URL_MOBILE\""
         buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
-        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL_NEW\""
+        buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL_MOBILE\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
         buildConfigField "String", "DEV1_API_URL", "\"$DEV1_API_URL\""
         buildConfigField "String", "DEV2_API_URL", "\"$DEV2_API_URL\""
         buildConfigField "String", "DEV3_API_URL", "\"$DEV3_API_URL\""
         buildConfigField "String", "LOCAL_API_URL", "\"$LOCAL_API_URL\""
-
-        buildConfigField "String", "MASTER_KEY", "\"$MASTER_KEY\""
-        buildConfigField "String", "APP_ID", "\"$APP_ID\""
-        buildConfigField "short", "APP_VESION", "$APP_VERSION"
 
         buildConfigField "String", "DEMO_ACCOUNT", "\"$DEMO_ACCOUNT\""
 

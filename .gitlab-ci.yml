@@ -170,6 +170,7 @@ upload_to_firebase_automatically_merge:
         app:assembleDebug app:appDistributionUploadDebug -PappTesterReleaseNotes="$RELEASE_NOTES"   
   rules:
     - if: $CI_COMMIT_BRANCH == "dev" && $CI_COMMIT_TITLE =~ /Merge branch.*/
+    - if: $CI_COMMIT_BRANCH =~ /^release/ && $CI_COMMIT_TITLE =~ /Merge branch.*/
 
 # Build release and archive bundle automatically
 archive_release_bundle_job_automatically:
@@ -210,6 +211,8 @@ upload_release_candidate:
   when: manual
   environment:
     name: aws-rc
+  except:
+    - tags
 
 upload_stable:
   stage: upload_aws
@@ -217,7 +220,6 @@ upload_stable:
     APP_NAME: field-app
     APK: $ARTIFACT_RELEASE_PATH
   extends: .release_stable
-  when: manual
   environment:
     name: aws-stable
   only:
@@ -229,7 +231,6 @@ upload_stable_debug:
     APP_NAME: field-app
     APK: $ARTIFACT_DEBUG_PATH
   extends: .release_stable_debug
-  when: manual
   environment:
     name: aws-debug
   only:

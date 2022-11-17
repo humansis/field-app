@@ -60,7 +60,7 @@ class BeneficiariesRepository @Inject constructor(
                     foodLimit = distribution?.foodLimit,
                     nonfoodLimit = distribution?.nonfoodLimit,
                     cashbackLimit = distribution?.cashbackLimit,
-                    nationalId = it.beneficiary.nationalCardId,
+                    nationalIds = it.beneficiary.nationalCardIds,
                     originalReferralType = it.beneficiary.referralType,
                     originalReferralNote = it.beneficiary.referralComment,
                     referralType = it.beneficiary.referralType,
@@ -263,7 +263,12 @@ class BeneficiariesRepository @Inject constructor(
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->
                 val bookletValue = booklet.voucherValues.sum().toDouble()
-                CommodityLocal(0, CommodityType.QR_VOUCHER, bookletValue, booklet.currency)
+                CommodityLocal(
+                    0,
+                    CommodityType.QR_VOUCHER,
+                    bookletValue,
+                    booklet.currency
+                )
             }
         }
 
@@ -272,7 +277,8 @@ class BeneficiariesRepository @Inject constructor(
                 it.id,
                 it.modalityType,
                 it.amountToDistribute,
-                it.unit
+                it.unit,
+                it.notes
             )
         }
     }

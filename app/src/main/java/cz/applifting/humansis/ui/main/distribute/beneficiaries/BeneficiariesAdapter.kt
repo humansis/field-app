@@ -11,9 +11,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
@@ -76,8 +78,8 @@ class BeneficiariesAdapter(
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
             tvHumansisId.text = view.context.getString(R.string.humansis_id_formatted, beneficiaryLocal.beneficiaryId)
-            tvNationalId.visible(beneficiaryLocal.nationalId != null)
-            tvNationalId.text = view.context.getString(R.string.national_id_format, beneficiaryLocal.nationalId)
+            tvNationalId.visible(beneficiaryLocal.nationalIds.isNotEmpty())
+            tvNationalId.text = constructNationalIdText(beneficiaryLocal.nationalIds)
 
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
@@ -99,32 +101,38 @@ class BeneficiariesAdapter(
                     2.2) it's a normal commodity - show commodity and value
              */
 
-            if (beneficiaryLocal.distributed) {
-                beneficiaryLocal.commodities?.forEach { commodity ->
-                    val row = TableRow(context)
+            beneficiaryLocal.commodities.forEach { commodity ->
+                val row = TableRow(context)
 
-                    val commodityImage = ImageView(context)
-                    commodityImage.simpleDrawable(commodity.type.drawableResId)
-                    commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                val commodityImage = ImageView(context)
+                commodityImage.simpleDrawable(commodity.type.drawableResId)
+                commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
-                    val txtValue = TextView(context)
-                    if ((commodity.value % 1) == 0.0) {
-                        txtValue.text = context.getString(R.string.commodity_value, commodity.value.toInt(), commodity.unit)
-                    } else {
-                        // This needs to be updated if Denars or Madagascar Ariaries are used in the future
-                        txtValue.text = context.getString(R.string.commodity_value_decimal, commodity.value, commodity.unit)
-                    }
+                val txtValue = TextView(context)
+                txtValue.text = commodity.value.getCommodityValueText(context, commodity.unit)
 
-                    row.addView(commodityImage)
-                    row.addView(txtValue)
-                    tlCommoditiesHolder.addView(row)
+                row.addView(commodityImage)
+                row.addView(txtValue)
+
+                if (beneficiaryLocal.distributed) {
+                    val distributedImage = ImageView(context)
+                    distributedImage.simpleDrawable(R.drawable.ic_baseline_check_circle_24)
+                    distributedImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    row.addView(distributedImage)
                 }
+                tlCommoditiesHolder.addView(row)
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
             view.setOnClickListener {
                 Log.d(TAG, "Beneficiary $beneficiaryLocal clicked")
                 if (clickable) onItemClick(beneficiaryLocal)
+            }
+        }
+
+        private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
+            return nationalIds.joinToString("\n") { nationalCardId ->
+                "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
             }
         }
     }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -15,9 +16,7 @@
     <string name="households">Households: %1$d</string>
     <string name="beneficiaries_title">Beneficiaries</string>
     <string name="national_id">National ID</string>
-    <string name="national_id_format">National ID: %1$s</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d of %2$d beneficiaries reached</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Search</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>
@@ -49,8 +48,6 @@
     <string name="country">Country</string>
     <string name="settings_country_update_success">Country updated</string>
     <string name="settings_country_update_error">Invalid ISO3 code</string>
-    <string name="commodity_value">%1$d %2$s</string>
-    <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="error_invalid_username">Invalid username</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_no_internet_connection">Network connection lost</string>
@@ -145,7 +142,6 @@
     <string name="success">Success!</string>
     <string name="card_updated">Card Updated!</string>
     <string name="export_logs">Send logs</string>
-    <string name="send_email_adress" translatable="false">support@humansis.org, mobilne-pin@quanti.cz</string>
     <string name="logs_dialog_title">Share logs</string>
     <string name="logs_dialog_message">Would you like to share logs?</string>
     <string name="logs_dialog_email_button">Share</string>
@@ -179,4 +175,14 @@
     <string name="logs">Logs</string>
     <string name="card_empty">This card is empty</string>
     <string name="logs_upload_failed">Logs upload failed. Would you like to send them manually?</string>
+    <string name="tax_number">Tax Number</string>
+    <string name="passport">Passport</string>
+    <string name="family_registration">Family Registration</string>
+    <string name="birth_certificate">Birth Certificate</string>
+    <string name="drivers_license">Driver’s License</string>
+    <string name="camp_id">Camp ID</string>
+    <string name="social_service_card">Social Service Card</string>
+    <string name="civil_registration_record">Civil Registration Record</string>
+    <string name="other">Other</string>
+    <string name="amount_label">Amount</string>
 </resources>

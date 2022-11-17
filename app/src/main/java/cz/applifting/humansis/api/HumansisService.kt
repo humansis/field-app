@@ -21,7 +21,7 @@ interface HumansisService {
         @Path("projectId") projectId: Int
     ): List<Distribution>
 
-    @GET("v3/assistances/{assistanceId}/targets/beneficiaries")
+    @GET("v4/assistances/{assistanceId}/targets/beneficiaries")
     suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<DistributionBeneficiary>
 
     @PATCH("v1/assistances/relief-packages/distribute")

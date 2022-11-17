@@ -12,9 +12,7 @@
     <string name="commodities">Товары: </string>
     <string name="households">Домохозяйства: %1$d</string>
     <string name="beneficiaries_title">Бенефициары</string>
-    <string name="national_id_format">Идентификационный номер: %1$s</string>
     <string name="beneficiaries_reached">%1$d из %2$d бенефициаров достигнуто</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Поиск по имени.</string>
     <string name="distributions">Выдачи</string>
     <string name="unknown">Неизвестно</string>
@@ -45,7 +43,6 @@
     <string name="country">Страна</string>
     <string name="settings_country_update_success">Информация о стране обновлена</string>
     <string name="settings_country_update_error">Неверный  ISO3 код.</string>
-    <string name="commodity_value">%1$d %2$s</string>
     <string name="error_invalid_username">Неверное имя пользователя.</string>
     <string name="error_invalid_password">Неверный пароль.</string>
     <string name="error_no_internet_connection">Нет интернет соединения.</string>
@@ -147,7 +144,6 @@
     <string name="navigation_drawer_close">Закройте панель навигации.</string>
     <string name="unnamed_project">Проекты без названия</string>
     <string name="ETH">ETH</string>
-    <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="scanning_card_pin">пин-код : %1$s</string>
     <string name="change_pin">изменить пин-код</string>
     <string name="changing_pin_result">новый пин-код: %1$s</string>
@@ -163,5 +159,14 @@
     <string name="humansis_id">Humansis ID</string>
     <string name="email">Электронная почта</string>
     <string name="national_id">Идентификационный номер</string>
+    <string name="tax_number">ИНН</string>
+    <string name="passport">Паспорт для выезда заграницу</string>
+    <string name="family_registration">Свидетельство о браке</string>
+    <string name="birth_certificate">Свидетельство о рождении</string>
+    <string name="drivers_license">Водительские права</string>
+    <string name="camp_id">ID лагеря</string>
+    <string name="social_service_card">Карта социального обслуживания</string>
+    <string name="other">Другое</string>
+    <string name="amount_label">Количество</string>
 
 </resources>
