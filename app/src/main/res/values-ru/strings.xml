@@ -13,7 +13,6 @@
     <string name="households">Домохозяйства: %1$d</string>
     <string name="beneficiaries_title">Бенефициары</string>
     <string name="beneficiaries_reached">%1$d из %2$d бенефициаров достигнуто</string>
-    <string name="beneficiary_name">%1$s %2$s</string>
     <string name="search_beneficiary_hint">Поиск по имени.</string>
     <string name="distributions">Выдачи</string>
     <string name="unknown">Неизвестно</string>
@@ -44,7 +43,6 @@
     <string name="country">Страна</string>
     <string name="settings_country_update_success">Информация о стране обновлена</string>
     <string name="settings_country_update_error">Неверный  ISO3 код.</string>
-    <string name="commodity_value">%1$d %2$s</string>
     <string name="error_invalid_username">Неверное имя пользователя.</string>
     <string name="error_invalid_password">Неверный пароль.</string>
     <string name="error_no_internet_connection">Нет интернет соединения.</string>
@@ -146,7 +144,6 @@
     <string name="navigation_drawer_close">Закройте панель навигации.</string>
     <string name="unnamed_project">Проекты без названия</string>
     <string name="ETH">ETH</string>
-    <string name="commodity_value_decimal">%1$.2f %2$s</string>
     <string name="scanning_card_pin">пин-код : %1$s</string>
     <string name="change_pin">изменить пин-код</string>
     <string name="changing_pin_result">новый пин-код: %1$s</string>
