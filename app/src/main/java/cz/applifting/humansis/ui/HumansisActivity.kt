@@ -1,20 +1,30 @@
 package cz.applifting.humansis.ui
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.work.*
+import androidx.navigation.findNavController
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
@@ -32,9 +42,10 @@ import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
-import quanti.com.kotlinlog.Log
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
@@ -82,7 +93,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         super.onResume()
         Log.d(TAG, "onResume")
 
-        enqueueSynchronization()
+        checkTokenAndEnqueueSynchronization()
 
         val filter = IntentFilter()
         filter.addAction("android.net.conn.CONNECTIVITY_ACTION")
@@ -152,6 +163,18 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         }
     }
 
+    private fun checkTokenAndEnqueueSynchronization() {
+        if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
+            if (vm.validateToken()) {
+                enqueueSynchronization()
+            } else {
+                showToast(getString(R.string.token_missing_or_expired))
+            }
+        } else {
+            enqueueSynchronization()
+        }
+    }
+
     private fun enqueueSynchronization() {
         val workManager = WorkManager.getInstance(this)
 
@@ -165,6 +188,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
                 .build()
 
             workManager.enqueueUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, syncWhenWifiRequest)
+            Log.d(TAG, "Synchronization enqueued")
         }
     }
 
@@ -180,7 +204,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     private inner class NetworkChangeReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (isWifiConnected()) {
-                enqueueSynchronization()
+                checkTokenAndEnqueueSynchronization()
             }
         }
     }
@@ -197,15 +221,13 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
         observe(vm.readBalanceError) {
             Log.e(this.javaClass.simpleName, it)
-            Toast.makeText(
-                this,
+            showToast(
                 if (it is PINException) {
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
                 } else {
                     getString(R.string.card_error)
-                },
-                Toast.LENGTH_LONG
-            ).show()
+                }
+            )
             displayedDialog?.dismiss()
             NfcInitializer.disableForegroundDispatch(this)
         }
@@ -327,6 +349,16 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         initializeCardDisposable = null
         readBalanceDisposable?.dispose()
         readBalanceDisposable = null
+    }
+
+    private fun showToast(text: String) {
+        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+        tvMessage.text = text
+        val toast = Toast(this)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = toastView
+        toast.show()
     }
 
     companion object {
