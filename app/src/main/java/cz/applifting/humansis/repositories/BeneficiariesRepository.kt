@@ -9,7 +9,6 @@ import cz.applifting.humansis.model.api.AssignBookletRequest
 import cz.applifting.humansis.model.api.AssignSmartcardRequest
 import cz.applifting.humansis.model.api.BeneficiaryForReferralUpdate
 import cz.applifting.humansis.model.api.Booklet
-import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
 import cz.applifting.humansis.model.api.ReliefPackage
@@ -159,9 +158,6 @@ class BeneficiariesRepository @Inject constructor(
             val time = beneficiaryLocal.distributedAt ?: return
             if (beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
-                beneficiaryLocal.smartcard?.let {
-                    deactivateSmartcard(beneficiaryLocal.smartcard, time)
-                }
             }
 
             val lastSmartCardDistribution = beneficiaryLocal.commodities
@@ -211,10 +207,6 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
         service.assignSmartcard(AssignSmartcardRequest(code, beneficiaryId, date))
-    }
-
-    private suspend fun deactivateSmartcard(code: String, date: String) {
-        service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
     }
 
     private suspend fun distributeSmartcard(
