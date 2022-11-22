@@ -1,9 +1,13 @@
 package cz.applifting.humansis.ui.main
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.ToastManager
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
@@ -26,6 +30,7 @@ import javax.inject.Inject
  */
 class MainViewModel @Inject constructor(
     private val loginManager: LoginManager,
+    private val toastManager: ToastManager,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
@@ -81,10 +86,13 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun validateToken(): Boolean {
+    fun validateToken(context: Context): Boolean {
         val token = userLD.value?.token
         return if (token == null || token.isExpired()) {
             invalidateToken()
+            toastManager.setToastMessage(
+                context.getString(R.string.token_missing_or_expired)
+            )
             false
         } else {
             true
@@ -98,6 +106,14 @@ class MainViewModel @Inject constructor(
             sp.setDate(LAST_DOWNLOAD_KEY, null)
             userLD.postValue(null)
         }
+    }
+
+    fun getToastMessageLiveData(): LiveData<String?> {
+        return toastManager.getToastMessageLiveData()
+    }
+
+    fun setToastMessage(text: String?) {
+        toastManager.setToastMessage(text)
     }
 
     fun logout() {

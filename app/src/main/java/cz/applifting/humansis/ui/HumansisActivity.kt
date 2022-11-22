@@ -64,6 +64,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     private val networkChangeReceiver = NetworkChangeReceiver()
 
     private var displayedDialog: AlertDialog? = null
+    private var displayedToast: Toast? = null
 
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
@@ -165,10 +166,8 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     private fun checkTokenAndEnqueueSynchronization() {
         if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
-            if (vm.validateToken()) {
+            if (vm.validateToken(this)) {
                 enqueueSynchronization()
-            } else {
-                showToast(getString(R.string.token_missing_or_expired))
             }
         } else {
             enqueueSynchronization()
@@ -215,13 +214,34 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun setUpObservers() {
+
+        // The method is here, so nobody can show toasts from anywhere else other than sharedViewModel.toastLD
+        fun showToast(text: String) {
+            displayedToast?.cancel()
+            displayedToast = null
+            val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+            val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+            tvMessage.text = text
+            displayedToast = Toast(this)
+            displayedToast?.duration = Toast.LENGTH_SHORT
+            displayedToast?.view = toastView
+            displayedToast?.show()
+        }
+
+        observe(vm.getToastMessageLiveData()) {
+            if (it != null) {
+                showToast(it)
+                vm.setToastMessage(null)
+            }
+        }
+
         observe(vm.readBalanceResult) {
             showReadBalanceResult(it)
         }
 
         observe(vm.readBalanceError) {
             Log.e(this.javaClass.simpleName, it)
-            showToast(
+            vm.setToastMessage(
                 if (it is PINException) {
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
                 } else {
@@ -349,16 +369,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         initializeCardDisposable = null
         readBalanceDisposable?.dispose()
         readBalanceDisposable = null
-    }
-
-    private fun showToast(text: String) {
-        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-        tvMessage.text = text
-        val toast = Toast(this)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = toastView
-        toast.show()
     }
 
     companion object {

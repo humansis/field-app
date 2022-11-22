@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -329,7 +328,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun leaveWithSuccess() {
         sharedViewModel.beneficiaryDialogDissmissedOnSuccess.call()
-        sharedViewModel.showToast(getString(R.string.success))
+        sharedViewModel.setToastMessage(getString(R.string.success))
         dismiss()
     }
 
@@ -618,24 +617,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     }
                                 }
                                 else -> {
-                                    Toast.makeText(
-                                        requireContext(),
+                                    sharedViewModel.setToastMessage(
                                         NfcCardErrorMessage.getNfcCardErrorMessage(
                                             ex.pinExceptionEnum,
                                             requireActivity()
-                                        ),
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                        )
+                                    )
                                 }
                             }
                         }
                         else -> {
                             Log.e(this.javaClass.simpleName, ex)
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.card_error),
-                                Toast.LENGTH_LONG
-                            ).show()
+                            sharedViewModel.setToastMessage(
+                                getString(R.string.card_error)
+                            )
                         }
                     }
 
@@ -675,21 +670,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            Toast.makeText(
-                                requireContext(),
+                            sharedViewModel.setToastMessage(
                                 NfcCardErrorMessage.getNfcCardErrorMessage(
                                     ex.pinExceptionEnum,
                                     requireActivity()
-                                ),
-                                Toast.LENGTH_LONG
-                            ).show()
+                                )
+                            )
                         }
                         else -> {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.card_error),
-                                Toast.LENGTH_LONG
-                            ).show()
+                            sharedViewModel.setToastMessage(
+                                getString(R.string.card_error)
+                            )
                         }
                     }
 
