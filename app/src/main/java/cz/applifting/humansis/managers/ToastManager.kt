@@ -19,5 +19,6 @@ class ToastManagerImpl : ToastManager {
 
     override fun setToastMessage(text: String?) {
         toastMessageLD.value = text
+        toastMessageLD.value = null // To prevent showing it again on resume
     }
 }

@@ -109,7 +109,6 @@ class SharedViewModel @Inject constructor(
 
         toastManager.getToastMessageLiveData().addSource(workInfos) {
             if (it.isNullOrEmpty()) {
-                setToastMessage(null)
                 return@addSource
             }
 

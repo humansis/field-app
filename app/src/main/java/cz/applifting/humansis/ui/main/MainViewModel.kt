@@ -48,6 +48,8 @@ class MainViewModel @Inject constructor(
     val initializeCardResult = SingleLiveEvent<UserPinBalance>()
     val initializeCardError = SingleLiveEvent<Throwable>()
 
+    val enqueueSynchronization = SingleLiveEvent<Unit>()
+
     init {
         launch {
             userLD.value = loginManager.retrieveUser()

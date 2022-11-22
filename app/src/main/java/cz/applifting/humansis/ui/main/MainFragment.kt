@@ -26,6 +26,7 @@ import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
+import cz.applifting.humansis.extensions.isWifiConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironment
@@ -198,6 +199,9 @@ class MainFragment : BaseFragment() {
         sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner) { available ->
             val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
             ivStatus.simpleDrawable(drawable)
+            if (available && requireContext().isWifiConnected()) {
+                viewModel.enqueueSynchronization.call()
+            }
         }
 
         sharedViewModel.syncNeededLD.observe(viewLifecycleOwner) {
