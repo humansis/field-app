@@ -189,8 +189,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun setUpObservers() {
-
-        // The method is here, so nobody can show toasts from anywhere else other than sharedViewModel.toastLD
         fun showToast(text: String) {
             displayedToast?.cancel()
             displayedToast = null
