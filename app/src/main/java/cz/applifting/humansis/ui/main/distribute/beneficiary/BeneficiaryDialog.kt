@@ -338,8 +338,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     private fun handleSmartcard(beneficiary: BeneficiaryLocal) {
         var value = 0.0
         var currency = ""
-        beneficiary.commodities.forEach {
-            if (it.type == CommodityType.SMARTCARD) { // TODO use .find instead of forEach with if?
+        beneficiary.commodities.findLast { it.type == CommodityType.SMARTCARD }?.let {
+            if (it.type == CommodityType.SMARTCARD) {
                 value = it.value
                 currency = it.unit
             }

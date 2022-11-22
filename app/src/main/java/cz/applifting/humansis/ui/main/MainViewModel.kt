@@ -90,7 +90,7 @@ class MainViewModel @Inject constructor(
         val token = userLD.value?.token
         return if (token == null || token.isExpired()) {
             invalidateToken()
-            toastManager.setToastMessage(
+            setToastMessage(
                 context.getString(R.string.token_missing_or_expired)
             )
             false

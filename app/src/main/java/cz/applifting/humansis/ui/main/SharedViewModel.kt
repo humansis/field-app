@@ -85,7 +85,7 @@ class SharedViewModel @Inject constructor(
                     logsUploadFailedOnly()
                 )
 
-                if (it.first().state == WorkInfo.State.FAILED) {
+                if (it.firstOrNull()?.state == WorkInfo.State.FAILED) {
                     errorsRepository.getAll().collect { errors ->
                         errors.find { error -> error.syncErrorAction == SyncErrorActionEnum.LOGS_UPLOAD_NEW }
                             ?.let {
