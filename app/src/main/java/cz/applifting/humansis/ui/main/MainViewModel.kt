@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -88,13 +87,11 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun validateToken(context: Context): Boolean {
+    fun validateToken(): Boolean {
         val token = userLD.value?.token
         return if (token == null || token.isExpired()) {
             invalidateToken()
-            setToastMessage(
-                context.getString(R.string.token_missing_or_expired)
-            )
+            setToastMessage(R.string.token_missing_or_expired)
             false
         } else {
             true
@@ -114,8 +111,12 @@ class MainViewModel @Inject constructor(
         return toastManager.getToastMessageLiveData()
     }
 
-    fun setToastMessage(text: String?) {
+    fun setToastMessage(text: String) {
         toastManager.setToastMessage(text)
+    }
+
+    private fun setToastMessage(stringResId: Int) {
+        toastManager.setToastMessage(stringResId)
     }
 
     fun logout() {

@@ -150,7 +150,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideToastManager(): ToastManager {
-        return ToastManagerImpl()
+    fun provideToastManager(context: Context): ToastManager {
+        return ToastManagerImpl(context)
     }
 }

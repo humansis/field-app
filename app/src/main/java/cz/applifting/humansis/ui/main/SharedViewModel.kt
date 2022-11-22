@@ -118,9 +118,10 @@ class SharedViewModel @Inject constructor(
             if (lastInfo.state == WorkInfo.State.FAILED && lastInfoId != lastShownInfoId) {
                 val errors = lastInfo.outputData.getStringArray(ERROR_MESSAGE_KEY)
                 // show only first error in toast
-                val error = errors?.first()
+                errors?.firstOrNull()?.let { error ->
+                    setToastMessage(error)
+                }
 
-                setToastMessage(error)
                 launch {
                     // avoid showing the same error toast twice (after restarting the app)
                     sp.edit().putString(LAST_SYNC_FAILED_ID_KEY, lastInfoId).suspendCommit()
@@ -169,7 +170,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun setToastMessage(text: String?) {
+    fun setToastMessage(text: String) {
         toastManager.setToastMessage(text)
     }
 

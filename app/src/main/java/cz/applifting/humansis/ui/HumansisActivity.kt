@@ -151,7 +151,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     private fun checkTokenAndEnqueueSynchronization() {
         if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
-            if (vm.validateToken(this)) {
+            if (vm.validateToken()) {
                 enqueueSynchronization()
             }
         }
