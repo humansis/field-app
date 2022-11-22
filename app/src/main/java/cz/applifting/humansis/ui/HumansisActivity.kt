@@ -1,10 +1,6 @@
 package cz.applifting.humansis.ui
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.nfc.NfcAdapter
@@ -29,7 +25,6 @@ import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
-import cz.applifting.humansis.extensions.isWifiConnected
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
@@ -61,9 +56,8 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     private val vm: MainViewModel by viewModels { viewModelFactory }
 
-    private val networkChangeReceiver = NetworkChangeReceiver()
-
     private var displayedDialog: AlertDialog? = null
+    private var displayedToast: Toast? = null
 
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
@@ -84,37 +78,29 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     override fun onStart() {
-        super.onStart()
         Log.d(TAG, "onStart")
+        super.onStart()
         checkAppVersion()
     }
 
     override fun onResume() {
-        super.onResume()
         Log.d(TAG, "onResume")
-
-        checkTokenAndEnqueueSynchronization()
-
-        val filter = IntentFilter()
-        filter.addAction("android.net.conn.CONNECTIVITY_ACTION")
-        filter.addAction("android.net.wifi.STATE_CHANGE")
-        registerReceiver(networkChangeReceiver, filter)
+        super.onResume()
     }
 
     override fun onPause() {
-        NfcInitializer.disableForegroundDispatch(this)
         Log.d(TAG, "onPause")
+        NfcInitializer.disableForegroundDispatch(this)
         super.onPause()
     }
 
     override fun onStop() {
-        dispose()
         Log.d(TAG, "onStop")
+        dispose()
         super.onStop()
     }
 
     override fun onDestroy() {
-        unregisterReceiver(networkChangeReceiver)
         Log.d(TAG, "onDestroy")
         super.onDestroy()
     }
@@ -167,11 +153,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
             if (vm.validateToken()) {
                 enqueueSynchronization()
-            } else {
-                showToast(getString(R.string.token_missing_or_expired))
             }
-        } else {
-            enqueueSynchronization()
         }
     }
 
@@ -201,27 +183,41 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         return (lastDownloadDate != null && lastDownloadDate.before(dateHourAgo))
     }
 
-    private inner class NetworkChangeReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (isWifiConnected()) {
-                checkTokenAndEnqueueSynchronization()
-            }
-        }
-    }
-
     override fun onTagDiscovered(tag: Tag) {
         Log.d(TAG, "onTagDiscovered")
         nfcTagPublisher.getTagSubject().onNext(tag)
     }
 
     private fun setUpObservers() {
+        fun showToast(text: String) {
+            displayedToast?.cancel()
+            displayedToast = null
+            val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+            val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+            tvMessage.text = text
+            displayedToast = Toast(this)
+            displayedToast?.duration = Toast.LENGTH_SHORT
+            displayedToast?.view = toastView
+            displayedToast?.show()
+        }
+
+        observe(vm.getToastMessageLiveData()) {
+            if (it != null) {
+                showToast(it)
+            }
+        }
+
+        observe(vm.enqueueSynchronization) {
+            checkTokenAndEnqueueSynchronization()
+        }
+
         observe(vm.readBalanceResult) {
             showReadBalanceResult(it)
         }
 
         observe(vm.readBalanceError) {
             Log.e(this.javaClass.simpleName, it)
-            showToast(
+            vm.setToastMessage(
                 if (it is PINException) {
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
                 } else {
@@ -349,16 +345,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         initializeCardDisposable = null
         readBalanceDisposable?.dispose()
         readBalanceDisposable = null
-    }
-
-    private fun showToast(text: String) {
-        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-        tvMessage.text = text
-        val toast = Toast(this)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = toastView
-        toast.show()
     }
 
     companion object {

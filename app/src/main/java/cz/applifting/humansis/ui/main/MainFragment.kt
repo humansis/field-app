@@ -3,11 +3,15 @@ package cz.applifting.humansis.ui.main
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
@@ -22,6 +26,7 @@ import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.hideSoftKeyboard
+import cz.applifting.humansis.extensions.isWifiConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironment
@@ -29,9 +34,12 @@ import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.SendLogDialogFragment
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.menu_status_button.view.*
+import kotlinx.android.synthetic.main.app_bar_main.nav_host_fragment
+import kotlinx.android.synthetic.main.app_bar_main.tb_toolbar
+import kotlinx.android.synthetic.main.fragment_main.btn_logout
+import kotlinx.android.synthetic.main.fragment_main.drawer_layout
+import kotlinx.android.synthetic.main.fragment_main.nav_view
+import kotlinx.android.synthetic.main.menu_status_button.view.iv_pending_changes
 import quanti.com.kotlinlog.Log
 
 /**
@@ -113,13 +121,6 @@ class MainFragment : BaseFragment() {
 
         // Define Observers
 
-        sharedViewModel.toastLD.observe(viewLifecycleOwner) {
-            if (it != null) {
-                showToast(it)
-                sharedViewModel.showToast(null)
-            }
-        }
-
         sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner) {
             if (it) {
                 sharedViewModel.resetShouldReauthenticate()
@@ -168,8 +169,6 @@ class MainFragment : BaseFragment() {
             } else if (viewModel.validateToken()) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
-            } else {
-                sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
             }
         }
     }
@@ -200,6 +199,9 @@ class MainFragment : BaseFragment() {
         sharedViewModel.getNetworkStatus().observe(viewLifecycleOwner) { available ->
             val drawable = if (available) R.drawable.ic_online else R.drawable.ic_offline
             ivStatus.simpleDrawable(drawable)
+            if (available && requireContext().isWifiConnected()) {
+                viewModel.enqueueSynchronization.call()
+            }
         }
 
         sharedViewModel.syncNeededLD.observe(viewLifecycleOwner) {
@@ -242,8 +244,6 @@ class MainFragment : BaseFragment() {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
                 if (viewModel.validateToken()) {
                     mainNavController.navigate(R.id.uploadDialog)
-                } else {
-                    sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
                 }
                 return true
             }
@@ -281,16 +281,6 @@ class MainFragment : BaseFragment() {
         } else {
             ContextCompat.getColor(requireContext(), R.color.screenBackgroundColor)
         }
-    }
-
-    private fun showToast(text: String) {
-        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
-        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
-        tvMessage.text = text
-        val toast = Toast(context)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = toastView
-        toast.show()
     }
 
     companion object {

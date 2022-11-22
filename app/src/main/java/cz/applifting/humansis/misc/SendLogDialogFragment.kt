@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import cz.applifting.humansis.R
 import cz.applifting.humansis.databinding.DialogLogsBinding
-import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.message
 import kotlinx.android.synthetic.main.dialog_logs.view.*
 import kotlinx.coroutines.*

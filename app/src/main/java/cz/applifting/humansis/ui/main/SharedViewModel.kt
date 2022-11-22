@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.managers.ToastManager
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
@@ -47,12 +48,12 @@ class SharedViewModel @Inject constructor(
     private val beneficiariesRepository: BeneficiariesRepository,
     private val errorsRepository: ErrorsRepository,
     private val loginManager: LoginManager,
+    private val toastManager: ToastManager,
     private val connectionObserver: ConnectionObserver,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
 
-    val toastLD = MediatorLiveData<String?>()
     private val pendingChangesLD = MutableLiveData<Boolean>()
     private val uploadIncompleteLD = sp.booleanLiveData(SP_SYNC_UPLOAD_INCOMPLETE, false)
     val syncNeededLD = MediatorLiveData<Boolean>()
@@ -84,7 +85,7 @@ class SharedViewModel @Inject constructor(
                     logsUploadFailedOnly()
                 )
 
-                if (it.first().state == WorkInfo.State.FAILED) {
+                if (it.firstOrNull()?.state == WorkInfo.State.FAILED) {
                     errorsRepository.getAll().collect { errors ->
                         errors.find { error -> error.syncErrorAction == SyncErrorActionEnum.LOGS_UPLOAD_NEW }
                             ?.let {
@@ -106,9 +107,8 @@ class SharedViewModel @Inject constructor(
             }
         }
 
-        toastLD.addSource(workInfos) {
+        toastManager.getToastMessageLiveData().addSource(workInfos) {
             if (it.isNullOrEmpty()) {
-                toastLD.value = null
                 return@addSource
             }
 
@@ -118,9 +118,10 @@ class SharedViewModel @Inject constructor(
             if (lastInfo.state == WorkInfo.State.FAILED && lastInfoId != lastShownInfoId) {
                 val errors = lastInfo.outputData.getStringArray(ERROR_MESSAGE_KEY)
                 // show only first error in toast
-                val error = errors?.first()
+                errors?.firstOrNull()?.let { error ->
+                    setToastMessage(error)
+                }
 
-                toastLD.value = error
                 launch {
                     // avoid showing the same error toast twice (after restarting the app)
                     sp.edit().putString(LAST_SYNC_FAILED_ID_KEY, lastInfoId).suspendCommit()
@@ -169,8 +170,8 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun showToast(text: String?) {
-        toastLD.value = text
+    fun setToastMessage(text: String) {
+        toastManager.setToastMessage(text)
     }
 
     fun resetShouldReauthenticate() {
