@@ -1,8 +1,23 @@
 package cz.applifting.humansis.db
 
-import androidx.room.*
-import cz.applifting.humansis.db.converters.*
-import cz.applifting.humansis.db.dao.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import cz.applifting.humansis.db.converters.CommodityConverter
+import cz.applifting.humansis.db.converters.CommodityTypeConverter
+import cz.applifting.humansis.db.converters.CountryConverter
+import cz.applifting.humansis.db.converters.DateConverter
+import cz.applifting.humansis.db.converters.IntListConverter
+import cz.applifting.humansis.db.converters.NationalCardIdConverter
+import cz.applifting.humansis.db.converters.ReferralTypeConverter
+import cz.applifting.humansis.db.converters.StringListConverter
+import cz.applifting.humansis.db.converters.TargetConverter
+import cz.applifting.humansis.db.dao.BeneficiaryDao
+import cz.applifting.humansis.db.dao.DistributionsDao
+import cz.applifting.humansis.db.dao.ErrorDao
+import cz.applifting.humansis.db.dao.ProjectsDao
+import cz.applifting.humansis.db.dao.UserDao
 import cz.applifting.humansis.db.migrations.Migration21to22
 import cz.applifting.humansis.db.migrations.Migration22to23
 import cz.applifting.humansis.db.migrations.Migration24to25
