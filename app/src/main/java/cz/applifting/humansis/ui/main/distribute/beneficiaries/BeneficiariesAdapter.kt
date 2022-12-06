@@ -77,6 +77,8 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
+            // TODO ukazat ikonku ze ma duplicitni jmeno
+
             tvHumansisId.text = view.context.getString(R.string.humansis_id_formatted, beneficiaryLocal.beneficiaryId)
             tvNationalId.visible(beneficiaryLocal.nationalIds.isNotEmpty())
             tvNationalId.text = constructNationalIdText(beneficiaryLocal.nationalIds)

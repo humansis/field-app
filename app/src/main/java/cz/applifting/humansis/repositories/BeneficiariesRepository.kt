@@ -11,6 +11,7 @@ import cz.applifting.humansis.model.api.BeneficiaryForReferralUpdate
 import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
+import cz.applifting.humansis.model.api.DistributionBeneficiary
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -34,42 +35,57 @@ class BeneficiariesRepository @Inject constructor(
 
         val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
-        val result = service
-            .getDistributionBeneficiaries(assistanceId).data
-            .map {
-                BeneficiaryLocal(
-                    id = it.id,
-                    beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.localGivenName,
-                    familyName = it.beneficiary.localFamilyName,
-                    assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(
-                        it.booklets
-                    ) || it.distributedAt != null,
-                    distributedAt = it.distributedAt,
-                    reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
-                    qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
-                    newSmartcard = null,
-                    edited = false,
-                    commodities = parseCommodities(it.booklets, it.reliefPackages),
-                    remote = distribution?.remote ?: false,
-                    dateExpiration = distribution?.dateOfExpiration,
-                    foodLimit = distribution?.foodLimit,
-                    nonfoodLimit = distribution?.nonfoodLimit,
-                    cashbackLimit = distribution?.cashbackLimit,
-                    nationalIds = it.beneficiary.nationalCardIds,
-                    originalReferralType = it.beneficiary.referralType,
-                    originalReferralNote = it.beneficiary.referralComment,
-                    referralType = it.beneficiary.referralType,
-                    referralNote = it.beneficiary.referralComment
-                )
-            }
+        val data = service.getDistributionBeneficiaries(assistanceId).data
+
+        val duplicateBeneficiaries = findAllDuplicates(data)
+
+        val result = data.map { distributionBeneficiary ->
+            BeneficiaryLocal(
+                id = distributionBeneficiary.id,
+                beneficiaryId = distributionBeneficiary.beneficiary.id,
+                givenName = distributionBeneficiary.beneficiary.localGivenName,
+                familyName = distributionBeneficiary.beneficiary.localFamilyName,
+                assistanceId = assistanceId,
+                distributed = areReliefPackagesDistributed(distributionBeneficiary.reliefPackages) || areBookletsDistributed(
+                    distributionBeneficiary.booklets
+                ) || distributionBeneficiary.distributedAt != null,
+                distributedAt = distributionBeneficiary.distributedAt,
+                reliefIDs = parseGeneralReliefPackages(distributionBeneficiary.reliefPackages),
+                qrBooklets = parseQRBooklets(distributionBeneficiary.booklets),
+                smartcard = distributionBeneficiary.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
+                newSmartcard = null,
+                edited = false,
+                commodities = parseCommodities(distributionBeneficiary.booklets, distributionBeneficiary.reliefPackages),
+                remote = distribution?.remote ?: false,
+                dateExpiration = distribution?.dateOfExpiration,
+                foodLimit = distribution?.foodLimit,
+                nonfoodLimit = distribution?.nonfoodLimit,
+                cashbackLimit = distribution?.cashbackLimit,
+                nationalIds = distributionBeneficiary.beneficiary.nationalCardIds,
+                originalReferralType = distributionBeneficiary.beneficiary.referralType,
+                originalReferralNote = distributionBeneficiary.beneficiary.referralComment,
+                referralType = distributionBeneficiary.beneficiary.referralType,
+                referralNote = distributionBeneficiary.beneficiary.referralComment,
+                hasDuplicateName = duplicateBeneficiaries.find { it == distributionBeneficiary } != null
+            )
+        }
 
         dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
+    }
+
+    private fun findAllDuplicates(list: List<DistributionBeneficiary>): List<DistributionBeneficiary> {
+        val seenNames = mutableSetOf<Pair<String, String>>()
+        return list.filter {
+            !seenNames.add(
+                Pair(
+                    it.beneficiary.localGivenName ?: "",
+                    it.beneficiary.localFamilyName ?: ""
+                )
+            )
+        }.distinct().toList()
     }
 
     suspend fun updateBeneficiaryReferralOnline(beneficiary: BeneficiaryLocal) {

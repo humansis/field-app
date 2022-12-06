@@ -148,6 +148,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // TODO pridat ikonky duplicitniho jmena
+
         view.apply {
             btn_close.setImageResource(if (args.isFromList) R.drawable.ic_arrow_back else R.drawable.ic_close_black_24dp)
             btn_close.setOnClickListener {
@@ -385,6 +387,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     ) {
         if (NfcInitializer.initNfc(requireActivity())) {
             btn_scan_smartcard.setOnClickListener {
+
+                // TODO ukazat nejdriv warning dialog
+
                 Log.d(TAG, "Scan smartcard button clicked")
                 btn_scan_smartcard.isEnabled = false
                 val pin = generateRandomPin()
@@ -442,7 +447,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         val third = (0..9).random()
         val fourth = (0..9).random()
 
-        return "${first}${second}${third}$fourth"
+        return "$first$second$third$fourth"
     }
 
     private fun handleQrVoucher(beneficiary: BeneficiaryLocal) {
