@@ -28,7 +28,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_connection_status" />
+        app:layout_constraintTop_toBottomOf="@id/iv_connection_status" />
 
     <TextView
         android:id="@+id/tv_changes"
@@ -39,7 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_connectoin_status"
+        app:layout_constraintTop_toBottomOf="@id/tv_connectoin_status"
         tools:text="@string/pending_local_changes" />
 
     <TextView
@@ -52,7 +52,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_changes" />
+        app:layout_constraintTop_toBottomOf="@id/tv_changes" />
 
     <TextView
         android:id="@+id/tv_current_data_date"
@@ -63,7 +63,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_current_data"
+        app:layout_constraintTop_toBottomOf="@id/tv_current_data"
         tools:text="20-09-2019 13:30" />
 
     <TextView
@@ -76,7 +76,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_current_data_date" />
+        app:layout_constraintTop_toBottomOf="@id/tv_current_data_date" />
 
     <TextView
         android:id="@+id/tv_sync_failed_date"
@@ -87,7 +87,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sync_failed"
+        app:layout_constraintTop_toBottomOf="@id/tv_sync_failed"
         tools:text="20-09-2019 13:30" />
 
     <TextView
@@ -114,7 +114,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sync_summary" />
+        app:layout_constraintTop_toBottomOf="@id/tv_sync_summary" />
 
     <Button
         android:id="@+id/btn_sync"

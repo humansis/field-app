@@ -19,7 +19,7 @@ import cz.applifting.humansis.model.Target
 import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_distribution.view.*
-import kotlinx.android.synthetic.main.item_project.view.tv_location
+import kotlinx.android.synthetic.main.item_project.view.tv_name
 import quanti.com.kotlinlog.Log
 
 /**
@@ -64,7 +64,7 @@ class DistributionsAdapter(
     }
 
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
-        private val tvName: TextView = layout.tv_location
+        private val tvName: TextView = layout.tv_name
         private val tvDate: TextView = layout.tv_date!!
         private val tvBeneficiariesCnt: TextView = layout.tv_beneficiaries_cnt
         private val ivTarget: ImageView = layout.iv_target

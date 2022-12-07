@@ -37,7 +37,7 @@ class BeneficiariesRepository @Inject constructor(
 
         val data = service.getDistributionBeneficiaries(assistanceId).data
 
-        val duplicateBeneficiaries = findAllDuplicates(data)
+        val duplicateBeneficiaryNames = findAllDuplicateNames(data)
 
         val result = data.map { distributionBeneficiary ->
             BeneficiaryLocal(
@@ -66,7 +66,7 @@ class BeneficiariesRepository @Inject constructor(
                 originalReferralNote = distributionBeneficiary.beneficiary.referralComment,
                 referralType = distributionBeneficiary.beneficiary.referralType,
                 referralNote = distributionBeneficiary.beneficiary.referralComment,
-                hasDuplicateName = duplicateBeneficiaries.find { it == distributionBeneficiary } != null
+                hasDuplicateName = isDuplicateName(duplicateBeneficiaryNames, distributionBeneficiary)
             )
         }
 
@@ -74,18 +74,6 @@ class BeneficiariesRepository @Inject constructor(
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
-    }
-
-    private fun findAllDuplicates(list: List<DistributionBeneficiary>): List<DistributionBeneficiary> {
-        val seenNames = mutableSetOf<Pair<String, String>>()
-        return list.filter {
-            !seenNames.add(
-                Pair(
-                    it.beneficiary.localGivenName ?: "",
-                    it.beneficiary.localFamilyName ?: ""
-                )
-            )
-        }.distinct().toList()
     }
 
     suspend fun updateBeneficiaryReferralOnline(beneficiary: BeneficiaryLocal) {
@@ -301,5 +289,26 @@ class BeneficiariesRepository @Inject constructor(
     private fun List<ReliefPackage>.filterGeneralReliefs(): List<ReliefPackage> {
         val nonGeneralTypes = setOf(CommodityType.SMARTCARD, CommodityType.QR_VOUCHER)
         return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
+    }
+
+    private fun findAllDuplicateNames(list: List<DistributionBeneficiary>): List<Pair<String, String>> {
+        val seenNames = mutableSetOf<Pair<String, String>>()
+        return list.asSequence()
+            .map { Pair(it.beneficiary.localGivenName ?: "", it.beneficiary.localFamilyName ?: "") }
+            .filter { !seenNames.add(it) }
+            .distinct()
+            .toList()
+    }
+
+    private fun isDuplicateName(
+        duplicateBeneficiaryNames: List<Pair<String, String>>,
+        distributionBeneficiary: DistributionBeneficiary
+    ): Boolean {
+        return duplicateBeneficiaryNames.find {
+            it == Pair(
+                distributionBeneficiary.beneficiary.localGivenName,
+                distributionBeneficiary.beneficiary.localFamilyName
+            )
+        } != null
     }
 }
