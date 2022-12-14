@@ -70,6 +70,18 @@ class SettingsViewModel @Inject constructor(
             "UKR" -> {
                 context?.getString(R.string.UKR) ?: iso3
             }
+            "ETH" -> {
+                context?.getString(R.string.ETH) ?: iso3
+            }
+            "MNG" -> {
+                context?.getString(R.string.MNG) ?: iso3
+            }
+            "ARM" -> {
+                context?.getString(R.string.ARM) ?: iso3
+            }
+            "ZMB" -> {
+                context?.getString(R.string.ZMB) ?: iso3
+            }
             else -> {
                 iso3
             }

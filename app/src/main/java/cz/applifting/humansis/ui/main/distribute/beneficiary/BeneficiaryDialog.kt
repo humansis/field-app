@@ -514,7 +514,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                 beneficiary.familyName
                             )
                             this.tv_ids.text = getString(
-                                R.string.please_check_id,
+                                R.string.please_check_ids,
                                 getNationalIdsAsText(beneficiary.nationalIds, requireContext(), true)
                             )
                         }

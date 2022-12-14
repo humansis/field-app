@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="navigation_drawer_open">Відкрити панель навігації</string>
-    <string name="navigation_drawer_close">Закрити панель навігації</string>
     <string name="nav_header_desc">Меню навігації</string>
     <string name="action_settings">Налаштування</string>
     <string name="menu_home">Проєкти</string>
@@ -9,7 +7,6 @@
     <string name="login">Логін</string>
     <string name="log_out">Вихід</string>
     <string name="projects">Проєкти</string>
-    <string name="unnamed_project">Проєкти без назви</string>
     <string name="date_of_distribution">Старт: %1$s</string>
     <string name="beneficiaries">Отримувачі: %1$d</string>
     <string name="commodities">Товари</string>
@@ -18,10 +15,6 @@
     <string name="national_id">Ідентифікаційний номер</string>
     <string name="beneficiaries_reached">%1$d з %2$d досягнуто отримувачів</string>
     <string name="search_beneficiary_hint">Пошук по назві</string>
-    <string name="camera_permission_dialog_title">Дозволите доступ до камери</string>
-    <string name="camera_permission_dialog_message">Для скануваня QR коду потрібен доступ до камери</string>
-    <string name="camera_permission_dialog_positive_btn_label">Ок</string>
-    <string name="camera_permission_dialog_negative_btn_label">Не зараз</string>
     <string name="rescan_qr">Пересканувати QR</string>
     <string name="booklet_id">Номер буклету</string>
     <string name="beneficiary">Отримувач</string>
@@ -65,8 +58,6 @@
     <string name="logout_alert_title">Вийти</string>
     <string name="logout_alert_pending_changes_title">Очікування змін</string>
     <string name="logout_alert_pending_changes_text">Ви впевнені, що бажаєте вийти? вся інформація з додатку буде видалена. Перед виходом потрібно синхронізувати зміни, інакше вони будуть видалені</string>
-    <string name="show_developer_logs">Показати журнали розробника</string>
-    <string name="copy">Скопіювати</string>
     <string name="close">Закрити</string>
     <string name="error_server">Помилка сервера</string>
     <string name="error_bad_request">Помилковий запит</string>
@@ -109,33 +100,19 @@
     <string name="add_referral">Додати інформацію про перенаправлення</string>
     <string name="edit_referral">Редагувати інформацію про рекомендації</string>
     <string name="confirm_distribution_message">Підтвердьте призначення цього отримувачу</string>
-    <string name="acra_notif_channel">Надішліть звіт про аварійне завершення роботи</string>
-    <string name="acra_notif_title">Збій системи Humansis</string>
-    <string name="acra_notif_text">Вибачте, додаток зазнав збою. Будь ласка, надішліть звіт розробникам.</string>
-    <string name="acra_notif_send_button">Надіслати</string>
-    <string name="acra_email_subject">Звіт про аварійне завершення роботи Android</string>
     <string name="scan_card">Сканувати картку</string>
     <string name="smartcard_id">Відсканований ідентифікатор смарт-карти</string>
     <string name="you_need_to_enable_nfc">Щоб сканувати картки, потрібно ввімкнути NFC</string>
     <string name="no_nfc_available">Немає NFC</string>
-    <string name="pin">PIN-код картки</string>
-    <string name="please_enter_pin">Введіть PIN-код</string>
-    <string name="error_card_mismatch">Помилка: невідповідність картки</string>
-    <string name="remove_card">Видалити</string>
-    <string name="card_mismatch">Помилка. Будь ласка, відскануйте ту саму стару картку.</string>
     <string name="smartcard_id_old">Власна смарт-карта</string>
     <string name="none">Нічого немає</string>
-    <string name="old_card">стара картка</string>
-    <string name="new_card">нова картка</string>
     <string name="ok">ок</string>
     <string name="card_locked">Ця картка заблокована, і її більше не можна використовувати.</string>
     <string name="incorrect_pin">Недійсний PIN-код</string>
     <string name="invalid_data">Дані на картці не дійсні для цього запиту.</string>
     <string name="invalid_version">Недійсна версія.</string>
     <string name="currency_mismatch">Ви намагаєтеся додати гроші на картку з іншою валютою. Натомість використовуйте опцію «нова картка», щоб видалити старі кошти та створити новий з новою валютою.</string>
-    <string name="card_mismatch_message">Цьому отримувачу вже призначена активна картка, і вона не відповідає відсканованій картці. Якщо продовжити, стару картку буде заблоковано. Ви впевнені, що хочете продовжити?</string>
     <string name="card_error">Помилка під час сканування картки. Будь ласка спробуйте ще раз.</string>
-    <string name="delete_card_first">Неможливо скасувати призначення. Спершу видаліть призначену картку.</string>
     <string name="scan_the_card">Скануйте картку</string>
     <string name="tag_lost_card_error">Сканування перервано. Будь ласка, відскануйте картку ще раз.</string>
     <string name="different_user_card_error">Цю картку вже призначено іншому користувачеві</string>
@@ -145,9 +122,6 @@
     <string name="logs_dialog_title">Поділитися жуналом помилок</string>
     <string name="logs_dialog_message">Бажаєте відправити звіт з помилками?</string>
     <string name="logs_dialog_email_button">Поділитися</string>
-    <string name="menu">меню</string>
-    <string name="synchronize">синхронізувати</string>
-    <string name="loading">завантаження</string>
     <string name="read_balance">Показати баланс</string>
     <string name="utilities">Інструменти</string>
     <string name="initialize_cards">Додати картку</string>
