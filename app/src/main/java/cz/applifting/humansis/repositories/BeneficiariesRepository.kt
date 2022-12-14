@@ -291,24 +291,29 @@ class BeneficiariesRepository @Inject constructor(
         return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
     }
 
-    private fun findAllDuplicateNames(list: List<DistributionBeneficiary>): List<Pair<String, String>> {
-        val seenNames = mutableSetOf<Pair<String, String>>()
+    private fun findAllDuplicateNames(list: List<DistributionBeneficiary>): List<FullName> {
+        val seenNames = mutableSetOf<FullName>()
         return list.asSequence()
-            .map { Pair(it.beneficiary.localGivenName ?: "", it.beneficiary.localFamilyName ?: "") }
+            .map { FullName(it.beneficiary.localGivenName ?: "", it.beneficiary.localFamilyName ?: "") }
             .filter { !seenNames.add(it) }
             .distinct()
             .toList()
     }
 
     private fun isDuplicateName(
-        duplicateBeneficiaryNames: List<Pair<String, String>>,
+        duplicateBeneficiaryNames: List<FullName>,
         distributionBeneficiary: DistributionBeneficiary
     ): Boolean {
         return duplicateBeneficiaryNames.find {
-            it == Pair(
+            it == FullName(
                 distributionBeneficiary.beneficiary.localGivenName,
                 distributionBeneficiary.beneficiary.localFamilyName
             )
         } != null
     }
+
+    private data class FullName(
+        val givenName: String?,
+        val familyName: String?
+    )
 }
