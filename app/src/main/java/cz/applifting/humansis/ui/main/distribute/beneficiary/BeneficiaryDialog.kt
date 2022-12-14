@@ -29,6 +29,7 @@ import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
+import cz.applifting.humansis.misc.SmartcardUtilities.getNationalIdsAsText
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -60,6 +61,8 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.tv_old_smartcard
 import kotlinx.android.synthetic.main.fragment_beneficiary.tv_smartcard
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_action
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.btn_close
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.iv_duplicate_name_beneficiary
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.iv_duplicate_name_title
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.qr_scanner
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_amount
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
@@ -83,6 +86,8 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_smartcard
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_social_service_card
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_status
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_tax_number
+import kotlinx.android.synthetic.main.layout_duplicate_names_warning_dialog.view.tv_ids
+import kotlinx.android.synthetic.main.layout_duplicate_names_warning_dialog.view.tv_name
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import quanti.com.kotlinlog.Log
 
@@ -148,8 +153,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO pridat ikonky duplicitniho jmena
-
         view.apply {
             btn_close.setImageResource(if (args.isFromList) R.drawable.ic_arrow_back else R.drawable.ic_close_black_24dp)
             btn_close.setOnClickListener {
@@ -177,6 +180,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     beneficiary.givenName,
                     beneficiary.familyName
                 )
+                iv_duplicate_name_title.visible(beneficiary.hasDuplicateName)
                 tv_status.setValue(getString(if (beneficiary.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(beneficiary.distributed)
                 tv_humansis_id.setValue("${beneficiary.beneficiaryId}")
@@ -224,6 +228,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 }
 
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
+                iv_duplicate_name_beneficiary.visible(beneficiary.hasDuplicateName)
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
                 tv_amount.setOptionalValue(
@@ -388,8 +393,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         if (NfcInitializer.initNfc(requireActivity())) {
             btn_scan_smartcard.setOnClickListener {
 
-                // TODO ukazat nejdriv warning dialog
-
                 Log.d(TAG, "Scan smartcard button clicked")
                 btn_scan_smartcard.isEnabled = false
                 val pin = generateRandomPin()
@@ -405,7 +408,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         expirationDate = DateUtil.stringToDate(beneficiary.dateExpiration),
                         limits = beneficiary.getLimits()
                     ),
-                    showScanCardDialog(btn_scan_smartcard)
+                    showScanCardDialog(btn_scan_smartcard, beneficiary)
                 )
             }
         } else {
@@ -484,9 +487,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun showScanCardDialog(clickedButton: MaterialButton): AlertDialog {
+    private fun showScanCardDialog(clickedButton: MaterialButton, beneficiary: BeneficiaryLocal? = null): AlertDialog {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-            .setMessage(getString(R.string.scan_the_card))
+            .setTitle(getString(R.string.scan_the_card))
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog?.dismiss()
@@ -498,6 +501,26 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 disposable = null
             }
             .create()
+
+        if (beneficiary?.hasDuplicateName == true) {
+            scanCardDialog.apply {
+                setIcon(R.drawable.ic_warning)
+                setView(
+                    layoutInflater.inflate(R.layout.layout_duplicate_names_warning_dialog, null)
+                        .apply {
+                            this.tv_name.text = getString(
+                                R.string.beneficiary_name,
+                                beneficiary.givenName,
+                                beneficiary.familyName
+                            )
+                            this.tv_ids.text = getString(
+                                R.string.please_check_id,
+                                getNationalIdsAsText(beneficiary.nationalIds, requireContext(), true)
+                            )
+                        }
+                )
+            }
+        }
 
         scanCardDialog.show()
         displayedScanCardDialog = scanCardDialog

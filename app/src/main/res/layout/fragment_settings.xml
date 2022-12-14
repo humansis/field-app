@@ -15,7 +15,7 @@
         android:text="@string/country"
         android:textColor="@color/textColor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@id/textView" />
 
     <Spinner
         android:id="@+id/spinner_country"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_country" />
+        app:layout_constraintTop_toBottomOf="@id/tv_country" />
 
     <Button
         android:id="@+id/btn_export_logs"

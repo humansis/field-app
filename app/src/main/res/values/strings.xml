@@ -185,4 +185,7 @@
     <string name="civil_registration_record">Civil Registration Record</string>
     <string name="other">Other</string>
     <string name="amount_label">Amount</string>
+    <string name="assistance_duplicate_names">This assistance contains beneficiaries with similar names marked with the following icon.\nPlease check their IDs carefully.</string>
+    <string name="dialog_duplicate_name">There is another beneficiary with the SAME NAME in this assistance:</string>
+    <string name="please_check_id">Please, check ID numbers:\n%1$s</string>
 </resources>

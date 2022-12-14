@@ -2,6 +2,7 @@ package cz.applifting.humansis.misc
 
 import android.content.Context
 import cz.applifting.humansis.R
+import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.CategoryType
 import java.util.*
 
@@ -30,5 +31,12 @@ object SmartcardUtilities {
             }
         }
         return limits
+    }
+
+    fun getNationalIdsAsText(nationalIds: List<NationalCardId>, context: Context, bulleted: Boolean = false): String {
+        val bullet = if (bulleted) "- " else ""
+        return nationalIds.joinToString("\n") { nationalCardId ->
+            "$bullet${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
+        }
     }
 }

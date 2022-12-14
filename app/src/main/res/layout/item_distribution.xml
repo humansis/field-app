@@ -19,12 +19,12 @@
                 android:layout_height="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_location"
+                app:layout_constraintTop_toTopOf="@id/tv_name"
                 app:layout_constraintVertical_bias="0.050000012"
                 app:srcCompat="@drawable/ic_circle" />
 
         <TextView
-                android:id="@+id/tv_location"
+                android:id="@+id/tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -33,7 +33,7 @@
                 android:layout_weight="1"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                app:layout_constraintEnd_toStartOf="@+id/iv_target"
+                app:layout_constraintEnd_toStartOf="@id/iv_target"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="I am a cool distribution" />
@@ -46,7 +46,7 @@
                 android:layout_marginTop="16dp"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
-                app:layout_constraintTop_toBottomOf="@+id/tv_location"
+                app:layout_constraintTop_toBottomOf="@id/tv_name"
                 tools:text="Date: lsadjfadsf" />
 
         <TextView
@@ -57,7 +57,7 @@
                 android:layout_marginTop="4dp"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
-                app:layout_constraintTop_toBottomOf="@+id/tv_date"
+                app:layout_constraintTop_toBottomOf="@id/tv_date"
                 tools:text="Beneficiaries: 100" />
 
         <TextView
@@ -69,16 +69,16 @@
                 android:text="@string/commodities"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
-                app:layout_constraintTop_toBottomOf="@+id/tv_beneficiaries_cnt" />
+                app:layout_constraintTop_toBottomOf="@id/tv_beneficiaries_cnt" />
 
             <LinearLayout
                     android:id="@+id/tl_commodities_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_commodities"
-                    app:layout_constraintStart_toEndOf="@+id/tv_commodities"
-                    app:layout_constraintTop_toTopOf="@+id/tv_commodities">
+                    app:layout_constraintBottom_toBottomOf="@id/tv_commodities"
+                    app:layout_constraintStart_toEndOf="@id/tv_commodities"
+                    app:layout_constraintTop_toTopOf="@id/tv_commodities">
 
             </LinearLayout>
 
@@ -102,9 +102,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="center_vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_status"
+                app:layout_constraintBottom_toBottomOf="@id/iv_status"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/iv_status"
+                app:layout_constraintTop_toTopOf="@id/iv_status"
                 app:srcCompat="@drawable/ic_home_black_24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
