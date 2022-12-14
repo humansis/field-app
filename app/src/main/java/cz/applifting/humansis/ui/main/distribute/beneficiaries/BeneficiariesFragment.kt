@@ -55,6 +55,7 @@ class BeneficiariesFragment : BaseFragment() {
         lc_beneficiaries.init(viewAdapter)
 
         viewModel.searchResultsLD.observe(viewLifecycleOwner) {
+            // TODO if obsahuje nejaky s duplicateName -> ukazat warning
             viewAdapter.update(it)
         }
 
