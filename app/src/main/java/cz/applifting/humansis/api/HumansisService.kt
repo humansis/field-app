@@ -13,6 +13,9 @@ interface HumansisService {
     @POST("v2/login")
     suspend fun postLogin(@Body loginRequest: LoginRequest): LoginResponse
 
+    @POST("v2/login/token/refresh")
+    suspend fun refreshToken(@Body refreshToken: String): LoginResponse
+
     @GET("v1/projects")
     suspend fun getProjects(): List<Project>
 

@@ -24,7 +24,7 @@ import quanti.com.kotlinlog.Log
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 29,
+    version = 30,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(
@@ -51,6 +51,11 @@ import quanti.com.kotlinlog.Log
             from = 28,
             to = 29,
             spec = HumansisDB.AutoMigrationTo29::class
+        ),
+        AutoMigration(
+            from = 29,
+            to = 30,
+            spec = HumansisDB.AutoMigrationTo30::class
         )
     ]
 )
@@ -212,6 +217,13 @@ abstract class HumansisDB : RoomDatabase() {
     class AutoMigrationTo29 : AutoMigrationSpec {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             Log.d(TAG, "DATABASE MIGRATION FROM 28 TO 29 FINISHED SUCCESSFULLY")
+        }
+    }
+
+    // Migration that adds refresh token columns to UserDbEntity
+    class AutoMigrationTo30 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            Log.d(TAG, "DATABASE MIGRATION FROM 29 TO 30 FINISHED SUCCESSFULLY")
         }
     }
 

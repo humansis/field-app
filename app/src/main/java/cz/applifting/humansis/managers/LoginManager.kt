@@ -79,6 +79,8 @@ class LoginManager @Inject constructor(
             username = userResponse.username,
             email = userResponse.email,
             token = userResponse.token,
+            refreshToken = userResponse.refreshToken,
+            refreshTokenExpiration = userResponse.refreshTokenExpiration,
             countries = userResponse.availableCountries ?: listOf()
         )
         db.userDao().insert(user)
@@ -104,6 +106,7 @@ class LoginManager @Inject constructor(
     suspend fun invalidateToken() {
         val user = retrieveUserDb()
         if (user != null) {
+            // TODO invalidate both tokens?
             db.userDao().update(user.copy(token = null))
         }
     }
@@ -153,6 +156,8 @@ class LoginManager @Inject constructor(
                 id = it.id,
                 username = it.username,
                 token = it.token?.let { token -> JWToken(getPayload(token)) },
+                refreshToken = it.refreshToken?.let{ token -> JWToken(getPayload(token)) }, // TODO
+                refreshTokenExpiration = it.refreshTokenExpiration, // TODO null check
                 email = it.email,
                 invalidPassword = it.invalidPassword,
                 countries = it.countries

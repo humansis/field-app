@@ -251,6 +251,7 @@ class MainFragment : BaseFragment() {
 
     private fun validateToken(token: JWToken?): Boolean {
         return if (token == null || token.isExpired()) {
+            // TODO (check refresh token. if valid, refresh. else, invalidate both tokens)
             invalidateToken()
             false
         } else {

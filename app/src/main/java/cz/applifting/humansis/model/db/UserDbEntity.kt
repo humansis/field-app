@@ -11,6 +11,8 @@ data class UserDbEntity(
     @PrimaryKey val id: Long,
     val username: String,
     val token: String?,
+    var refreshToken: String?,
+    var refreshTokenExpiration: String?,
     val email: String,
     val invalidPassword: Boolean = false,
     val countries: List<String> = listOf()
