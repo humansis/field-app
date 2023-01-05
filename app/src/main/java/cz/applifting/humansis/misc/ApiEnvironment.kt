@@ -74,7 +74,7 @@ sealed class ApiEnvironment(
 
     object T4G : ApiEnvironment(
         id = 9,
-        title = "T4G",
+        title = T4G_API_TITLE,
         url = "apiarm.humansis.org"
     )
 
@@ -89,6 +89,7 @@ sealed class ApiEnvironment(
         const val TEST_API_TITLE = "TEST"
         const val LOCAL_API_TITLE = "LOCAL"
         const val CUSTOM_API_TITLE = "CUSTOM"
+        const val T4G_API_TITLE = "T4G"
 
         fun createEnvironments(context: Context): List<ApiEnvironment> {
             return mutableListOf(
@@ -135,6 +136,7 @@ sealed class ApiEnvironment(
                 DEV3_API_TITLE -> Dev3
                 TEST_API_TITLE -> Test
                 LOCAL_API_TITLE -> Local
+                T4G_API_TITLE -> T4G
                 else -> null
             }
         }
