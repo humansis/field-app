@@ -10,6 +10,6 @@ data class User(
     val refreshToken: String?,
     val refreshTokenExpiration: String?,
     val email: String,
-    val invalidPassword: Boolean = false,
+    val shouldReauthenticate: Boolean = false,
     val countries: List<String> = listOf()
 )

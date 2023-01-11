@@ -48,10 +48,7 @@ class HeadersInterceptor(
                     loginManager.updateUser(loginResponse)
                     this.add("Authorization", "Bearer ${loginResponse.token}")
                 } catch (e: Exception) {
-                    Log.e(TAG, e, "Refresh token request ended with an exception, using old auth token expecting an response error code.")
-                    loginManager.getAuthToken()?.let {
-                        this.add("Authorization", "Bearer $it")
-                    }
+                    Log.e(TAG, e, "Refresh token request ended with an exception. Not using Authorization token expecting a 401 response error code.")
                 }
             }
         } else {

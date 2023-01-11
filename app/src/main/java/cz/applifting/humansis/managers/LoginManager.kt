@@ -43,9 +43,9 @@ class LoginManager @Inject constructor(
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
-        val defaultCountry = userResponse.availableCountries?.firstOrNull() ?: ""
+        val defaultCountry = userResponse.availableCountries.firstOrNull() ?: ""
 
-        if (retrieveUser()?.invalidPassword == true) {
+        if (retrieveUser()?.shouldReauthenticate == true) {
             // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekeyed using the new one.
             val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null)
                 ?: throw IllegalStateException("DB password lost")
@@ -92,10 +92,10 @@ class LoginManager @Inject constructor(
         encryptDefault()
     }
 
-    suspend fun invalidatePassword() {
+    suspend fun forceReauthentication() {
         val user = retrieveUserDb()
         if (user != null) {
-            db.userDao().update(user.copy(invalidPassword = true))
+            db.userDao().update(user.copy(shouldReauthenticate = true))
         }
     }
 
@@ -168,7 +168,7 @@ class LoginManager @Inject constructor(
                 refreshToken = it.refreshToken,
                 refreshTokenExpiration = it.refreshTokenExpiration,
                 email = it.email,
-                invalidPassword = it.invalidPassword,
+                shouldReauthenticate = it.shouldReauthenticate,
                 countries = it.countries
             )
         }

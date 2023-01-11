@@ -98,9 +98,9 @@ class SharedViewModel @Inject constructor(
 
         shouldReauthenticateLD.addSource(workInfos) {
             launch {
-                shouldReauthenticateLD.value = loginManager.retrieveUser()?.invalidPassword == true
+                shouldReauthenticateLD.value = loginManager.retrieveUser()?.shouldReauthenticate == true
 
-                if (loginManager.retrieveUser()?.invalidPassword == true) {
+                if (loginManager.retrieveUser()?.shouldReauthenticate == true) {
                     sp.edit().putBoolean("test", false).apply()
                 }
             }

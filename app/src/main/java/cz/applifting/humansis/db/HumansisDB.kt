@@ -220,8 +220,13 @@ abstract class HumansisDB : RoomDatabase() {
         }
     }
 
-    // Migration that adds refresh token columns to UserDbEntity
+    @RenameColumn(
+        tableName = "User",
+        fromColumnName = "invalidPassword",
+        toColumnName = "shouldReauthenticate"
+    )
     class AutoMigrationTo30 : AutoMigrationSpec {
+        // This migration also adds refresh token columns to UserDbEntity.
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             Log.d(TAG, "DATABASE MIGRATION FROM 29 TO 30 FINISHED SUCCESSFULLY")
         }
