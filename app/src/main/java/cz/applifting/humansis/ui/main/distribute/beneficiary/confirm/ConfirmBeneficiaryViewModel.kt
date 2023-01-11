@@ -3,7 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.orNullIfEmpty
-import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
+import cz.applifting.humansis.misc.convertTimeForApiRequestBody
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository

@@ -11,7 +11,7 @@ object SmartcardUtilities {
         return if (expirationDate != null) {
             context.getString(
                 R.string.expiration_date_formatted,
-                DateUtil.dateToString(expirationDate, context)
+                dateToString(expirationDate, context)
             )
         } else {
             String()

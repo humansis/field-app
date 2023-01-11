@@ -8,8 +8,8 @@ import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironment
-import cz.applifting.humansis.misc.ApiUtilities
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.misc.getDefaultEnvironment
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
 import cz.applifting.humansis.ui.App
@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
             sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
         } catch (e: Exception) {
             null
-        } ?: ApiUtilities.getDefaultEnvironment()
+        } ?: getDefaultEnvironment()
     }
 
     fun login(username: String, password: String, loginFinishCallback: LoginFinishCallback) {

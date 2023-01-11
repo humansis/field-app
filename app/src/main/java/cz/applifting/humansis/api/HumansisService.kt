@@ -13,9 +13,6 @@ interface HumansisService {
     @POST("v2/login")
     suspend fun postLogin(@Body loginRequest: LoginRequest): LoginResponse
 
-    @POST("v2/login/token/refresh")
-    suspend fun refreshToken(@Body refreshToken: String): LoginResponse
-
     @GET("v1/projects")
     suspend fun getProjects(): List<Project>
 
@@ -36,7 +33,7 @@ interface HumansisService {
     suspend fun assignBooklet(
         @Path("beneficiaryId") beneficiaryId: Int,
         @Path("assistanceId") assistanceId: Int,
-        @Body assingBookletRequest: AssignBookletRequest
+        @Body assignBookletRequest: AssignBookletRequest
     )
 
     @POST("v1/beneficiaries/{beneficiaryId}")

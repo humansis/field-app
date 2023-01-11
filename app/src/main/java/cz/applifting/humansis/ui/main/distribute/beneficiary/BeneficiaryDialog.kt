@@ -24,12 +24,12 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.misc.DateUtil
-import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
+import cz.applifting.humansis.misc.convertTimeForApiRequestBody
+import cz.applifting.humansis.misc.stringToDate
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -398,7 +398,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         beneficiaryId = beneficiary.beneficiaryId,
                         currency = currency,
                         assistanceId = beneficiary.assistanceId,
-                        expirationDate = DateUtil.stringToDate(beneficiary.dateExpiration),
+                        expirationDate = stringToDate(beneficiary.dateExpiration),
                         limits = beneficiary.getLimits()
                     ),
                     showScanCardDialog(btn_scan_smartcard)

@@ -81,9 +81,9 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun invalidateToken() {
+    fun invalidateTokens() {
         launch(Dispatchers.IO) {
-            loginManager.invalidateToken()
+            loginManager.invalidateTokens()
             sp.setDate(LAST_DOWNLOAD_KEY, null)
             userLD.postValue(null)
         }

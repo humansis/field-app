@@ -27,9 +27,10 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.SendLogDialogFragment
-import cz.applifting.humansis.model.JWToken
+import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import java.util.Date
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
@@ -166,7 +167,7 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-            } else if (validateToken(it.token)) {
+            } else if (validateTokens(it)) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
             }
@@ -239,7 +240,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (validateToken(viewModel.userLD.value?.token)) {
+                if (validateTokens(viewModel.userLD.value)) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
@@ -249,11 +250,17 @@ class MainFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun validateToken(token: JWToken?): Boolean {
-        return if (token == null || token.isExpired()) {
-            // TODO (check refresh token. if valid, refresh. else, invalidate both tokens)
-            invalidateToken()
-            false
+    private fun validateTokens(user: User?): Boolean {
+        val authToken = user?.token
+        val refreshToken = user?.refreshToken
+        val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
+        return if (authToken == null || authToken.isExpired()) {
+            if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
+                invalidateToken()
+                false
+            } else {
+                true
+            }
         } else {
             true
         }
@@ -262,7 +269,7 @@ class MainFragment : BaseFragment() {
     private fun invalidateToken() {
         Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
         sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
-        viewModel.invalidateToken()
+        viewModel.invalidateTokens()
     }
 
     private fun setUpBackground() {

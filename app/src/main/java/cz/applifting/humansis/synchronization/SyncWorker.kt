@@ -298,6 +298,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             // Erase password to trigger re-authentication
             if (syncErrors.find { it.code == 403 } != null) {
+                // TODO ověřit, jestli tohle platí i pro invalid token
                 loginManager.invalidatePassword()
                 sp.setDate(LAST_DOWNLOAD_KEY, null)
             }
