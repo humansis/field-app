@@ -297,7 +297,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             errorsRepository.insertAll(syncErrors)
 
             // Erase password to trigger re-authentication
-            if (syncErrors.shouldReauthenticate()) {
+            // 401 response code means token was expired or that no token was sent at all
+            if (syncErrors.find { it.code == 401 } != null) {
                 loginManager.forceReauthentication()
                 sp.setDate(LAST_DOWNLOAD_KEY, null)
             }
@@ -309,12 +310,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()
             )
         }
-    }
-
-    private fun ArrayList<SyncError>.shouldReauthenticate(): Boolean {
-        // 403 means token expired TODO ověřit jestli je to pravda
-        // 401 means no token was sent
-        return this.find { it.code == 403 || it.code == 401 } != null
     }
 
     private fun convertErrors(errors: List<SyncError>): Array<String> {
