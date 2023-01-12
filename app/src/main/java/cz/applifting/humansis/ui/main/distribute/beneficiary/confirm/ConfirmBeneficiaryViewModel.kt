@@ -2,8 +2,8 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.convertForApiRequestBody
 import cz.applifting.humansis.extensions.orNullIfEmpty
-import cz.applifting.humansis.misc.convertTimeForApiRequestBody
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
@@ -94,7 +94,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(
                     ).let {
                         if (it.distributed) {
                             it.copy(
-                                distributedAt = convertTimeForApiRequestBody(Date())
+                                distributedAt = Date().convertForApiRequestBody()
                             )
                         } else {
                             it

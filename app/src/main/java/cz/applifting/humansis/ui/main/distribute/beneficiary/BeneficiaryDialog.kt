@@ -21,15 +21,15 @@ import com.google.android.material.button.MaterialButton
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.convertForApiRequestBody
 import cz.applifting.humansis.extensions.getCommodityValueText
+import cz.applifting.humansis.extensions.toDate
 import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
-import cz.applifting.humansis.misc.convertTimeForApiRequestBody
-import cz.applifting.humansis.misc.stringToDate
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.NationalCardIdType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -398,7 +398,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         beneficiaryId = beneficiary.beneficiaryId,
                         currency = currency,
                         assistanceId = beneficiary.assistanceId,
-                        expirationDate = stringToDate(beneficiary.dateExpiration),
+                        expirationDate = beneficiary.dateExpiration?.toDate(),
                         limits = beneficiary.getLimits()
                     ),
                     showScanCardDialog(btn_scan_smartcard)
@@ -563,7 +563,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     val cardId = NfcUtil.toHexString(tag.id).toUpperCase(Locale.US)
                     viewModel.saveCard(
                         cardId,
-                        convertTimeForApiRequestBody(Date()),
+                        Date().convertForApiRequestBody(),
                         cardContent.originalBalance,
                         cardContent.balance
                     )
