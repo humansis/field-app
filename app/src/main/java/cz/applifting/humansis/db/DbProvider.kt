@@ -17,7 +17,7 @@ class DbProvider(val context: Context) {
     lateinit var db: HumansisDB
 
     fun init(password: ByteArray, oldPass: ByteArray? = null) {
-        if (!::db.isInitialized) {
+        if (!isInitialized()) {
             db = Room.databaseBuilder(
                 context,
                 HumansisDB::class.java, DB_NAME

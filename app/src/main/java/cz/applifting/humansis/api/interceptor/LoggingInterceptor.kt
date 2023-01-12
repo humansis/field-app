@@ -1,7 +1,7 @@
 package cz.applifting.humansis.api.interceptor
 
 import cz.applifting.humansis.BuildConfig
-import cz.applifting.humansis.misc.ApiUtilities
+import cz.applifting.humansis.misc.isPositiveResponseHttpCode
 import okhttp3.Headers
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -13,14 +13,16 @@ import okio.Buffer
 import okio.GzipSource
 import quanti.com.kotlinlog.Log
 import java.nio.charset.Charset
+import java.util.regex.Pattern
 
 class LoggingInterceptor : Interceptor {
 
     @Volatile
     private var shouldLogHeaders: Boolean = false
 
-    // TODO neskryvat cele telo pokud obsahuje password nebo token, ale jen skryt hodnotu pomoci matcheru
-    private val forbiddenRegex = Regex("(password|multipart/form-data|^<html>)")
+    private val forbiddenRegex = Regex("(multipart/form-data|^<html>)")
+    private val passwordPattern = Pattern.compile("password\":\"[^\"]*\"", Pattern.CASE_INSENSITIVE)
+    private val tokenPattern = Pattern.compile("token\":\"[^\"]*\"", Pattern.CASE_INSENSITIVE)
 
     fun setShouldLogHeaders(shouldLogHeaders: Boolean) {
         this.shouldLogHeaders = shouldLogHeaders
@@ -53,7 +55,7 @@ class LoggingInterceptor : Interceptor {
                 setShouldLogHeaders(false)
             }
 
-            if (BuildConfig.DEBUG || !ApiUtilities.isPositiveResponseHttpCode(this.code())) {
+            if (BuildConfig.DEBUG || !isPositiveResponseHttpCode(this.code())) {
                 this.body()?.let {
                     logResponseBody(this.headers(), it)
                 }
@@ -87,7 +89,7 @@ class LoggingInterceptor : Interceptor {
         }
         val body = buffer.readString(charset)
         if (!body.contains(forbiddenRegex)) {
-            Log.d(TAG, "--> BODY $body")
+            Log.d(TAG, "--> BODY ${transformBody(body)}")
             Log.d(
                 TAG,
                 "--> END " + requestMethod + " (" + requestBody.contentLength() + "-byte body)"
@@ -121,7 +123,7 @@ class LoggingInterceptor : Interceptor {
             }
             val body = buffer.clone().readString(charset)
             if (!body.contains(forbiddenRegex)) {
-                Log.d(TAG, "<-- BODY $body")
+                Log.d(TAG, "<-- BODY ${transformBody(body)}")
             }
         }
         if (gzippedLength != null) {
@@ -132,6 +134,11 @@ class LoggingInterceptor : Interceptor {
         } else {
             Log.d(TAG, "<-- END HTTP (" + buffer.size() + "-byte body)")
         }
+    }
+
+    private fun transformBody(body: String): String {
+        val bodyWithHiddenPasswords = passwordPattern.matcher(body).replaceAll("password\":\"******\"")
+        return tokenPattern.matcher(bodyWithHiddenPasswords).replaceAll("token\":\"******\"")
     }
 
     companion object {
