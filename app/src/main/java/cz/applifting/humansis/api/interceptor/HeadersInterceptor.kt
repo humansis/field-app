@@ -36,7 +36,10 @@ class HeadersInterceptor(
     }
 
     private suspend fun Headers.Builder.handleAuthorizationHeader(oldRequest: Request) {
-        if (isAuthTokenExpiredOrNull()) {
+        val authToken = loginManager.getAuthToken()
+        if (!authToken.isExpiredOrNull()) {
+            this.add("Authorization", "Bearer $authToken")
+        } else {
             Log.d(
                 TAG,
                 "Auth token is expiring soon, acquiring new token for request ${oldRequest.method()} ${oldRequest.url()}"
@@ -48,18 +51,23 @@ class HeadersInterceptor(
                     loginManager.updateUser(loginResponse)
                     this.add("Authorization", "Bearer ${loginResponse.token}")
                 } catch (e: Exception) {
-                    Log.e(TAG, e, "Refresh token request ended with an exception. Not using Authorization token expecting a 401 response error code.")
+                    Log.e(
+                        TAG,
+                        e,
+                        "Refresh token request ended with an exception. Not using Authorization token expecting a 401 response error code."
+                    )
                 }
-            }
-        } else {
-            loginManager.getAuthToken()?.let {
-                this.add("Authorization", "Bearer $it")
+            } ?: run {
+                Log.e(
+                    TAG,
+                    "Refresh token not available. Not using Authorization token expecting a 401 response error code."
+                )
             }
         }
     }
 
-    private suspend fun isAuthTokenExpiredOrNull(): Boolean {
-        return loginManager.getAuthToken()?.let { JWToken(getPayload(it)) }?.isExpired() ?: true
+    private fun String?.isExpiredOrNull(): Boolean {
+        return this?.let { JWToken(getPayload(it)) }?.isExpired() ?: true
     }
 
     companion object {
