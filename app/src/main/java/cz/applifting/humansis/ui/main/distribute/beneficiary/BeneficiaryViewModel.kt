@@ -12,11 +12,14 @@ import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.C
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.v2.Deposit
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
+import cz.quanti.android.nfc.exception.PINException
+import cz.quanti.android.nfc.exception.PINExceptionEnum
 import io.reactivex.Single
+import java.util.Locale
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -73,7 +76,9 @@ class BeneficiaryViewModel @Inject constructor(
         deposit: Deposit,
         tagFoundCallback: () -> Unit
     ): Single<Pair<Tag, UserPinBalance>> {
+        lateinit var currentTag: Tag
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
+            currentTag = tag
             tagFoundCallback.invoke()
             if (remote) {
                 nfcFacade.rewriteBalanceForUser(tag, deposit).map {
@@ -85,6 +90,16 @@ class BeneficiaryViewModel @Inject constructor(
                 }
             }
         }
+            .onErrorResumeNext {
+                if (it is PINException && it.pinExceptionEnum == PINExceptionEnum.ALREADY_DISTRIBUTED) {
+                    Log.d(TAG, "Already distributed, reading balance.")
+                    nfcFacade.readProtectedBalanceForUser(currentTag).map { balance ->
+                        Pair(currentTag, balance)
+                    }
+                } else {
+                    throw it
+                }
+            }
     }
 
     fun changePinForCard(
@@ -155,6 +170,7 @@ class BeneficiaryViewModel @Inject constructor(
     }
 
     companion object {
+        private val TAG = BeneficiaryViewModel::class.java.simpleName
         private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
         private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
     }
