@@ -94,7 +94,11 @@ class BeneficiaryViewModel @Inject constructor(
                 if (it is PINException && it.pinExceptionEnum == PINExceptionEnum.ALREADY_DISTRIBUTED) {
                     Log.d(TAG, "Already distributed, reading balance.")
                     nfcFacade.readProtectedBalanceForUser(currentTag).map { balance ->
-                        Pair(currentTag, balance)
+                        if (balance.balance == deposit.amount) {
+                            Pair(currentTag, balance)
+                        } else {
+                            throw it
+                        }
                     }
                 } else {
                     throw it
