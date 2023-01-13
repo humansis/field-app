@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
@@ -133,4 +134,9 @@ class MainViewModel @Inject constructor(
             userLD.postValue(null)
         }
     }
+
+    companion object {
+        private val TAG = MainViewModel::class.java.simpleName
+    }
+
 }
