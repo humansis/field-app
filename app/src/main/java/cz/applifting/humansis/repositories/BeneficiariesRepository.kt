@@ -3,7 +3,7 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.misc.DateUtil.convertTimeForApiRequestBody
+import cz.applifting.humansis.extensions.convertForApiRequestBody
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.AssignBookletRequest
 import cz.applifting.humansis.model.api.AssignSmartcardRequest
@@ -146,7 +146,7 @@ class BeneficiariesRepository @Inject constructor(
         if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
             setDistributedRelief(
                 beneficiaryLocal.reliefIDs,
-                beneficiaryLocal.distributedAt ?: convertTimeForApiRequestBody(Date())
+                beneficiaryLocal.distributedAt ?: Date().convertForApiRequestBody()
             )
         }
 

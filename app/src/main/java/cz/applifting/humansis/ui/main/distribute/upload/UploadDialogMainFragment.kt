@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.format
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
+import cz.applifting.humansis.extensions.toFormattedString
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_main.*
@@ -64,10 +64,10 @@ class UploadDialogMainFragment : BaseFragment() {
 
             tv_sync_failed.visible(it.lastSyncFail != null)
             tv_sync_failed_date.visible(it.lastSyncFail != null)
-            tv_sync_failed_date.text = it.lastSyncFail?.format()
+            tv_sync_failed_date.text = it.lastSyncFail?.toFormattedString()
             btn_show_error_info.visible(it.lastSyncFail != null)
 
-            tv_current_data_date.text = it.lastDownload?.format()
+            tv_current_data_date.text = it.lastDownload?.toFormattedString()
         }
 
         uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner) {

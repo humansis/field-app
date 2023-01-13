@@ -43,9 +43,9 @@ class LoginManager @Inject constructor(
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
-        val defaultCountry = userResponse.availableCountries?.firstOrNull() ?: ""
+        val defaultCountry = userResponse.availableCountries.firstOrNull() ?: ""
 
-        if (retrieveUser()?.invalidPassword == true) {
+        if (retrieveUser()?.shouldReauthenticate == true) {
             // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekeyed using the new one.
             val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null)
                 ?: throw IllegalStateException("DB password lost")
@@ -74,16 +74,14 @@ class LoginManager @Inject constructor(
 
         val db = dbProvider.get()
 
-        val user = UserDbEntity(
-            id = userResponse.id,
-            username = userResponse.username,
-            email = userResponse.email,
-            token = userResponse.token,
-            countries = userResponse.availableCountries ?: listOf()
-        )
+        val user = convert(userResponse)
         db.userDao().insert(user)
 
         return convert(user)
+    }
+
+    fun updateUser(loginResponse: LoginResponse) {
+        db.userDao().update(convert(loginResponse))
     }
 
     suspend fun logout() {
@@ -94,17 +92,23 @@ class LoginManager @Inject constructor(
         encryptDefault()
     }
 
-    suspend fun invalidatePassword() {
+    suspend fun forceReauthentication() {
         val user = retrieveUserDb()
         if (user != null) {
-            db.userDao().update(user.copy(invalidPassword = true))
+            db.userDao().update(user.copy(shouldReauthenticate = true))
         }
     }
 
-    suspend fun invalidateToken() {
+    suspend fun invalidateTokens() {
         val user = retrieveUserDb()
         if (user != null) {
-            db.userDao().update(user.copy(token = null))
+            db.userDao().update(
+                user.copy(
+                    token = null,
+                    refreshToken = null,
+                    refreshTokenExpiration = null
+                )
+            )
         }
     }
 
@@ -125,11 +129,15 @@ class LoginManager @Inject constructor(
 
     private suspend fun retrieveUserDb(): UserDbEntity? {
         return supervisorScope {
-            try {
-                val db = dbProvider.get()
-                db.userDao().getUser()
-            } catch (e: Exception) {
-                Log.e(TAG, e, "DB not initialized")
+            if (dbProvider.isInitialized()) {
+                try {
+                    val db = dbProvider.get()
+                    db.userDao().getUser()
+                } catch (e: Exception) {
+                    Log.e(TAG, e, "DB not initialized")
+                    null
+                }
+            } else {
                 null
             }
         }
@@ -137,6 +145,10 @@ class LoginManager @Inject constructor(
 
     suspend fun retrieveUser(): User? {
         return retrieveUserDb()?.let { convert(it) }
+    }
+
+    suspend fun getRefreshToken(): String? {
+        return retrieveUserDb()?.refreshToken
     }
 
     suspend fun getAuthToken(): String? {
@@ -153,11 +165,25 @@ class LoginManager @Inject constructor(
                 id = it.id,
                 username = it.username,
                 token = it.token?.let { token -> JWToken(getPayload(token)) },
+                refreshToken = it.refreshToken,
+                refreshTokenExpiration = it.refreshTokenExpiration,
                 email = it.email,
-                invalidPassword = it.invalidPassword,
+                shouldReauthenticate = it.shouldReauthenticate,
                 countries = it.countries
             )
         }
+    }
+
+    private fun convert(loginResponse: LoginResponse): UserDbEntity {
+        return UserDbEntity(
+            id = loginResponse.id,
+            username = loginResponse.username,
+            email = loginResponse.email,
+            token = loginResponse.token,
+            refreshToken = loginResponse.refreshToken,
+            refreshTokenExpiration = loginResponse.refreshTokenExpiration,
+            countries = loginResponse.availableCountries
+        )
     }
 
     private fun encryptDefault() {

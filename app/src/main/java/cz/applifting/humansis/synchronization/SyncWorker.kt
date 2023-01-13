@@ -299,8 +299,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             errorsRepository.insertAll(syncErrors)
 
             // Erase password to trigger re-authentication
-            if (syncErrors.find { it.code == 403 } != null) {
-                loginManager.invalidatePassword()
+            // 401 response code means token was expired or that no token was sent at all
+            if (syncErrors.find { it.code == 401 } != null) {
+                loginManager.forceReauthentication()
                 sp.setDate(LAST_DOWNLOAD_KEY, null)
             }
 

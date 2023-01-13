@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.RefreshTokenService
 import cz.applifting.humansis.api.interceptor.ConnectionInterceptor
 import cz.applifting.humansis.api.interceptor.HeadersInterceptor
 import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
@@ -50,18 +51,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHeadersInterceptor(
-        loginManager: LoginManager,
-        sp: SharedPreferences
-    ): HeadersInterceptor {
-        return HeadersInterceptor(
-            loginManager,
-            sp
-        )
-    }
-
-    @Provides
-    @Singleton
     fun provideConnectionInterceptor(
         context: Context
     ): ConnectionInterceptor {
@@ -74,6 +63,48 @@ class AppModule {
     @Singleton
     fun provideLoggingInterceptor(): LoggingInterceptor {
         return LoggingInterceptor()
+    }
+
+    @Provides
+    @Singleton
+    fun refreshTokenProvider(
+        @Named(BASE_URL) baseUrl: String,
+        hostUrlInterceptor: HostUrlInterceptor,
+        connectionInterceptor: ConnectionInterceptor,
+        loggingInterceptor: LoggingInterceptor
+    ): RefreshTokenService {
+        val client: OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .callTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .addInterceptor(hostUrlInterceptor)
+            .addInterceptor(connectionInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(
+                GsonConverterFactory.create(
+                    GsonBuilder().serializeNulls().create()
+                )
+            )
+            .client(client)
+            .build().create()
+    }
+
+    @Provides
+    @Singleton
+    fun provideHeadersInterceptor(
+        refreshTokenService: RefreshTokenService,
+        loginManager: LoginManager,
+        sp: SharedPreferences
+    ): HeadersInterceptor {
+        return HeadersInterceptor(
+            refreshTokenService,
+            loginManager,
+            sp
+        )
     }
 
     @Provides

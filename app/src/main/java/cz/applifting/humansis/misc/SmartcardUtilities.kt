@@ -2,9 +2,10 @@ package cz.applifting.humansis.misc
 
 import android.content.Context
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.toLocalisedString
 import cz.applifting.humansis.model.api.NationalCardId
 import cz.applifting.humansis.model.db.CategoryType
-import java.util.*
+import java.util.Date
 
 object SmartcardUtilities {
 
@@ -12,7 +13,7 @@ object SmartcardUtilities {
         return if (expirationDate != null) {
             context.getString(
                 R.string.expiration_date_formatted,
-                DateUtil.dateToString(expirationDate, context)
+                expirationDate.toLocalisedString(context)
             )
         } else {
             String()
