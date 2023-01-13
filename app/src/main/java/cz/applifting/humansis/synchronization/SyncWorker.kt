@@ -23,18 +23,19 @@ import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.LogsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_URL
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 05, October, 2019
@@ -94,11 +95,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Log.d(TAG, "Started Sync as ${loginManager.retrieveUser()?.username}")
 
-            val host = try {
-                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-            } catch (e: Exception) {
-                Log.e(TAG, e)
-                null
+            val host = sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+                sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                    ApiEnvironment.find(name, url)
+                }
             } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
 
             hostUrlInterceptor.setHost(host)

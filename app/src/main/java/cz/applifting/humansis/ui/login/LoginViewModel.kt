@@ -14,12 +14,13 @@ import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import javax.inject.Inject
 
-const val SP_ENVIRONMENT = "pin_offline_app_api_url"
+const val SP_ENVIRONMENT_NAME = "pin_field_app_env_name"
+const val SP_ENVIRONMENT_URL = "pin_field_app_env_url"
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
@@ -45,14 +46,15 @@ class LoginViewModel @Inject constructor(
 
     fun changeHostUrl(host: ApiEnvironment) {
         hostUrlInterceptor.setHost(host)
-        sp.edit().putString(SP_ENVIRONMENT, host.title).apply()
+        sp.edit().putString(SP_ENVIRONMENT_NAME, host.title).apply()
+        sp.edit().putString(SP_ENVIRONMENT_URL, host.url).apply()
     }
 
     fun loadHostFromSaved(): ApiEnvironment {
-        return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-        } catch (e: Exception) {
-            null
+        return sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+            sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                ApiEnvironment.find(name, url)
+            }
         } ?: getDefaultEnvironment()
     }
 

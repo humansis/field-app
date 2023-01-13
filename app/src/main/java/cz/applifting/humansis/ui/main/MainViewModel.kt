@@ -10,16 +10,16 @@ import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_URL
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import quanti.com.kotlinlog.Log
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(
             userLD.value = loginManager.retrieveUser()
         }
         launch {
-            environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironment.Stage.title)
+            environmentLD.value = sp.getString(SP_ENVIRONMENT_NAME, ApiEnvironment.Stage.title)
         }
     }
 
@@ -73,11 +73,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun getHostUrl(): ApiEnvironment {
-        return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-        } catch (e: Exception) {
-            Log.e(TAG, e)
-            null
+        return sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+            sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                ApiEnvironment.find(name, url)
+            }
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
@@ -94,9 +93,5 @@ class MainViewModel @Inject constructor(
             loginManager.logout()
             userLD.postValue(null)
         }
-    }
-
-    companion object {
-        private val TAG = MainViewModel::class.java.simpleName
     }
 }

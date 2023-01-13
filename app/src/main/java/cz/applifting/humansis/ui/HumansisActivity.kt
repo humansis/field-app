@@ -149,6 +149,11 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         if (currentVersion != lastVersion) {
             Log.d(TAG, "App updated from $lastVersion to $currentVersion")
             sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
+
+            if (currentVersion == VERSION_NAME_3_9_0) {
+                val envName = sp.getString("pin_offline_app_api_url", "")
+                sp.edit().putString("pin_field_app_env_name", envName).apply()
+            }
         }
     }
 
@@ -332,5 +337,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     companion object {
         private val TAG = HumansisActivity::class.java.simpleName
         private const val LAST_VERSION_KEY = "last-version-key"
+        private const val VERSION_NAME_3_9_0 = "3.9.0"
     }
 }
