@@ -93,6 +93,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 SyncErrorActionEnum.BEFORE_INITIALIZATION
             )
 
+            // TODO PIN-4471 do not sync if another sync is in progress
+
             Log.d(TAG, "Started Sync as ${loginManager.retrieveUser()?.username}")
 
             val host = sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->

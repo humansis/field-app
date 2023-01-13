@@ -11,7 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
-import kotlinx.android.synthetic.main.component_list.view.*
+import kotlinx.android.synthetic.main.component_list.view.iv_error
+import kotlinx.android.synthetic.main.component_list.view.pb_loading
+import kotlinx.android.synthetic.main.component_list.view.rv_list
+import kotlinx.android.synthetic.main.component_list.view.swrl_swipe_to_refresh
+import kotlinx.android.synthetic.main.component_list.view.tv_info
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
@@ -81,14 +85,17 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
     }
 
     inner class VerticalMarginItemDecoration : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
 
             val margin = context.resources.getDimension(R.dimen.list_items_vertical_margin).toInt()
 
             with(outRect) {
-                if (parent.getChildAdapterPosition(view) == 0) {
-                    top = margin
-                }
+                top = 0
                 left = margin
                 right = margin
                 bottom = margin
