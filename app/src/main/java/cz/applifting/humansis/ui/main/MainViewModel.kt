@@ -19,6 +19,7 @@ import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
@@ -87,25 +88,28 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    private fun validateTokens(user: User?): Boolean {
-        val authToken = user?.token
-        val refreshToken = user?.refreshToken
-        val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
-        return if (authToken == null || authToken.isExpired()) {
-            if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
-                invalidateTokens()
-                false
+    fun validateTokens(): Boolean {
+        userLD.value.let { user ->
+            val authToken = user?.token
+            val refreshToken = user?.refreshToken
+            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
+            return if (authToken == null || authToken.isExpired()) {
+                if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
+                    invalidateTokens()
+                    false
+                } else {
+                    true
+                }
             } else {
                 true
             }
-        } else {
-            true
         }
     }
 
-    fun invalidateTokens() {
+    private fun invalidateTokens() {
         launch(Dispatchers.IO) {
             Log.d(TAG, "You have been logged out because your authentication tokens have expired or are missing.")
+            setToastMessage(R.string.token_missing_or_expired)
             loginManager.invalidateTokens()
             sp.setDate(LAST_DOWNLOAD_KEY, null)
             userLD.postValue(null)

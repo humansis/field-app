@@ -23,6 +23,7 @@ import cz.applifting.humansis.db.migrations.Migration22to23
 import cz.applifting.humansis.db.migrations.Migration24to25
 import cz.applifting.humansis.db.migrations.Migration26to27
 import cz.applifting.humansis.db.migrations.Migration28to29
+import cz.applifting.humansis.db.migrations.Migration30to31
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
@@ -40,12 +41,12 @@ import cz.applifting.humansis.model.db.UserDbEntity
         DistributionLocal::class,
         SyncError::class
     ],
-    version = 30,
+    version = 31,
     exportSchema = true,
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
     // not changed since the last release as it might introduce serious bugs that are hard to trace.
-    // i.e. when migrating from version 30 to version 31, look up last release in git, download "30.json"
+    // i.e. when migrating from version 31 to version 32, look up last release in git, download "31.json"
     // and compare it with your current file, that there are no new unwanted changes.
     autoMigrations = [
         AutoMigration(
@@ -72,12 +73,13 @@ import cz.applifting.humansis.model.db.UserDbEntity
             from = 28,
             to = 29,
             spec = Migration28to29::class
+        ),
+        AutoMigration(
+            from = 30,
+            to = 31,
+            spec = Migration30to31::class
         )
     ]
-    // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
-    // not changed since the last release as it might introduce serious bugs that are hard to trace.
-    // i.e. when migrating from version 23 to version 24, look up last release in git, download "23.json"
-    // and compare it with your current file, that there are no new unwanted changes.
 )
 @TypeConverters(
     StringListConverter::class,

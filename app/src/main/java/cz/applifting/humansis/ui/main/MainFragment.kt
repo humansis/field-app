@@ -166,7 +166,7 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-            } else if (viewModel.validateToken()) {
+            } else if (viewModel.validateTokens()) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
             }
@@ -242,7 +242,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (viewModel.validateToken()) {
+                if (viewModel.validateTokens()) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
