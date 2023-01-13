@@ -138,5 +138,4 @@ class MainViewModel @Inject constructor(
     companion object {
         private val TAG = MainViewModel::class.java.simpleName
     }
-
 }
