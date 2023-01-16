@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.ListenableWorker
 import androidx.work.testing.TestWorkerBuilder
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.misc.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.model.Target
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
@@ -16,7 +17,6 @@ import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
-import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.synchronization.SyncWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -258,7 +258,8 @@ class SyncWorkerTest {
         nonfoodLimit = null,
         cashbackLimit = null,
         balance = null,
-        originalBalance = null
+        originalBalance = null,
+        hasDuplicateName = false
     )
 
     private fun anyHttpException() =

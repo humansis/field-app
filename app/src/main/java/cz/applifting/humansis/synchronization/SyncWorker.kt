@@ -11,8 +11,14 @@ import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironment
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
+import cz.applifting.humansis.misc.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
+import cz.applifting.humansis.misc.SP_LAST_SYNC_FAILED
+import cz.applifting.humansis.misc.SP_SYNC_SUMMARY
+import cz.applifting.humansis.misc.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
@@ -23,10 +29,6 @@ import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.LogsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_NAME
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_URL
-import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -43,9 +45,6 @@ import retrofit2.HttpException
 const val SYNC_WORKER = "sync-worker"
 
 const val ERROR_MESSAGE_KEY = "error-message-key"
-
-const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
-const val SP_SYNC_SUMMARY = "sync-summary"
 
 class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -289,8 +288,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     private suspend fun finishWork(): Result {
         sp.edit().putString(SP_SYNC_SUMMARY, syncStats.toString()).suspendCommit()
         return if (syncErrors.isEmpty()) {
-            sp.setDate(LAST_DOWNLOAD_KEY, Date())
-            sp.setDate(LAST_SYNC_FAILED_KEY, null)
+            sp.setDate(SP_LAST_DOWNLOAD, Date())
+            sp.setDate(SP_LAST_SYNC_FAILED, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
             sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
             Log.d(TAG, "Sync finished successfully")
@@ -302,11 +301,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             // 401 response code means token was expired or that no token was sent at all
             if (syncErrors.find { it.code == 401 } != null) {
                 loginManager.forceReauthentication()
-                sp.setDate(LAST_DOWNLOAD_KEY, null)
+                sp.setDate(SP_LAST_DOWNLOAD, null)
             }
 
             Log.d(TAG, "Sync finished with failure")
-            sp.setDate(LAST_SYNC_FAILED_KEY, Date())
+            sp.setDate(SP_LAST_SYNC_FAILED, Date())
 
             Result.failure(
                 reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()

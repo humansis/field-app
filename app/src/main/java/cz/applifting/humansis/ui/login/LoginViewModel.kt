@@ -9,6 +9,8 @@ import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
 import cz.applifting.humansis.misc.getDefaultEnvironment
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
@@ -18,9 +20,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-
-const val SP_ENVIRONMENT_NAME = "pin_field_app_env_name"
-const val SP_ENVIRONMENT_URL = "pin_field_app_env_url"
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019

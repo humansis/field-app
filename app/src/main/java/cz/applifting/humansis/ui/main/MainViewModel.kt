@@ -10,12 +10,13 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.ToastManager
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_NAME
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT_URL
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -106,7 +107,7 @@ class MainViewModel @Inject constructor(
             Log.d(TAG, "You have been logged out because your refresh token have expired or are missing.")
             setToastMessage(R.string.token_missing_or_expired)
             loginManager.invalidateTokens()
-            sp.setDate(LAST_DOWNLOAD_KEY, null)
+            sp.setDate(SP_LAST_DOWNLOAD, null)
             userLD.postValue(null)
         }
     }

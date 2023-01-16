@@ -25,14 +25,16 @@ import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
+import cz.applifting.humansis.misc.SP_LAST_VERSION
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
-import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
@@ -141,15 +143,15 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun checkAppVersion() {
-        val lastVersion = sp.getString(LAST_VERSION_KEY, "unknown")
+        val lastVersion = sp.getString(SP_LAST_VERSION, "unknown")
         val currentVersion = BuildConfig.VERSION_NAME
         if (currentVersion != lastVersion) {
             Log.d(TAG, "App updated from $lastVersion to $currentVersion")
-            sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
+            sp.edit().putString(SP_LAST_VERSION, currentVersion).apply()
 
             if (currentVersion == VERSION_NAME_3_9_0) {
                 val envName = sp.getString("pin_offline_app_api_url", "")
-                sp.edit().putString("pin_field_app_env_name", envName).apply()
+                sp.edit().putString(SP_ENVIRONMENT_NAME, envName).apply()
             }
         }
     }
@@ -181,7 +183,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun lastUploadWasLongTimeAgo(): Boolean {
-        val lastDownloadDate = sp.getDate(LAST_DOWNLOAD_KEY)
+        val lastDownloadDate = sp.getDate(SP_LAST_DOWNLOAD)
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.HOUR_OF_DAY, -1)
         val dateHourAgo = calendar.time
@@ -355,7 +357,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     companion object {
         private val TAG = HumansisActivity::class.java.simpleName
-        private const val LAST_VERSION_KEY = "last-version-key"
         private const val VERSION_NAME_3_9_0 = "3.9.0"
     }
 }

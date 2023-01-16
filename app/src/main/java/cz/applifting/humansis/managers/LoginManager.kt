@@ -23,12 +23,7 @@ import javax.inject.Inject
  *
  * This class is something like a repository, but it is not, as it is required by API service and can't depend on it
  */
-const val SP_DB_PASS_KEY = "humansis-db"
-const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
-const val SP_COUNTRY = "country"
-const val SP_USERNAME = "username"
-const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
 
 class LoginManager @Inject constructor(
     private val dbProvider: DbProvider,

@@ -242,7 +242,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (viewModel.validateTokens()) {
+                if (viewModel.validateToken()) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
