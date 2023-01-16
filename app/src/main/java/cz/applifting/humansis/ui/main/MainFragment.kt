@@ -242,7 +242,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (validateTokens(viewModel.userLD.value)) {
+                if (viewModel.validateTokens()) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
@@ -250,28 +250,6 @@ class MainFragment : BaseFragment() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun validateTokens(user: User?): Boolean {
-        val authToken = user?.token
-        val refreshToken = user?.refreshToken
-        val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
-        return if (authToken == null || authToken.isExpired()) {
-            if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
-                invalidateToken()
-                false
-            } else {
-                true
-            }
-        } else {
-            true
-        }
-    }
-
-    private fun invalidateToken() {
-        Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
-        sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
-        viewModel.invalidateTokens()
     }
 
     private fun setUpBackground() {

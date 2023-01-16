@@ -156,7 +156,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     private fun checkTokenAndEnqueueSynchronization() {
         if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
-            if (vm.validateTokens()) {
+            if (vm.validateToken()) {
                 // TODO tohle je picovina. Tahle metoda se zavola pouze z MainFragmentu kdyz je pripojena wifi. A uvnitr enqueueSynchronization se wifi checkuje znovu.
                 enqueueSynchronization()
             }
