@@ -9,10 +9,9 @@ import cz.applifting.humansis.model.api.AssignBookletRequest
 import cz.applifting.humansis.model.api.AssignSmartcardRequest
 import cz.applifting.humansis.model.api.BeneficiaryForReferralUpdate
 import cz.applifting.humansis.model.api.Booklet
-import cz.applifting.humansis.model.api.DeactivateSmartcardRequest
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
-import cz.applifting.humansis.model.api.LegacyDistributeSmartcardRequest
+import cz.applifting.humansis.model.api.DistributionBeneficiary
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -36,37 +35,40 @@ class BeneficiariesRepository @Inject constructor(
 
         val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
 
-        val result = service
-            .getDistributionBeneficiaries(assistanceId).data
-            .map {
-                BeneficiaryLocal(
-                    id = it.id,
-                    beneficiaryId = it.beneficiary.id,
-                    givenName = it.beneficiary.localGivenName,
-                    familyName = it.beneficiary.localFamilyName,
-                    assistanceId = assistanceId,
-                    distributed = areReliefPackagesDistributed(it.reliefPackages) || areBookletsDistributed(
-                        it.booklets
-                    ) || it.distributedAt != null,
-                    distributedAt = it.distributedAt,
-                    reliefIDs = parseGeneralReliefPackages(it.reliefPackages),
-                    qrBooklets = parseQRBooklets(it.booklets),
-                    smartcard = it.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
-                    newSmartcard = null,
-                    edited = false,
-                    commodities = parseCommodities(it.booklets, it.reliefPackages),
-                    remote = distribution?.remote ?: false,
-                    dateExpiration = distribution?.dateOfExpiration,
-                    foodLimit = distribution?.foodLimit,
-                    nonfoodLimit = distribution?.nonfoodLimit,
-                    cashbackLimit = distribution?.cashbackLimit,
-                    nationalIds = it.beneficiary.nationalCardIds,
-                    originalReferralType = it.beneficiary.referralType,
-                    originalReferralNote = it.beneficiary.referralComment,
-                    referralType = it.beneficiary.referralType,
-                    referralNote = it.beneficiary.referralComment
-                )
-            }
+        val data = service.getDistributionBeneficiaries(assistanceId).data
+
+        val duplicateBeneficiaryNames = findAllDuplicateNames(data)
+
+        val result = data.map { distributionBeneficiary ->
+            BeneficiaryLocal(
+                id = distributionBeneficiary.id,
+                beneficiaryId = distributionBeneficiary.beneficiary.id,
+                givenName = distributionBeneficiary.beneficiary.localGivenName,
+                familyName = distributionBeneficiary.beneficiary.localFamilyName,
+                assistanceId = assistanceId,
+                distributed = areReliefPackagesDistributed(distributionBeneficiary.reliefPackages) || areBookletsDistributed(
+                    distributionBeneficiary.booklets
+                ) || distributionBeneficiary.distributedAt != null,
+                distributedAt = distributionBeneficiary.distributedAt,
+                reliefIDs = parseGeneralReliefPackages(distributionBeneficiary.reliefPackages),
+                qrBooklets = parseQRBooklets(distributionBeneficiary.booklets),
+                smartcard = distributionBeneficiary.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
+                newSmartcard = null,
+                edited = false,
+                commodities = parseCommodities(distributionBeneficiary.booklets, distributionBeneficiary.reliefPackages),
+                remote = distribution?.remote ?: false,
+                dateExpiration = distribution?.dateOfExpiration,
+                foodLimit = distribution?.foodLimit,
+                nonfoodLimit = distribution?.nonfoodLimit,
+                cashbackLimit = distribution?.cashbackLimit,
+                nationalIds = distributionBeneficiary.beneficiary.nationalCardIds,
+                originalReferralType = distributionBeneficiary.beneficiary.referralType,
+                originalReferralNote = distributionBeneficiary.beneficiary.referralComment,
+                referralType = distributionBeneficiary.beneficiary.referralType,
+                referralNote = distributionBeneficiary.beneficiary.referralComment,
+                hasDuplicateName = isDuplicateName(duplicateBeneficiaryNames, distributionBeneficiary)
+            )
+        }
 
         dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
@@ -160,9 +162,6 @@ class BeneficiariesRepository @Inject constructor(
             val time = beneficiaryLocal.distributedAt ?: return
             if (beneficiaryLocal.newSmartcard != beneficiaryLocal.smartcard) {
                 assignSmartcard(beneficiaryLocal.newSmartcard, beneficiaryLocal.beneficiaryId, time)
-                beneficiaryLocal.smartcard?.let {
-                    deactivateSmartcard(beneficiaryLocal.smartcard, time)
-                }
             }
 
             val lastSmartCardDistribution = beneficiaryLocal.commodities
@@ -175,18 +174,6 @@ class BeneficiariesRepository @Inject constructor(
                     beneficiaryLocal.newSmartcard,
                     DistributeSmartcardRequest(
                         reliefPackageId,
-                        value,
-                        time,
-                        beneficiaryLocal.beneficiaryId,
-                        beneficiaryLocal.originalBalance,
-                        beneficiaryLocal.balance ?: 1.0
-                    )
-                )
-            } ?: run { // TODO must be removed for v3.9.0 release
-                legacyDistributeSmartcard(
-                    beneficiaryLocal.newSmartcard,
-                    LegacyDistributeSmartcardRequest(
-                        beneficiaryLocal.assistanceId,
                         value,
                         time,
                         beneficiaryLocal.beneficiaryId,
@@ -224,18 +211,6 @@ class BeneficiariesRepository @Inject constructor(
 
     private suspend fun assignSmartcard(code: String, beneficiaryId: Int, date: String) {
         service.assignSmartcard(AssignSmartcardRequest(code, beneficiaryId, date))
-    }
-
-    private suspend fun deactivateSmartcard(code: String, date: String) {
-        service.deactivateSmartcard(code, DeactivateSmartcardRequest(createdAt = date))
-    }
-
-    // TODO must be removed for v3.9.0 release
-    private suspend fun legacyDistributeSmartcard(
-        code: String,
-        distributeSmartcardRequest: LegacyDistributeSmartcardRequest
-    ) {
-        service.legacyDistributeSmartcard(code, distributeSmartcardRequest)
     }
 
     private suspend fun distributeSmartcard(
@@ -315,4 +290,30 @@ class BeneficiariesRepository @Inject constructor(
         val nonGeneralTypes = setOf(CommodityType.SMARTCARD, CommodityType.QR_VOUCHER)
         return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
     }
+
+    private fun findAllDuplicateNames(list: List<DistributionBeneficiary>): List<FullName> {
+        val seenNames = mutableSetOf<FullName>()
+        return list.asSequence()
+            .map { FullName(it.beneficiary.localGivenName ?: "", it.beneficiary.localFamilyName ?: "") }
+            .filter { !seenNames.add(it) }
+            .distinct()
+            .toList()
+    }
+
+    private fun isDuplicateName(
+        duplicateBeneficiaryNames: List<FullName>,
+        distributionBeneficiary: DistributionBeneficiary
+    ): Boolean {
+        return duplicateBeneficiaryNames.find {
+            it == FullName(
+                distributionBeneficiary.beneficiary.localGivenName,
+                distributionBeneficiary.beneficiary.localFamilyName
+            )
+        } != null
+    }
+
+    private data class FullName(
+        val givenName: String?,
+        val familyName: String?
+    )
 }

@@ -15,7 +15,7 @@ import cz.applifting.humansis.extensions.getCommodityValueText
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.model.api.NationalCardId
+import cz.applifting.humansis.misc.SmartcardUtilities.getNationalIdsAsText
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
@@ -69,17 +69,17 @@ class BeneficiariesAdapter(
 
         private val tvNationalId: TextView = view.tv_id
         private val tvHumansisId: TextView = view.tv_info
-        private val tvName: TextView = view.tv_location
+        private val tvName: TextView = view.tv_name
         private val ivDistributionState: ImageView = view.iv_distribution_state
         private val tlCommoditiesHolder: TableLayout = view.tl_commodities_holder
         private val ivOffline: ImageView = view.iv_offline
+        private val ivDuplicateName: ImageView = view.iv_duplicateName
         val context: Context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
-
             tvHumansisId.text = view.context.getString(R.string.humansis_id_formatted, beneficiaryLocal.beneficiaryId)
             tvNationalId.visible(beneficiaryLocal.nationalIds.isNotEmpty())
-            tvNationalId.text = constructNationalIdText(beneficiaryLocal.nationalIds)
+            tvNationalId.text = getNationalIdsAsText(beneficiaryLocal.nationalIds, context)
 
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
@@ -124,15 +124,12 @@ class BeneficiariesAdapter(
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
+
+            ivDuplicateName.visible(beneficiaryLocal.hasDuplicateName)
+
             view.setOnClickListener {
                 Log.d(TAG, "Beneficiary $beneficiaryLocal clicked")
                 if (clickable) onItemClick(beneficiaryLocal)
-            }
-        }
-
-        private fun constructNationalIdText(nationalIds: List<NationalCardId>): String {
-            return nationalIds.joinToString("\n") { nationalCardId ->
-                "${context.getString(nationalCardId.type.stringResource)}: ${nationalCardId.number}"
             }
         }
     }

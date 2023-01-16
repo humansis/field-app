@@ -12,6 +12,8 @@ import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.ToastManager
+import cz.applifting.humansis.managers.ToastManagerImpl
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserverImpl
@@ -175,5 +177,11 @@ class AppModule {
     @Singleton
     fun provideConnectionObserver(context: Context): ConnectionObserver {
         return ConnectionObserverImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideToastManager(context: Context): ToastManager {
+        return ToastManagerImpl(context)
     }
 }

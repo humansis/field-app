@@ -1,9 +1,12 @@
 package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.ToastManager
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.NfcTagPublisher
 import cz.applifting.humansis.misc.SingleLiveEvent
@@ -16,6 +19,7 @@ import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
@@ -26,6 +30,7 @@ import javax.inject.Inject
  */
 class MainViewModel @Inject constructor(
     private val loginManager: LoginManager,
+    private val toastManager: ToastManager,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
@@ -42,6 +47,8 @@ class MainViewModel @Inject constructor(
     val readBalanceError = SingleLiveEvent<Throwable>()
     val initializeCardResult = SingleLiveEvent<UserPinBalance>()
     val initializeCardError = SingleLiveEvent<Throwable>()
+
+    val enqueueSynchronization = SingleLiveEvent<Unit>()
 
     init {
         launch {
@@ -81,12 +88,39 @@ class MainViewModel @Inject constructor(
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun invalidateTokens() {
+    fun validateToken(): Boolean {
+        userLD.value.let { user ->
+            val refreshToken = user?.refreshToken
+            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
+            return if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
+                invalidateTokens()
+                false
+            } else {
+                true
+            }
+        }
+    }
+
+    private fun invalidateTokens() {
         launch(Dispatchers.IO) {
+            Log.d(TAG, "You have been logged out because your refresh token have expired or are missing.")
+            setToastMessage(R.string.token_missing_or_expired)
             loginManager.invalidateTokens()
             sp.setDate(LAST_DOWNLOAD_KEY, null)
             userLD.postValue(null)
         }
+    }
+
+    fun getToastMessageLiveData(): LiveData<String?> {
+        return toastManager.getToastMessageLiveData()
+    }
+
+    fun setToastMessage(text: String) {
+        toastManager.setToastMessage(text)
+    }
+
+    private fun setToastMessage(stringResId: Int) {
+        toastManager.setToastMessage(stringResId)
     }
 
     fun logout() {

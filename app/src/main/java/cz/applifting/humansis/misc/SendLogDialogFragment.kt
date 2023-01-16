@@ -4,13 +4,13 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import cz.applifting.humansis.R
 import cz.applifting.humansis.databinding.DialogLogsBinding
-import kotlinx.android.synthetic.main.dialog_card_message.view.*
 import kotlinx.android.synthetic.main.dialog_card_message.view.message
 import kotlinx.android.synthetic.main.dialog_logs.view.*
 import kotlinx.coroutines.*
@@ -170,14 +170,16 @@ class SendLogDialogFragment : DialogFragment() {
             putExtra(Intent.EXTRA_STREAM, zipFileUri)
         }
 
-        appContext.packageManager?.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
-            ?.let {
-                appContext.grantUriPermission(
-                    it.activityInfo.packageName,
-                    zipFileUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-            }
+        val resInfoList: List<ResolveInfo> = requireContext().packageManager
+            .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        for (resolveInfo in resInfoList) {
+            val packageName = resolveInfo.activityInfo.packageName
+            requireContext().grantUriPermission(
+                packageName,
+                zipFileUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
 
         dialog.dismiss()
 

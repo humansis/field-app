@@ -38,17 +38,17 @@
             android:layout_height="wrap_content"
             android:text="Nothing here."
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@+id/swrl_swipe_to_refresh"
+            app:layout_constraintBottom_toBottomOf="@id/swrl_swipe_to_refresh"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swrl_swipe_to_refresh" />
+            app:layout_constraintTop_toTopOf="@id/swrl_swipe_to_refresh" />
 
     <ImageView
             android:id="@+id/iv_error"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_info"
+            app:layout_constraintBottom_toTopOf="@id/tv_info"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_sync_problem" />

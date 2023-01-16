@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="navigation_drawer_open">افتح لوحة التصفح</string>
-    <string name="navigation_drawer_close">أغلق لوحة التصفح</string>
     <string name="nav_header_desc">رأس التنقل</string>
     <string name="action_settings">الاعدادات</string>
     <string name="menu_home">المشاريع</string>
@@ -9,7 +7,6 @@
     <string name="login">تسجيل الدخول الى الحساب</string>
     <string name="log_out">تسجيل خروج</string>
     <string name="projects">المشاريع</string>
-    <string name="unnamed_project">مشروع بدون اسم</string>
     <string name="date_of_distribution">البدء: %1$s</string>
     <string name="beneficiaries">المستفيدين: %1$d</string>
     <string name="commodities">السلع: </string>
@@ -29,10 +26,6 @@
     <string name="confirm_distribution">تأكيد</string>
     <string name="rescan_qr">امسح الرمز</string>
     <string name="booklet_id">رقم الدفتر</string>
-    <string name="camera_permission_dialog_title">السماح للكاميرا</string>
-    <string name="camera_permission_dialog_message">اذا تريد ان تمسح الرمز يتوجب عليك منح الاذن بالوصول للكاميرا</string>
-    <string name="camera_permission_dialog_positive_btn_label">موافق</string>
-    <string name="camera_permission_dialog_negative_btn_label">ليس الان</string>
     <string name="scan_qr_code">امسح الرمز</string>
     <string name="search">ابحث</string>
     <string name="offline">غير متصل</string>
@@ -65,8 +58,6 @@
     <string name="logout_alert_title">تسجيل خروج</string>
     <string name="logout_alert_pending_changes_title">تغييرات معلقة!</string>
     <string name="logout_alert_pending_changes_text">هل انت متأكد انك تريد تسجيل الخروج؟  سوف يتم فقدان بيانات التطبيق. التغيرات المطبقة تحتاج الى المزامنة قبل تسجيل الخروج واإلا سوف يتم فقدانها</string>
-    <string name="show_developer_logs">اظهار حركة المطورين</string>
-    <string name="copy">نسخ</string>
     <string name="close">اغلق</string>
     <string name="error_server">خطأ في استجابة الخادم (السرفر)</string>
     <string name="error_bad_request">طلب خاطئ</string>
@@ -109,25 +100,12 @@
     <string name="add_referral">اضافة إحالة</string>
     <string name="edit_referral">تحرير معلومات الإحالة</string>
     <string name="confirm_distribution_message">تأكيد لتعيين هذا العنصر للمستفيد</string>
-    <string name="acra_notif_channel">إرسال تقرير العطل</string>
-    <string name="acra_notif_title">تعطلت \u200fHumansis\u200f</string>
-    <string name="acra_notif_text">عذرا ، تعطل التطبيق. الرجاء إرسال تقرير للمطورين.</string>
-    <string name="acra_notif_send_button">إرسال</string>
-    <string name="acra_email_subject">تقرير أعطال \u200fAndroid\u200f</string>
     <string name="scan_card">يرجى مسح البطاقة ضوئيًا</string>
     <string name="smartcard_id">معرف البطاقة الذكية الممسوحة ضوئيًا</string>
     <string name="you_need_to_enable_nfc">تحتاج إلى تمكين \u200fNFC\u200f</string>
     <string name="no_nfc_available">\u200fNFC\u200f غير متوفر</string>
-    <string name="pin">رقم التعريف الشخصي</string>
-    <string name="please_enter_pin">الرجاء إدخال رقم التعريف الشخصي لبطاقتك</string>
-    <string name="error_card_mismatch">خطأ: البطاقة غير متطابقة</string>
-    <string name="card_mismatch_message">خطأ. يرجى مسح نفس البطاقة القديمة ضوئيًا.</string>
-    <string name="remove_card">إزالة</string>
-    <string name="card_mismatch">خطأ. يرجى مسح نفس البطاقة القديمة ضوئيًا.</string>
     <string name="smartcard_id_old">البطاقة الذكية المملوكة</string>
     <string name="none">لا شيء</string>
-    <string name="old_card">البطاقة القديمة</string>
-    <string name="new_card">بطاقة جديدة</string>
     <string name="ok">موافق</string>
     <string name="card_locked">هذه البطاقة مقفلة.</string>
     <string name="incorrect_pin">رقم التعريف الشخصي غير صحيح</string>
@@ -135,7 +113,6 @@
     <string name="invalid_version">نسخة غير صالحة.</string>
     <string name="currency_mismatch">أنت تحاول إضافة أموال إلى بطاقة بعملة مختلفة. استخدم خيار \"بطاقة جديدة\" بدلاً من ذلك لحذف الأموال القديمة وإنشاء واحدة جديدة بعملة جديدة.</string>
     <string name="card_error">خطأ. يرجى المحاولة مرة أخرى.</string>
-    <string name="delete_card_first">لا يمكن التراجع عن التعيين. الرجاء إزالة البطاقة المخصصة أولاً.</string>
     <string name="scan_the_card">امسح البطاقة ضوئيًا</string>
     <string name="tag_lost_card_error">المسح توقف. يرجى مسح البطاقة ضوئيًا مرة أخرى.</string>
     <string name="different_user_card_error">تم تخصيص هذه البطاقة بالفعل لمستخدم مختلف</string>
@@ -148,9 +125,6 @@
     <string name="scanning_card_pin">ارقم التعريف الشخصي: %1$s</string>
     <string name="change_pin">تغيير رقم التعريف</string>
     <string name="changing_pin_result">رقم التعريف الشخصي الجديد: %1$s</string>
-    <string name="menu">قائمة طعام</string>
-    <string name="synchronize">مزامنة</string>
-    <string name="loading">تحميل</string>
     <string name="read_balance">قراءة الرصيد</string>
     <string name="utilities">خدمات</string>
     <string name="initialize_cards">تهيئة البطاقات</string>

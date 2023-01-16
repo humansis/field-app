@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 30,
-    "identityHash": "865413250b232094f26e41477ec97bef",
+    "version": 31,
+    "identityHash": "6b522c0a6b0319e2f2f98d642212a271",
     "entities": [
       {
         "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `username` TEXT NOT NULL, `token` TEXT, `email` TEXT NOT NULL, `invalidPassword` INTEGER NOT NULL, `countries` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `username` TEXT NOT NULL, `token` TEXT, `refreshToken` TEXT, `refreshTokenExpiration` TEXT, `email` TEXT NOT NULL, `shouldReauthenticate` INTEGER NOT NULL, `countries` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,14 +27,26 @@
             "notNull": false
           },
           {
+            "fieldPath": "refreshToken",
+            "columnName": "refreshToken",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refreshTokenExpiration",
+            "columnName": "refreshTokenExpiration",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "email",
             "columnName": "email",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "invalidPassword",
-            "columnName": "invalidPassword",
+            "fieldPath": "shouldReauthenticate",
+            "columnName": "shouldReauthenticate",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -444,7 +456,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '865413250b232094f26e41477ec97bef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6b522c0a6b0319e2f2f98d642212a271')"
     ]
   }
 }

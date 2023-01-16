@@ -47,7 +47,7 @@
                         android:textColor="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="v3.3.0"/>
+                        tools:text="v3.3.0" />
 
                     <ImageView
                         android:id="@+id/loginLogo"
@@ -65,9 +65,9 @@
                         android:layout_marginEnd="5dp"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/settingsImageView"
-                        app:layout_constraintTop_toTopOf="@+id/settingsImageView"
-                        app:layout_constraintBottom_toBottomOf="@+id/settingsImageView" />
+                        app:layout_constraintEnd_toStartOf="@id/settingsImageView"
+                        app:layout_constraintTop_toTopOf="@id/settingsImageView"
+                        app:layout_constraintBottom_toBottomOf="@id/settingsImageView" />
 
                     <ImageView
                         android:id="@+id/settingsImageView"
