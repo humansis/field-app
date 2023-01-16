@@ -167,7 +167,7 @@ class MainFragment : BaseFragment() {
             if (it == null) {
                 Log.d(TAG, "Application navigated to login screen because userLD.value == null.")
                 findNavController().navigate(R.id.logout)
-            } else if (validateTokens(it)) {
+            } else if (validateToken(it)) {
                 val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
                 tvUsername.text = it.username
             }
@@ -240,7 +240,7 @@ class MainFragment : BaseFragment() {
         when (item.itemId) {
             action_open_status_dialog -> {
                 Log.d(TAG, "Menu item \"action_open_status_dialog\" clicked")
-                if (validateTokens(viewModel.userLD.value)) {
+                if (validateToken(viewModel.userLD.value)) {
                     mainNavController.navigate(R.id.uploadDialog)
                 }
                 return true
@@ -250,24 +250,19 @@ class MainFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun validateTokens(user: User?): Boolean {
-        val authToken = user?.token
+    private fun validateToken(user: User?): Boolean {
         val refreshToken = user?.refreshToken
         val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
-        return if (authToken == null || authToken.isExpired()) {
-            if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
-                invalidateToken()
-                false
-            } else {
-                true
-            }
+        return if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
+            invalidateTokens()
+            false
         } else {
             true
         }
     }
 
-    private fun invalidateToken() {
-        Log.d(TAG, "You have been logged out because your authentication token has expired or is missing.")
+    private fun invalidateTokens() {
+        Log.d(TAG, "You have been logged out because your refresh token has expired or is missing.")
         sharedViewModel.toastLD.value = getString(R.string.token_missing_or_expired)
         viewModel.invalidateTokens()
     }
