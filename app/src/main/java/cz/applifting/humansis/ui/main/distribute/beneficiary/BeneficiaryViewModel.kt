@@ -16,9 +16,9 @@ import cz.quanti.android.nfc.exception.PINException
 import cz.quanti.android.nfc.exception.PINExceptionEnum
 import io.reactivex.Single
 import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import quanti.com.kotlinlog.Log
 
 /**
@@ -76,34 +76,31 @@ class BeneficiaryViewModel @Inject constructor(
         deposit: Deposit,
         tagFoundCallback: () -> Unit
     ): Single<Pair<Tag, UserPinBalance>> {
-        lateinit var currentTag: Tag
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
-            currentTag = tag
             tagFoundCallback.invoke()
             if (remote) {
-                nfcFacade.rewriteBalanceForUser(tag, deposit).map {
-                    Pair(tag, it)
-                }
+                nfcFacade.rewriteBalanceForUser(tag, deposit)
             } else {
-                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map {
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit)
+            }
+                .onErrorResumeNext {
+                    if (it is PINException && it.pinExceptionEnum == PINExceptionEnum.ALREADY_DISTRIBUTED) {
+                        Log.d(TAG, "Already distributed, reading balance.")
+                        nfcFacade.readProtectedBalanceForUser(tag).map { balance ->
+                            if (balance.balance == deposit.amount) {
+                                balance
+                            } else {
+                                throw it
+                            }
+                        }
+                    } else {
+                        throw it
+                    }
+                }
+                .map {
                     Pair(tag, it)
                 }
-            }
         }
-            .onErrorResumeNext {
-                if (it is PINException && it.pinExceptionEnum == PINExceptionEnum.ALREADY_DISTRIBUTED) {
-                    Log.d(TAG, "Already distributed, reading balance.")
-                    nfcFacade.readProtectedBalanceForUser(currentTag).map { balance ->
-                        if (balance.balance == deposit.amount) {
-                            Pair(currentTag, balance)
-                        } else {
-                            throw it
-                        }
-                    }
-                } else {
-                    throw it
-                }
-            }
     }
 
     fun changePinForCard(
