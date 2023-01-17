@@ -92,7 +92,7 @@ class MainViewModel @Inject constructor(
     fun validateToken(): Boolean {
         userLD.value.let { user ->
             val refreshToken = user?.refreshToken
-            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
+            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()?.times(1000) // refreshTokenExpiration figure is in seconds
             return if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
                 invalidateTokens()
                 false
