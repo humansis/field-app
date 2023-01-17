@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_COUNTRY
-import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.SP_COUNTRY
+import cz.applifting.humansis.misc.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.model.Country
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
@@ -34,10 +34,6 @@ class SettingsViewModel @Inject constructor(
 
     fun getCountrySettings(): String {
         return sp.getString(SP_COUNTRY, "") ?: ""
-    }
-
-    fun test() {
-        sp.edit().putBoolean("test", !sp.getBoolean("test", false)).apply()
     }
 
     fun updateCountrySettings(country: String) {

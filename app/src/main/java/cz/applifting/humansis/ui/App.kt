@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.di.AppComponent
 import cz.applifting.humansis.di.DaggerAppComponent
-import cz.applifting.humansis.managers.SP_USERNAME
+import cz.applifting.humansis.misc.SP_USERNAME
 import cz.quanti.android.nfc.logger.NfcLogger
 import quanti.com.kotlinlog.Log
 import quanti.com.kotlinlog.android.AndroidLogger

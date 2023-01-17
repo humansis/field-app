@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.api.RefreshTokenService
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.misc.SP_COUNTRY
 import cz.applifting.humansis.misc.getPayload
 import cz.applifting.humansis.model.JWToken
 import cz.applifting.humansis.model.api.RefreshTokenRequest

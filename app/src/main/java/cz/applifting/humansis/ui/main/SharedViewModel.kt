@@ -11,8 +11,12 @@ import androidx.work.WorkManager
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.managers.ToastManager
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
+import cz.applifting.humansis.misc.SP_LAST_SYNC_FAILED_ID
+import cz.applifting.humansis.misc.SP_LAST_SYNC_FAILED
+import cz.applifting.humansis.misc.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.misc.connectionObserver.ConnectionObserver
@@ -21,7 +25,6 @@ import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
-import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.synchronization.SyncWorkerState
@@ -39,10 +42,6 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 10, September, 2019
  */
-const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
-const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
-const val LAST_SYNC_FAILED_ID_KEY = "lastSyncFailedIdKey"
-
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
@@ -79,8 +78,8 @@ class SharedViewModel @Inject constructor(
             launch {
                 syncState.value = SyncWorkerState(
                     isLoading(it),
-                    sp.getDate(LAST_SYNC_FAILED_KEY),
-                    sp.getDate(LAST_DOWNLOAD_KEY),
+                    sp.getDate(SP_LAST_SYNC_FAILED),
+                    sp.getDate(SP_LAST_DOWNLOAD),
                     sp.getBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false),
                     logsUploadFailedOnly()
                 )
@@ -114,7 +113,7 @@ class SharedViewModel @Inject constructor(
 
             val lastInfo = it.first()
             val lastInfoId = lastInfo.id.toString()
-            val lastShownInfoId = sp.getString(LAST_SYNC_FAILED_ID_KEY, null)
+            val lastShownInfoId = sp.getString(SP_LAST_SYNC_FAILED_ID, null)
             if (lastInfo.state == WorkInfo.State.FAILED && lastInfoId != lastShownInfoId) {
                 val errors = lastInfo.outputData.getStringArray(ERROR_MESSAGE_KEY)
                 // show only first error in toast
@@ -124,7 +123,7 @@ class SharedViewModel @Inject constructor(
 
                 launch {
                     // avoid showing the same error toast twice (after restarting the app)
-                    sp.edit().putString(LAST_SYNC_FAILED_ID_KEY, lastInfoId).suspendCommit()
+                    sp.edit().putString(SP_LAST_SYNC_FAILED_ID, lastInfoId).suspendCommit()
                 }
             }
         }
@@ -162,7 +161,7 @@ class SharedViewModel @Inject constructor(
 
     fun tryFirstDownload() {
         launch {
-            if (sp.getDate(LAST_DOWNLOAD_KEY) == null || projectsRepository.getProjectsOfflineSuspend()
+            if (sp.getDate(SP_LAST_DOWNLOAD) == null || projectsRepository.getProjectsOfflineSuspend()
                     .isEmpty()
             ) {
                 forceSynchronize()

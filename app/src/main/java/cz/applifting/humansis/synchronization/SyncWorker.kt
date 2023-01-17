@@ -11,8 +11,14 @@ import cz.applifting.humansis.api.interceptor.LoggingInterceptor
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
-import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.ApiEnvironment
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
+import cz.applifting.humansis.misc.SP_FIRST_COUNTRY_DOWNLOAD
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
+import cz.applifting.humansis.misc.SP_LAST_SYNC_FAILED
+import cz.applifting.humansis.misc.SP_SYNC_SUMMARY
+import cz.applifting.humansis.misc.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
@@ -23,18 +29,15 @@ import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.LogsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
-import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 05, October, 2019
@@ -42,9 +45,6 @@ import javax.inject.Inject
 const val SYNC_WORKER = "sync-worker"
 
 const val ERROR_MESSAGE_KEY = "error-message-key"
-
-const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
-const val SP_SYNC_SUMMARY = "sync-summary"
 
 class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -96,11 +96,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Log.d(TAG, "Started Sync as ${loginManager.retrieveUser()?.username}")
 
-            val host = try {
-                sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-            } catch (e: Exception) {
-                Log.e(TAG, e)
-                null
+            val host = sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+                sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                    ApiEnvironment.find(name, url)
+                }
             } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
 
             hostUrlInterceptor.setHost(host)
@@ -289,8 +288,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     private suspend fun finishWork(): Result {
         sp.edit().putString(SP_SYNC_SUMMARY, syncStats.toString()).suspendCommit()
         return if (syncErrors.isEmpty()) {
-            sp.setDate(LAST_DOWNLOAD_KEY, Date())
-            sp.setDate(LAST_SYNC_FAILED_KEY, null)
+            sp.setDate(SP_LAST_DOWNLOAD, Date())
+            sp.setDate(SP_LAST_SYNC_FAILED, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
             sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
             Log.d(TAG, "Sync finished successfully")
@@ -302,11 +301,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             // 401 response code means token was expired or that no token was sent at all
             if (syncErrors.find { it.code == 401 } != null) {
                 loginManager.forceReauthentication()
-                sp.setDate(LAST_DOWNLOAD_KEY, null)
+                sp.setDate(SP_LAST_DOWNLOAD, null)
             }
 
             Log.d(TAG, "Sync finished with failure")
-            sp.setDate(LAST_SYNC_FAILED_KEY, Date())
+            sp.setDate(SP_LAST_SYNC_FAILED, Date())
 
             Result.failure(
                 reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build()

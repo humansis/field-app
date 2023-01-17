@@ -65,11 +65,11 @@ sealed class ApiEnvironment(
     )
 
     class Custom(
-        val context: Context
+        url: String
     ) : ApiEnvironment(
         id = 8,
         title = CUSTOM_API_TITLE,
-        url = readCustomUrl(context)
+        url = url
     )
 
     companion object {
@@ -96,9 +96,9 @@ sealed class ApiEnvironment(
                 Local
             ).apply {
                 try {
-                    add(Custom(context))
+                    add(Custom(readCustomUrl(context)))
                 } catch (e: Exception) {
-                    Log.d(e)
+                    Log.e(e)
                 }
             }
         }
@@ -118,7 +118,7 @@ sealed class ApiEnvironment(
             }
         }
 
-        fun find(title: String): ApiEnvironment? {
+        fun find(title: String, hostUrl: String): ApiEnvironment? {
             return when (title) {
                 PROD_API_TITLE -> Prod
                 DEMO_API_TITLE -> Demo
@@ -128,6 +128,7 @@ sealed class ApiEnvironment(
                 DEV3_API_TITLE -> Dev3
                 TEST_API_TITLE -> Test
                 LOCAL_API_TITLE -> Local
+                CUSTOM_API_TITLE -> Custom(hostUrl)
                 else -> null
             }
         }
