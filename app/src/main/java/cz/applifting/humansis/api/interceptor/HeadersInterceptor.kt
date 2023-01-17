@@ -36,34 +36,40 @@ class HeadersInterceptor(
     }
 
     private suspend fun Headers.Builder.handleAuthorizationHeader(oldRequest: Request) {
-        val authToken = loginManager.getAuthToken()
-        if (!authToken.isExpiredOrNull()) {
-            this.add("Authorization", "Bearer $authToken")
-        } else {
-            Log.d(
-                TAG,
-                "Auth token is expiring soon, acquiring new token for request ${oldRequest.method()} ${oldRequest.url()}"
-            )
-            loginManager.getRefreshToken()?.let { refreshToken ->
-                try {
-                    val loginResponse =
-                        refreshTokenService.refreshToken(RefreshTokenRequest(refreshToken))
-                    loginManager.updateUser(loginResponse)
-                    this.add("Authorization", "Bearer ${loginResponse.token}")
-                } catch (e: Exception) {
+        if (!oldRequest.isLoginRequest()) {
+            val authToken = loginManager.getAuthToken()
+            if (!authToken.isExpiredOrNull()) {
+                this.add("Authorization", "Bearer $authToken")
+            } else {
+                Log.d(
+                    TAG,
+                    "Auth token is expiring soon, acquiring new token for request ${oldRequest.method()} ${oldRequest.url()}"
+                )
+                loginManager.getRefreshToken()?.let { refreshToken ->
+                    try {
+                        val loginResponse =
+                            refreshTokenService.refreshToken(RefreshTokenRequest(refreshToken))
+                        loginManager.updateUser(loginResponse)
+                        this.add("Authorization", "Bearer ${loginResponse.token}")
+                    } catch (e: Exception) {
+                        Log.e(
+                            TAG,
+                            e,
+                            "Refresh token request ended with an exception. Not using Authorization token expecting a 401 response error code."
+                        )
+                    }
+                } ?: run {
                     Log.e(
                         TAG,
-                        e,
-                        "Refresh token request ended with an exception. Not using Authorization token expecting a 401 response error code."
+                        "Refresh token not available. Not using Authorization token expecting a 401 response error code."
                     )
                 }
-            } ?: run {
-                Log.e(
-                    TAG,
-                    "Refresh token not available. Not using Authorization token expecting a 401 response error code."
-                )
             }
         }
+    }
+
+    private fun Request.isLoginRequest(): Boolean {
+        return this.url().pathSegments().last() == LOGIN_PATH_SEGMENT
     }
 
     private fun String?.isExpiredOrNull(): Boolean {
@@ -72,5 +78,6 @@ class HeadersInterceptor(
 
     companion object {
         private val TAG = HeadersInterceptor::class.java.simpleName
+        private const val LOGIN_PATH_SEGMENT = "login"
     }
 }

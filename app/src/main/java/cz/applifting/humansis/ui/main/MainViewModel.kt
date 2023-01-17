@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.secondsToMilliseconds
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.ToastManager
@@ -92,7 +93,7 @@ class MainViewModel @Inject constructor(
     fun validateToken(): Boolean {
         userLD.value.let { user ->
             val refreshToken = user?.refreshToken
-            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()
+            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()?.secondsToMilliseconds()
             return if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
                 invalidateTokens()
                 false

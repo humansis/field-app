@@ -5,5 +5,5 @@ fun String?.equalsIgnoreEmpty(other: String?): Boolean {
 }
 
 fun String?.orNullIfEmpty(): String? {
-    return this?.let { if (it.isEmpty()) null else it }
+    return this?.let { it.ifEmpty { null } }
 }

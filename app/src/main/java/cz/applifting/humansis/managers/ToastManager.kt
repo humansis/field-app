@@ -21,12 +21,12 @@ class ToastManagerImpl(val context: Context) : ToastManager {
     }
 
     override fun setToastMessage(text: String) {
-        toastMessageLD.value = text
-        toastMessageLD.value = null // To prevent showing it again on resume
+        toastMessageLD.postValue(text)
+        toastMessageLD.postValue(null) // To prevent showing it again on resume
     }
 
     override fun setToastMessage(stringResId: Int) {
-        toastMessageLD.value = context.getString(stringResId)
-        toastMessageLD.value = null // To prevent showing it again on resume
+        toastMessageLD.postValue(context.getString(stringResId))
+        toastMessageLD.postValue(null) // To prevent showing it again on resume
     }
 }
