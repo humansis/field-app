@@ -12,11 +12,14 @@ import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.C
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.v2.Deposit
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
+import cz.quanti.android.nfc.exception.PINException
+import cz.quanti.android.nfc.exception.PINExceptionEnum
 import io.reactivex.Single
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -76,14 +79,27 @@ class BeneficiaryViewModel @Inject constructor(
         return nfcTagPublisher.getTagObservable().firstOrError().flatMap { tag ->
             tagFoundCallback.invoke()
             if (remote) {
-                nfcFacade.rewriteBalanceForUser(tag, deposit).map {
-                    Pair(tag, it)
-                }
+                nfcFacade.rewriteBalanceForUser(tag, deposit)
             } else {
-                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit).map {
+                nfcFacade.writeOrRewriteProtectedBalanceForUser(tag, pin, deposit)
+            }
+                .onErrorResumeNext {
+                    if (it is PINException && it.pinExceptionEnum == PINExceptionEnum.ALREADY_DISTRIBUTED) {
+                        Log.d(TAG, "Already distributed, reading balance.")
+                        nfcFacade.readProtectedBalanceForUser(tag).map { balance ->
+                            if (balance.balance == deposit.amount) {
+                                balance
+                            } else {
+                                throw it
+                            }
+                        }
+                    } else {
+                        throw it
+                    }
+                }
+                .map {
                     Pair(tag, it)
                 }
-            }
         }
     }
 
@@ -155,6 +171,7 @@ class BeneficiaryViewModel @Inject constructor(
     }
 
     companion object {
+        private val TAG = BeneficiaryViewModel::class.java.simpleName
         private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex(RegexOption.IGNORE_CASE)
         private val NEW_BOOKLET_REGEX = "^[a-zA-Z0-9]{2,3}_.+_[0-9]{1,2}-[0-9]{1,2}-[0-9]{2,4}_((booklet)|(batch))[0-9]+$".toRegex(RegexOption.IGNORE_CASE)
     }
