@@ -10,6 +10,8 @@ interface ToastManager {
     fun setToastMessage(text: String)
 
     fun setToastMessage(stringResId: Int)
+
+    fun removeToastMessage()
 }
 
 class ToastManagerImpl(val context: Context) : ToastManager {
@@ -22,11 +24,13 @@ class ToastManagerImpl(val context: Context) : ToastManager {
 
     override fun setToastMessage(text: String) {
         toastMessageLD.postValue(text)
-        toastMessageLD.postValue(null) // To prevent showing it again on resume
     }
 
     override fun setToastMessage(stringResId: Int) {
         toastMessageLD.postValue(context.getString(stringResId))
+    }
+
+    override fun removeToastMessage() {
         toastMessageLD.postValue(null) // To prevent showing it again on resume
     }
 }

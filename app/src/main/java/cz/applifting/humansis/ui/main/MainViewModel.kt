@@ -125,6 +125,10 @@ class MainViewModel @Inject constructor(
         toastManager.setToastMessage(stringResId)
     }
 
+    fun removeToastMessage() {
+        toastManager.removeToastMessage()
+    }
+
     fun logout() {
         launch(Dispatchers.IO) {
             loginManager.logout()

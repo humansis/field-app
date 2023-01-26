@@ -101,7 +101,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         private const val CAMERA_REQUEST_CODE = 0
         const val INVALID_CODE = "Invalid code"
         const val ALREADY_ASSIGNED = "Already assigned"
-        private val TAG = this::class.java.simpleName
+        private val TAG = BeneficiaryDialog::class.java.simpleName
     }
 
     @Inject
@@ -655,7 +655,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             }
                         }
                         else -> {
-                            Log.e(this.javaClass.simpleName, ex)
                             sharedViewModel.setToastMessage(
                                 getString(R.string.card_error)
                             )
