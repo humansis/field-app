@@ -45,19 +45,6 @@ interface HumansisService {
     @POST("v1/smartcards")
     suspend fun assignSmartcard(@Body assignSmartcardRequest: AssignSmartcardRequest)
 
-    @PATCH("v1/smartcards/{serialNumber}")
-    suspend fun deactivateSmartcard(
-        @Path("serialNumber") serialNumber: String,
-        @Body deactivateSmartcardRequest: DeactivateSmartcardRequest
-    )
-
-    // TODO must be removed for v3.9.0 release
-    @POST("v4/smartcards/{serialNumber}/deposit")
-    suspend fun legacyDistributeSmartcard(
-        @Path("serialNumber") serialNumber: String,
-        @Body distributeSmartcardRequest: LegacyDistributeSmartcardRequest
-    )
-
     @POST("v5/smartcards/{serialNumber}/deposit")
     suspend fun distributeSmartcard(
         @Path("serialNumber") serialNumber: String,

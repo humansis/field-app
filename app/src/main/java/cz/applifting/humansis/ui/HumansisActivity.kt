@@ -1,40 +1,48 @@
 package cz.applifting.humansis.ui
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.work.*
+import androidx.navigation.findNavController
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
-import cz.applifting.humansis.extensions.isWifiConnected
+import cz.applifting.humansis.misc.SP_LAST_VERSION
 import cz.applifting.humansis.misc.NfcCardErrorMessage
 import cz.applifting.humansis.misc.NfcInitializer
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
 import cz.applifting.humansis.misc.SmartcardUtilities.getExpirationDateAsString
 import cz.applifting.humansis.misc.SmartcardUtilities.getLimitsAsText
 import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
-import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.MainViewModel
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import cz.quanti.android.nfc.exception.PINException
 import io.reactivex.disposables.Disposable
-import quanti.com.kotlinlog.Log
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
@@ -50,9 +58,8 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     private val vm: MainViewModel by viewModels { viewModelFactory }
 
-    private val networkChangeReceiver = NetworkChangeReceiver()
-
     private var displayedDialog: AlertDialog? = null
+    private var displayedToast: Toast? = null
 
     private var readBalanceDisposable: Disposable? = null
     private var initializeCardDisposable: Disposable? = null
@@ -73,37 +80,29 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     override fun onStart() {
-        super.onStart()
         Log.d(TAG, "onStart")
+        super.onStart()
         checkAppVersion()
     }
 
     override fun onResume() {
-        super.onResume()
         Log.d(TAG, "onResume")
-
-        enqueueSynchronization()
-
-        val filter = IntentFilter()
-        filter.addAction("android.net.conn.CONNECTIVITY_ACTION")
-        filter.addAction("android.net.wifi.STATE_CHANGE")
-        registerReceiver(networkChangeReceiver, filter)
+        super.onResume()
     }
 
     override fun onPause() {
-        NfcInitializer.disableForegroundDispatch(this)
         Log.d(TAG, "onPause")
+        NfcInitializer.disableForegroundDispatch(this)
         super.onPause()
     }
 
     override fun onStop() {
-        dispose()
         Log.d(TAG, "onStop")
+        dispose()
         super.onStop()
     }
 
     override fun onDestroy() {
-        unregisterReceiver(networkChangeReceiver)
         Log.d(TAG, "onDestroy")
         super.onDestroy()
     }
@@ -144,11 +143,25 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun checkAppVersion() {
-        val lastVersion = sp.getString(LAST_VERSION_KEY, "unknown")
+        val lastVersion = sp.getString(SP_LAST_VERSION, "unknown")
         val currentVersion = BuildConfig.VERSION_NAME
         if (currentVersion != lastVersion) {
             Log.d(TAG, "App updated from $lastVersion to $currentVersion")
-            sp.edit().putString(LAST_VERSION_KEY, currentVersion).apply()
+            sp.edit().putString(SP_LAST_VERSION, currentVersion).apply()
+
+            if (currentVersion == VERSION_NAME_3_9_0) {
+                val envName = sp.getString("pin_offline_app_api_url", "")
+                sp.edit().putString(SP_ENVIRONMENT_NAME, envName).apply()
+            }
+        }
+    }
+
+    private fun checkTokenAndEnqueueSynchronization() {
+        if (findNavController(R.id.nav_host_fragment_base).currentDestination?.id == R.id.mainFragment) {
+            if (vm.validateToken()) {
+                // TODO tohle je picovina. Tahle metoda se zavola pouze z MainFragmentu kdyz je pripojena wifi. A uvnitr enqueueSynchronization se wifi checkuje znovu.
+                enqueueSynchronization()
+            }
         }
     }
 
@@ -165,24 +178,17 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
                 .build()
 
             workManager.enqueueUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, syncWhenWifiRequest)
+            Log.d(TAG, "Synchronization enqueued")
         }
     }
 
     private fun lastUploadWasLongTimeAgo(): Boolean {
-        val lastDownloadDate = sp.getDate(LAST_DOWNLOAD_KEY)
+        val lastDownloadDate = sp.getDate(SP_LAST_DOWNLOAD)
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.HOUR_OF_DAY, -1)
         val dateHourAgo = calendar.time
 
         return (lastDownloadDate != null && lastDownloadDate.before(dateHourAgo))
-    }
-
-    private inner class NetworkChangeReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (isWifiConnected()) {
-                enqueueSynchronization()
-            }
-        }
     }
 
     override fun onTagDiscovered(tag: Tag) {
@@ -191,21 +197,42 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun setUpObservers() {
+        fun showToast(text: String) {
+            displayedToast?.cancel()
+            displayedToast = null
+            val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+            val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+            tvMessage.text = text
+            displayedToast = Toast(this)
+            displayedToast?.duration = Toast.LENGTH_SHORT
+            displayedToast?.view = toastView
+            displayedToast?.show()
+        }
+
+        observe(vm.getToastMessageLiveData()) {
+            if (it != null) {
+                showToast(it)
+                vm.removeToastMessage() // To prevent showing it again on resume
+            }
+        }
+
+        observe(vm.enqueueSynchronization) {
+            checkTokenAndEnqueueSynchronization()
+        }
+
         observe(vm.readBalanceResult) {
             showReadBalanceResult(it)
         }
 
         observe(vm.readBalanceError) {
             Log.e(this.javaClass.simpleName, it)
-            Toast.makeText(
-                this,
+            vm.setToastMessage(
                 if (it is PINException) {
                     NfcCardErrorMessage.getNfcCardErrorMessage(it.pinExceptionEnum, this)
                 } else {
                     getString(R.string.card_error)
-                },
-                Toast.LENGTH_LONG
-            ).show()
+                }
+            )
             displayedDialog?.dismiss()
             NfcInitializer.disableForegroundDispatch(this)
         }
@@ -331,6 +358,6 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
 
     companion object {
         private val TAG = HumansisActivity::class.java.simpleName
-        private const val LAST_VERSION_KEY = "last-version-key"
+        private const val VERSION_NAME_3_9_0 = "3.9.0"
     }
 }

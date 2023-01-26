@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 30,
-    "identityHash": "f423632b93af3ee1d1dfa0387f234c40",
+    "identityHash": "865413250b232094f26e41477ec97bef",
     "entities": [
       {
         "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `username` TEXT NOT NULL, `token` TEXT, `refreshToken` TEXT, `refreshTokenExpiration` TEXT, `email` TEXT NOT NULL, `shouldReauthenticate` INTEGER NOT NULL, `countries` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `username` TEXT NOT NULL, `token` TEXT, `email` TEXT NOT NULL, `invalidPassword` INTEGER NOT NULL, `countries` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,26 +27,14 @@
             "notNull": false
           },
           {
-            "fieldPath": "refreshToken",
-            "columnName": "refreshToken",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "refreshTokenExpiration",
-            "columnName": "refreshTokenExpiration",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "email",
             "columnName": "email",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "shouldReauthenticate",
-            "columnName": "shouldReauthenticate",
+            "fieldPath": "invalidPassword",
+            "columnName": "invalidPassword",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -68,7 +56,7 @@
       },
       {
         "tableName": "beneficiaries",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `beneficiaryId` INTEGER NOT NULL, `givenName` TEXT, `familyName` TEXT, `assistanceId` INTEGER NOT NULL, `distributed` INTEGER NOT NULL, `distributedAt` TEXT, `reliefIDs` TEXT NOT NULL, `qrBooklets` TEXT, `smartcard` TEXT, `newSmartcard` TEXT, `edited` INTEGER NOT NULL, `commodities` TEXT NOT NULL, `remote` INTEGER NOT NULL, `dateExpiration` TEXT, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, `nationalIds` TEXT NOT NULL, `originalReferralType` TEXT, `originalReferralNote` TEXT, `referralType` TEXT, `referralNote` TEXT, `originalBalance` REAL, `balance` REAL, PRIMARY KEY(`id`), FOREIGN KEY(`assistanceId`) REFERENCES `distributions`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `beneficiaryId` INTEGER NOT NULL, `givenName` TEXT, `familyName` TEXT, `assistanceId` INTEGER NOT NULL, `distributed` INTEGER NOT NULL, `distributedAt` TEXT, `reliefIDs` TEXT NOT NULL, `qrBooklets` TEXT, `smartcard` TEXT, `newSmartcard` TEXT, `edited` INTEGER NOT NULL, `commodities` TEXT NOT NULL, `remote` INTEGER NOT NULL, `dateExpiration` TEXT, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, `nationalIds` TEXT NOT NULL, `originalReferralType` TEXT, `originalReferralNote` TEXT, `referralType` TEXT, `referralNote` TEXT, `originalBalance` REAL, `balance` REAL, `hasDuplicateName` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`assistanceId`) REFERENCES `distributions`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -219,6 +207,12 @@
             "columnName": "balance",
             "affinity": "REAL",
             "notNull": false
+          },
+          {
+            "fieldPath": "hasDuplicateName",
+            "columnName": "hasDuplicateName",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -450,7 +444,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f423632b93af3ee1d1dfa0387f234c40')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '865413250b232094f26e41477ec97bef')"
     ]
   }
 }

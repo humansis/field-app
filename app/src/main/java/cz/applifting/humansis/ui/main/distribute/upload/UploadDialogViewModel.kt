@@ -2,6 +2,7 @@ package cz.applifting.humansis.ui.main.distribute.upload
 
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.misc.SP_SYNC_SUMMARY
 import cz.applifting.humansis.misc.stringLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
@@ -10,7 +11,6 @@ import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
-import cz.applifting.humansis.synchronization.SP_SYNC_SUMMARY
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect

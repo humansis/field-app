@@ -1,31 +1,39 @@
 package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.secondsToMilliseconds
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.ToastManager
 import cz.applifting.humansis.misc.ApiEnvironment
 import cz.applifting.humansis.misc.NfcTagPublisher
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
+import cz.applifting.humansis.misc.SP_LAST_DOWNLOAD
 import cz.applifting.humansis.misc.SingleLiveEvent
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.ui.login.SP_ENVIRONMENT
 import cz.quanti.android.nfc.OfflineFacade
 import cz.quanti.android.nfc.dto.v2.UserPinBalance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Date
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import quanti.com.kotlinlog.Log
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
 class MainViewModel @Inject constructor(
     private val loginManager: LoginManager,
+    private val toastManager: ToastManager,
     private val sp: SharedPreferences,
     app: App
 ) : BaseViewModel(app) {
@@ -43,12 +51,14 @@ class MainViewModel @Inject constructor(
     val initializeCardResult = SingleLiveEvent<UserPinBalance>()
     val initializeCardError = SingleLiveEvent<Throwable>()
 
+    val enqueueSynchronization = SingleLiveEvent<Unit>()
+
     init {
         launch {
             userLD.value = loginManager.retrieveUser()
         }
         launch {
-            environmentLD.value = sp.getString(SP_ENVIRONMENT, ApiEnvironment.Stage.title)
+            environmentLD.value = sp.getString(SP_ENVIRONMENT_NAME, ApiEnvironment.Stage.title)
         }
     }
 
@@ -73,20 +83,50 @@ class MainViewModel @Inject constructor(
     }
 
     fun getHostUrl(): ApiEnvironment {
-        return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-        } catch (e: Exception) {
-            Log.e(TAG, e)
-            null
+        return sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+            sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                ApiEnvironment.find(name, url)
+            }
         } ?: ApiEnvironment.Stage // fallback to stage, because environment was not saved to SP when no environment was selected in debug builds on login screen until v3.4.1
     }
 
-    fun invalidateTokens() {
+    fun validateToken(): Boolean {
+        userLD.value.let { user ->
+            val refreshToken = user?.refreshToken
+            val refreshTokenExpiration = user?.refreshTokenExpiration?.toLong()?.secondsToMilliseconds()
+            return if (refreshToken == null || refreshTokenExpiration == null || refreshTokenExpiration < Date().time) {
+                invalidateTokens()
+                false
+            } else {
+                true
+            }
+        }
+    }
+
+    private fun invalidateTokens() {
         launch(Dispatchers.IO) {
+            Log.d(TAG, "You have been logged out because your refresh token have expired or are missing.")
+            setToastMessage(R.string.token_missing_or_expired)
             loginManager.invalidateTokens()
-            sp.setDate(LAST_DOWNLOAD_KEY, null)
+            sp.setDate(SP_LAST_DOWNLOAD, null)
             userLD.postValue(null)
         }
+    }
+
+    fun getToastMessageLiveData(): LiveData<String?> {
+        return toastManager.getToastMessageLiveData()
+    }
+
+    fun setToastMessage(text: String) {
+        toastManager.setToastMessage(text)
+    }
+
+    private fun setToastMessage(stringResId: Int) {
+        toastManager.setToastMessage(stringResId)
+    }
+
+    fun removeToastMessage() {
+        toastManager.removeToastMessage()
     }
 
     fun logout() {

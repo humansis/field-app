@@ -49,7 +49,8 @@ data class BeneficiaryLocal(
     val referralType: ReferralType? = null,
     val referralNote: String? = null,
     val originalBalance: Double? = null,
-    val balance: Double? = null
+    val balance: Double? = null,
+    val hasDuplicateName: Boolean
 ) {
     private val isReferralTypeChanged
         get() = originalReferralType != referralType

@@ -15,8 +15,11 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import kotlinx.android.synthetic.main.component_search_beneficiary.*
-import kotlinx.android.synthetic.main.fragment_beneficiaries.*
+import kotlinx.android.synthetic.main.component_search_beneficiary.et_search
+import kotlinx.android.synthetic.main.fragment_beneficiaries.cmp_reached_beneficiaries
+import kotlinx.android.synthetic.main.fragment_beneficiaries.cmp_search_beneficiary
+import kotlinx.android.synthetic.main.fragment_beneficiaries.layout_duplicate_names_warning
+import kotlinx.android.synthetic.main.fragment_beneficiaries.lc_beneficiaries
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -54,8 +57,9 @@ class BeneficiariesFragment : BaseFragment() {
 
         lc_beneficiaries.init(viewAdapter)
 
-        viewModel.searchResultsLD.observe(viewLifecycleOwner) {
-            viewAdapter.update(it)
+        viewModel.searchResultsLD.observe(viewLifecycleOwner) { beneficiaries ->
+            layout_duplicate_names_warning.visible(beneficiaries.find { it.hasDuplicateName } != null)
+            viewAdapter.update(beneficiaries)
         }
 
         viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner) {
