@@ -212,6 +212,7 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
         observe(vm.getToastMessageLiveData()) {
             if (it != null) {
                 showToast(it)
+                vm.removeToastMessage() // To prevent showing it again on resume
             }
         }
 
