@@ -570,6 +570,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             .show()
     }
 
+    private fun showSimpleDialog(message: String) {
+        AlertDialog.Builder(requireContext())
+            .setMessage(message)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog?.dismiss()
+            }
+            .create()
+            .show()
+    }
+
     private fun writeBalanceOnCard(
         pin: String,
         remote: Boolean,
@@ -645,7 +655,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     }
                                 }
                                 else -> {
-                                    sharedViewModel.setToastMessage(
+                                    showSimpleDialog(
                                         NfcCardErrorMessage.getNfcCardErrorMessage(
                                             ex.pinExceptionEnum,
                                             requireActivity()
@@ -655,7 +665,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             }
                         }
                         else -> {
-                            sharedViewModel.setToastMessage(
+                            showSimpleDialog(
                                 getString(R.string.card_error)
                             )
                         }
@@ -697,7 +707,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            sharedViewModel.setToastMessage(
+                            showSimpleDialog(
                                 NfcCardErrorMessage.getNfcCardErrorMessage(
                                     ex.pinExceptionEnum,
                                     requireActivity()
@@ -705,7 +715,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             )
                         }
                         else -> {
-                            sharedViewModel.setToastMessage(
+                            showSimpleDialog(
                                 getString(R.string.card_error)
                             )
                         }
