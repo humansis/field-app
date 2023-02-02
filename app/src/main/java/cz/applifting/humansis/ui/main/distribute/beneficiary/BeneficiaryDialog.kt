@@ -418,7 +418,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             showScanCardDialog(
                 clickedButton = btn_scan_smartcard,
                 title = title,
-                beneficiary = beneficiary,
+                beneficiary = beneficiary
             )
         )
     }
@@ -443,7 +443,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             pin,
             showScanCardDialog(
                 clickedButton = btn_change_pin,
-                title = title,
+                title = title
             )
         )
     }
@@ -500,7 +500,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun showScanCardDialog(clickedButton: MaterialButton, title: String? = null,  beneficiary: BeneficiaryLocal? = null): AlertDialog {
+    private fun showScanCardDialog(clickedButton: MaterialButton, title: String? = null, beneficiary: BeneficiaryLocal? = null): AlertDialog {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
             .setTitle(title ?: getString(R.string.scan_the_card))
             .setCancelable(false)
