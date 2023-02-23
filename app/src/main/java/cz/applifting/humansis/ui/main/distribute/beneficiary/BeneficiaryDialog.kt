@@ -392,24 +392,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     ) {
         if (NfcInitializer.initNfc(requireActivity())) {
             btn_scan_smartcard.setOnClickListener {
-
                 Log.d(TAG, "Scan smartcard button clicked")
-                btn_scan_smartcard.isEnabled = false
-                val pin = generateRandomPin()
-                writeBalanceOnCard(
-                    pin,
-                    beneficiary.remote,
-                    beneficiary.id,
-                    Deposit(
-                        amount = value,
-                        beneficiaryId = beneficiary.beneficiaryId,
-                        currency = currency,
-                        assistanceId = beneficiary.assistanceId,
-                        expirationDate = beneficiary.dateExpiration?.toDate(),
-                        limits = beneficiary.getLimits()
-                    ),
-                    showScanCardDialog(btn_scan_smartcard, beneficiary)
-                )
+                writeBalance(beneficiary, value, currency)
             }
         } else {
             btn_scan_smartcard.text = getString(R.string.no_nfc_available)
@@ -417,22 +401,51 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
+    private fun writeBalance(beneficiary: BeneficiaryLocal, value: Double, currency: String, title: String? = null) {
+        btn_scan_smartcard.isEnabled = false
+        val pin = generateRandomPin()
+        writeBalanceOnCard(
+            pin,
+            beneficiary,
+            Deposit(
+                amount = value,
+                beneficiaryId = beneficiary.beneficiaryId,
+                currency = currency,
+                assistanceId = beneficiary.assistanceId,
+                expirationDate = beneficiary.dateExpiration?.toDate(),
+                limits = beneficiary.getLimits()
+            ),
+            showScanCardDialog(
+                clickedButton = btn_scan_smartcard,
+                title = title,
+                beneficiary = beneficiary
+            )
+        )
+    }
+
     private fun setChangePinOnClickListener(beneficiary: BeneficiaryLocal) {
         if (NfcInitializer.initNfc(requireActivity())) {
             btn_change_pin.setOnClickListener {
                 Log.d(TAG, "Change pin button clicked")
-                btn_change_pin.isEnabled = false
-                val pin = generateRandomPin()
-                changePinOnCard(
-                    beneficiary,
-                    pin,
-                    showScanCardDialog(btn_change_pin)
-                )
+                changePin(beneficiary)
             }
         } else {
             btn_change_pin.text = getString(R.string.no_nfc_available)
             btn_change_pin.isEnabled = false
         }
+    }
+
+    private fun changePin(beneficiary: BeneficiaryLocal, title: String? = null) {
+        btn_change_pin.isEnabled = false
+        val pin = generateRandomPin()
+        changePinOnCard(
+            beneficiary,
+            pin,
+            showScanCardDialog(
+                clickedButton = btn_change_pin,
+                title = title
+            )
+        )
     }
 
     private fun enableButtons() {
@@ -487,14 +500,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    private fun showScanCardDialog(clickedButton: MaterialButton, beneficiary: BeneficiaryLocal? = null): AlertDialog {
+    private fun showScanCardDialog(clickedButton: MaterialButton, title: String? = null, beneficiary: BeneficiaryLocal? = null): AlertDialog {
         val scanCardDialog = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-            .setTitle(getString(R.string.scan_the_card))
+            .setTitle(title ?: getString(R.string.scan_the_card))
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog?.dismiss()
+                dialog?.cancel()
             }
-            .setOnDismissListener {
+            .setOnCancelListener {
                 clickedButton.visibility = View.VISIBLE
                 clickedButton.isEnabled = true
                 disposable?.dispose()
@@ -572,14 +585,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     private fun writeBalanceOnCard(
         pin: String,
-        remote: Boolean,
-        beneficiaryLocalId: Int,
+        beneficiary: BeneficiaryLocal,
         deposit: Deposit,
         scanCardDialog: AlertDialog
     ) {
+        val remote = beneficiary.remote
+        val beneficiaryLocalId = beneficiary.id
         Log.d(
             TAG,
-            "writeBalanceOnCard: pin: $pin, remote: $remote, deposit: $deposit"
+            "writeBalanceOnCard: pin: $pin, remote: $remote, beneficiaryId: $beneficiaryLocalId, deposit: $deposit"
         )
         disposable?.dispose()
         disposable = viewModel.depositMoneyToCard(pin, remote, deposit, ::tagFoundCallBack)
@@ -637,15 +651,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                                     if (NfcInitializer.initNfc(requireActivity())) {
                                         writeBalanceOnCard(
                                             pin,
-                                            remote,
-                                            beneficiaryLocalId,
+                                            beneficiary,
                                             deposit,
                                             showCardInitializedDialog()
                                         )
                                     }
                                 }
                                 else -> {
-                                    sharedViewModel.setToastMessage(
+                                    writeBalance(
+                                        beneficiary,
+                                        deposit.amount,
+                                        deposit.currency,
                                         NfcCardErrorMessage.getNfcCardErrorMessage(
                                             ex.pinExceptionEnum,
                                             requireActivity()
@@ -655,7 +671,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             }
                         }
                         else -> {
-                            sharedViewModel.setToastMessage(
+                            writeBalance(
+                                beneficiary,
+                                deposit.amount,
+                                deposit.currency,
                                 getString(R.string.card_error)
                             )
                         }
@@ -697,7 +716,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                     when (ex) {
                         is PINException -> {
-                            sharedViewModel.setToastMessage(
+                            changePin(
+                                beneficiary,
                                 NfcCardErrorMessage.getNfcCardErrorMessage(
                                     ex.pinExceptionEnum,
                                     requireActivity()
@@ -705,7 +725,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             )
                         }
                         else -> {
-                            sharedViewModel.setToastMessage(
+                            changePin(
+                                beneficiary,
                                 getString(R.string.card_error)
                             )
                         }
@@ -750,7 +771,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun onStop() {
-        displayedScanCardDialog?.dismiss()
+        displayedScanCardDialog?.cancel()
         disposable?.dispose()
         enableButtons()
         super.onStop()
@@ -771,9 +792,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         }
     }
-
-    private val String?.isValidSmartcard
-        get() = (this != null)
 
     private fun startScanner(view: View) {
         view.apply {

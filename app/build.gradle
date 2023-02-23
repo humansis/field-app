@@ -167,7 +167,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     // Artifactory
-    def nfc_library_version = "2.1.5"
+    def nfc_library_version = "2.1.8"
     implementation "cz.quanti.android:nfc:$nfc_library_version"
 
     // DI
