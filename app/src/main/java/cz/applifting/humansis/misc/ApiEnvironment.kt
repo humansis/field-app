@@ -32,32 +32,38 @@ sealed class ApiEnvironment(
         url = BuildConfig.STAGE_API_URL
     )
 
-    object Dev1 : ApiEnvironment(
+    object Stage2 : ApiEnvironment(
         id = 3,
+        title = STAGE2_API_TITLE,
+        url = BuildConfig.STAGE2_API_URL
+    )
+
+    object Dev1 : ApiEnvironment(
+        id = 4,
         title = DEV1_API_TITLE,
         url = BuildConfig.DEV1_API_URL
     )
 
     object Dev2 : ApiEnvironment(
-        id = 4,
+        id = 5,
         title = DEV2_API_TITLE,
         url = BuildConfig.DEV2_API_URL
     )
 
     object Dev3 : ApiEnvironment(
-        id = 5,
+        id = 6,
         title = DEV3_API_TITLE,
         url = BuildConfig.DEV3_API_URL
     )
 
     object Test : ApiEnvironment(
-        id = 6,
+        id = 7,
         title = TEST_API_TITLE,
         url = BuildConfig.TEST_API_URL
     )
 
     object Local : ApiEnvironment(
-        id = 7,
+        id = 8,
         title = LOCAL_API_TITLE,
         secure = false,
         url = BuildConfig.LOCAL_API_URL,
@@ -77,6 +83,7 @@ sealed class ApiEnvironment(
         const val PROD_API_TITLE = "PROD"
         const val DEMO_API_TITLE = "DEMO"
         const val STAGE_API_TITLE = "STAGE"
+        const val STAGE2_API_TITLE = "STAGE2"
         const val DEV1_API_TITLE = "DEV1"
         const val DEV2_API_TITLE = "DEV2"
         const val DEV3_API_TITLE = "DEV3"
@@ -89,6 +96,7 @@ sealed class ApiEnvironment(
                 Prod,
                 Demo,
                 Stage,
+                Stage2,
                 Dev1,
                 Dev2,
                 Dev3,
@@ -123,6 +131,7 @@ sealed class ApiEnvironment(
                 PROD_API_TITLE -> Prod
                 DEMO_API_TITLE -> Demo
                 STAGE_API_TITLE -> Stage
+                STAGE2_API_TITLE -> Stage2
                 DEV1_API_TITLE -> Dev1
                 DEV2_API_TITLE -> Dev2
                 DEV3_API_TITLE -> Dev3

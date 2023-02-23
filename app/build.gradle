@@ -71,6 +71,7 @@ android {
         buildConfigField "String", "PROD_API_URL", "\"$PROD_API_URL_MOBILE\""
         buildConfigField "String", "DEMO_API_URL", "\"$DEMO_API_URL\""
         buildConfigField "String", "STAGE_API_URL", "\"$STAGE_API_URL_MOBILE\""
+        buildConfigField "String", "STAGE2_API_URL", "\"$STAGE2_API_URL_MOBILE\""
         buildConfigField "String", "TEST_API_URL", "\"$TEST_API_URL\""
         buildConfigField "String", "DEV1_API_URL", "\"$DEV1_API_URL\""
         buildConfigField "String", "DEV2_API_URL", "\"$DEV2_API_URL\""

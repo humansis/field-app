@@ -268,7 +268,7 @@ class MainFragment : BaseFragment() {
                 ApiEnvironment.Test.id -> {
                     ContextCompat.getColor(requireContext(), R.color.test)
                 }
-                ApiEnvironment.Stage.id -> {
+                ApiEnvironment.Stage.id, ApiEnvironment.Stage2.id -> {
                     ContextCompat.getColor(requireContext(), R.color.stage)
                 }
                 ApiEnvironment.Demo.id -> {
