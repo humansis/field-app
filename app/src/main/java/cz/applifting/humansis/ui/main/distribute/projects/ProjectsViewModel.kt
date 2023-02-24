@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 class ProjectsViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
-    val distributionsRepository: DistributionsRepository,
+    private val distributionsRepository: DistributionsRepository,
     app: App
 ) : BaseListViewModel(app) {
 
