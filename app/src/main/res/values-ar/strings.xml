@@ -15,13 +15,13 @@
     <string name="national_id">رقم الهوية الشخصية</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">تم الوصول إلى %1$d من %2$d من المستفيدين</string>
     <string name="search_hint">ابحث في الأسماء</string>
-    <string name="distributions">التوزيعات</string>
+    <string name="assistances">التوزيعات</string>
     <string name="unknown">غير معروف</string>
     <string name="status">الحالة</string>
     <string name="distributed">استلم</string>
     <string name="not_distributed">لم يستلم</string>
     <string name="beneficiary">مستفيد</string>
-    <string name="distribution">توزيعة</string>
+    <string name="assistance">توزيعة</string>
     <string name="project">مشروع</string>
     <string name="confirm_distribution">تأكيد</string>
     <string name="rescan_qr">امسح الرمز</string>

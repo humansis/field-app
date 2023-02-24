@@ -1,6 +1,6 @@
 package cz.applifting.humansis.model.api
 
-data class DistributionBeneficiary(
+data class AssistanceBeneficiary(
     val id: Int,
     val beneficiary: Beneficiary,
     val distributedAt: String?, // TODO tyka se jenom smartcarty v teto distribuci, prejmenovat na smartcardDistributedAt

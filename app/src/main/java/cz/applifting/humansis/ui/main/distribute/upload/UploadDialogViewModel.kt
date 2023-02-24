@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.misc.SP_SYNC_SUMMARY
 import cz.applifting.humansis.misc.stringLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.DistributionLocal
+import cz.applifting.humansis.model.db.AssistanceLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
@@ -28,7 +28,7 @@ enum class Screen {
 class UploadDialogViewModel @Inject constructor(
     private val errorsRepository: ErrorsRepository,
     private val projectsRepository: ProjectsRepository,
-    private val distributionsRepository: DistributionsRepository,
+    private val assistancesRepository: AssistancesRepository,
     private val beneficiariesRepository: BeneficiariesRepository,
     sp: SharedPreferences,
     app: App
@@ -52,11 +52,11 @@ class UploadDialogViewModel @Inject constructor(
         currentScreenLD.value = screen
     }
 
-    suspend fun getRelatedEntities(id: Int): Triple<String?, DistributionLocal?, BeneficiaryLocal?> {
+    suspend fun getRelatedEntities(id: Int): Triple<String?, AssistanceLocal?, BeneficiaryLocal?> {
         val beneficiary = beneficiariesRepository.getBeneficiaryOffline(id)
         return Triple(
             beneficiary?.let { projectsRepository.getNameByAssistanceId(it.assistanceId) },
-            beneficiary?.let { distributionsRepository.getById(it.assistanceId) },
+            beneficiary?.let { assistancesRepository.getById(it.assistanceId) },
             beneficiary
         )
     }

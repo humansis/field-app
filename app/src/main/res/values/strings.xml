@@ -15,13 +15,13 @@
     <string name="national_id">National ID</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d of %2$d beneficiaries reached</string>
     <string name="search_hint">Search</string>
-    <string name="distributions">Distributions</string>
+    <string name="assistances">Assistances</string>
     <string name="unknown">Unknown</string>
     <string name="status">Status</string>
     <string name="distributed">Distributed</string>
     <string name="not_distributed">Not Distributed</string>
     <string name="beneficiary">Beneficiary</string>
-    <string name="distribution">Distribution</string>
+    <string name="assistance">Assistance</string>
     <string name="project">Project</string>
     <string name="confirm_distribution">Confirm</string>
     <string name="rescan_qr">Rescan QR</string>

@@ -18,13 +18,13 @@
     <string name="rescan_qr">Пересканувати QR</string>
     <string name="booklet_id">Номер буклету</string>
     <string name="beneficiary">Отримувач</string>
-    <string name="distribution">Видача</string>
+    <string name="assistance">Видача</string>
     <string name="project">Проєкт</string>
     <string name="confirm_distribution">Підтвердити</string>
     <string name="not_distributed">Не видано</string>
     <string name="status">Статус</string>
     <string name="distributed">Видано</string>
-    <string name="distributions">Выдачи</string>
+    <string name="assistances">Выдачи</string>
     <string name="unknown">Невідомо</string>
     <string name="scan_qr_code">Відсканувати QR код</string>
     <string name="search">Пошук</string>

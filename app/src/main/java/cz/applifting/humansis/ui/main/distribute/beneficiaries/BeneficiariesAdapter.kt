@@ -42,8 +42,8 @@ class BeneficiariesAdapter(
     }
 
     override fun onBindViewHolder(holder: BeneficiaryViewHolder, position: Int) {
-        val distributionBeneficiary = beneficiaries[position]
-        holder.bind(distributionBeneficiary)
+        val assistanceBeneficiary = beneficiaries[position]
+        holder.bind(assistanceBeneficiary)
     }
 
     override fun getItemCount(): Int = beneficiaries.size

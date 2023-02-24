@@ -41,7 +41,7 @@ class BeneficiaryViewModel @Inject constructor(
     lateinit var nfcFacade: OfflineFacade
 
     var previousEditState: Boolean? = null
-    var isAssignedInOtherDistribution: Boolean = false
+    var isAssignedInOtherAssistance: Boolean = false
     private set
 
     fun initBeneficiary(id: Int) {
@@ -49,7 +49,7 @@ class BeneficiaryViewModel @Inject constructor(
             beneficiariesRepository.getBeneficiaryOfflineFlow(id)
                 .collect {
                     it?.let {
-                        isAssignedInOtherDistribution = beneficiariesRepository.isAssignedInOtherDistribution(it)
+                        isAssignedInOtherAssistance = beneficiariesRepository.isAssignedInOtherAssistance(it)
                         beneficiaryLD.value = it
                     } ?: run {
                         goBackEventLD.value = Unit

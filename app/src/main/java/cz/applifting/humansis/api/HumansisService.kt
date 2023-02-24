@@ -17,12 +17,12 @@ interface HumansisService {
     suspend fun getProjects(): List<Project>
 
     @GET("v1/projects/{projectId}/distributions")
-    suspend fun getDistributions(
+    suspend fun getAssistances(
         @Path("projectId") projectId: Int
-    ): List<Distribution>
+    ): List<Assistance>
 
     @GET("v4/assistances/{assistanceId}/targets/beneficiaries")
-    suspend fun getDistributionBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<DistributionBeneficiary>
+    suspend fun getAssistanceBeneficiaries(@Path("assistanceId") assistanceId: Int): PagedApiEntity<AssistanceBeneficiary>
 
     @PATCH("v1/assistances/relief-packages/distribute")
     suspend fun setReliefPackagesDistributed(

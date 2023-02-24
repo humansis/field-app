@@ -15,13 +15,13 @@
     <string name="national_id">ብሔራዊ መታወቂያ</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d ከ%2$d ተጠቃሚዎች ደርሷል</string>
     <string name="search_hint">ስሞችን ይፈልጉ</string>
-    <string name="distributions">ስርጭቶች</string>
+    <string name="assistances">ስርጭቶች</string>
     <string name="unknown">ያልታወቀ</string>
     <string name="status"> ሁኔታ</string>
     <string name="distributed">ተሰራጭቷል</string>
     <string name="not_distributed">አልተሰራጨም</string>
     <string name="beneficiary">ተጠቃሚ</string>
-    <string name="distribution">ስርጭት</string>
+    <string name="assistance">ስርጭት</string>
     <string name="project">ፕሮጀክት</string>
     <string name="confirm_distribution">አረጋግጥ</string>
     <string name="rescan_qr">ዳግም መመርመር QR</string>

@@ -44,9 +44,9 @@ class BeneficiariesFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = if (args.isRemoteDistribution) {
-            getString(R.string.remote, args.distributionName)
+            getString(R.string.remote, args.assistanceName)
         } else {
-            args.distributionName
+            args.assistanceName
         }
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
@@ -105,7 +105,7 @@ class BeneficiariesFragment : BaseFragment() {
             R.id.beneficiariesFragment,
             BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
                 beneficiaryId = beneficiaryLocal.id,
-                distributionName = args.distributionName,
+                assistanceName = args.assistanceName,
                 projectName = args.projectName,
                 isQRVoucher = args.isQRVoucherDistribution,
                 isSmartcard = args.isSmartcardDistribution

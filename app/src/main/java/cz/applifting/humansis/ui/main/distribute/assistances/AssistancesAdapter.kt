@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribute.distributions
+package cz.applifting.humansis.ui.main.distribute.assistances
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -16,70 +16,75 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.Target
-import cz.applifting.humansis.model.ui.DistributionItemWrapper
+import cz.applifting.humansis.model.ui.AssistanceItemWrapper
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
-import kotlinx.android.synthetic.main.item_distribution.view.*
-import kotlinx.android.synthetic.main.item_project.view.tv_name
+import kotlinx.android.synthetic.main.item_assistance.view.iv_status
+import kotlinx.android.synthetic.main.item_assistance.view.iv_target
+import kotlinx.android.synthetic.main.item_assistance.view.pb_distribution_progress
+import kotlinx.android.synthetic.main.item_assistance.view.tl_commodities_holder
+import kotlinx.android.synthetic.main.item_assistance.view.tv_beneficiaries_cnt
+import kotlinx.android.synthetic.main.item_assistance.view.tv_date
+import kotlinx.android.synthetic.main.item_assistance.view.tv_name
 import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
-class DistributionsAdapter(
-    private val onItemClick: (distribution: DistributionItemWrapper) -> Unit
-) : ListComponentAdapter<DistributionsAdapter.DistributionViewHolder>() {
+class AssistancesAdapter(
+    private val onItemClick: (assistance: AssistanceItemWrapper) -> Unit
+) : ListComponentAdapter<AssistancesAdapter.AssistanceViewHolder>() {
 
-    private val distributions: MutableList<DistributionItemWrapper> = mutableListOf()
+    private val assistances: MutableList<AssistanceItemWrapper> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DistributionViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AssistanceViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_distribution,
+            R.layout.item_assistance,
             parent,
             false
         ) as CardView
-        return DistributionViewHolder(view)
+        return AssistanceViewHolder(view)
     }
 
-    override fun getItemCount(): Int = distributions.size
+    override fun getItemCount(): Int = assistances.size
 
-    override fun onBindViewHolder(holder: DistributionViewHolder, position: Int) {
-        val distribution = distributions[position]
-        holder.bind(distribution)
+    override fun onBindViewHolder(holder: AssistanceViewHolder, position: Int) {
+        val assistance = assistances[position]
+        holder.bind(assistance)
     }
 
-    fun updateDistributions(newDistributions: List<DistributionItemWrapper>) {
+    fun update(newAssistances: List<AssistanceItemWrapper>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-                newDistributions[newItemPosition].distribution.id == distributions[oldItemPosition].distribution.id
+                newAssistances[newItemPosition].assistance.id == assistances[oldItemPosition].assistance.id
 
-            override fun getOldListSize(): Int = distributions.size
-            override fun getNewListSize(): Int = newDistributions.size
+            override fun getOldListSize(): Int = assistances.size
+            override fun getNewListSize(): Int = newAssistances.size
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 false
         })
 
-        this.distributions.clear()
-        this.distributions.addAll(newDistributions)
+        this.assistances.clear()
+        this.assistances.addAll(newAssistances)
         diffResult.dispatchUpdatesTo(this)
     }
 
-    inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
+    inner class AssistanceViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
         private val tvName: TextView = layout.tv_name
         private val tvDate: TextView = layout.tv_date!!
         private val tvBeneficiariesCnt: TextView = layout.tv_beneficiaries_cnt
         private val ivTarget: ImageView = layout.iv_target
         private val ivStatus: ImageView = layout.iv_status
-        private val llComoditiesHolder: LinearLayout = layout.tl_commodities_holder
+        private val llCommoditiesHolder: LinearLayout = layout.tl_commodities_holder
         private val pbDistributionProgress: ProgressBar = layout.pb_distribution_progress
         val context: Context = layout.context
 
-        fun bind(distributionItemWrapper: DistributionItemWrapper) = with(distributionItemWrapper.distribution) {
+        fun bind(assistanceItemWrapper: AssistanceItemWrapper) = with(assistanceItemWrapper.assistance) {
 
             // Set text fields
             tvName.text = if (remote) { context.getString(R.string.remote, name) } else { name }
             tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution ?: context.getString(R.string.unknown))
             tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
-            llComoditiesHolder.removeAllViews()
+            llCommoditiesHolder.removeAllViews()
 
             commodityTypes.forEach {
                 try {
@@ -90,7 +95,7 @@ class DistributionsAdapter(
                         val commodityDrawable = it.drawableResId
 
                         commodityImage.simpleDrawable(commodityDrawable)
-                        llComoditiesHolder.addView(commodityImage)
+                        llCommoditiesHolder.addView(commodityImage)
                     } catch (e: IllegalArgumentException) {
                         // Todo add unknown commodity image
                     }
@@ -109,8 +114,8 @@ class DistributionsAdapter(
             ivTarget.setImageDrawable(targetImage)
 
             layout.setOnClickListener {
-                Log.d(TAG, "Distribution ${distributions[layoutPosition].distribution} clicked")
-                if (clickable) onItemClick(distributions[layoutPosition])
+                Log.d(TAG, "Assistance ${assistances[layoutPosition].assistance} clicked")
+                if (clickable) onItemClick(assistances[layoutPosition])
             }
 
             val statusColor = when {
@@ -123,12 +128,12 @@ class DistributionsAdapter(
             pbDistributionProgress.visible(!completed)
 
             if (numberOfBeneficiaries > 0) {
-                pbDistributionProgress.progress = distributionItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
+                pbDistributionProgress.progress = assistanceItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
         }
     }
 
     companion object {
-        private val TAG = DistributionsAdapter::class.java.simpleName
+        private val TAG = AssistancesAdapter::class.java.simpleName
     }
 }

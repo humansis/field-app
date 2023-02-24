@@ -9,7 +9,7 @@
             android:name="cz.applifting.humansis.ui.main.distribute.projects.ProjectsFragment">
         <action
                 android:id="@+id/choose_project"
-                app:destination="@id/distributionsFragment"
+                app:destination="@id/assistancesFragment"
                 app:enterAnim="@anim/slide_from_right"
                 app:exitAnim="@anim/slide_to_left"
                 app:popEnterAnim="@anim/slide_from_left"
@@ -17,8 +17,8 @@
     </fragment>
 
     <fragment
-            android:id="@+id/distributionsFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.distributions.DistributionsFragment">
+            android:id="@+id/assistancesFragment"
+            android:name="cz.applifting.humansis.ui.main.distribute.assistances.AssistancesFragment">
         <argument
                 android:name="projectId"
                 app:argType="integer" />
@@ -27,7 +27,7 @@
                 android:name="projectName"
                 app:argType="string" />
         <action
-                android:id="@+id/action_distributionsFragment_to_beneficiariesFragment"
+                android:id="@+id/action_assistancesFragment_to_beneficiariesFragment"
                 app:destination="@id/beneficiariesFragment"
                 app:enterAnim="@anim/slide_from_right"
                 app:exitAnim="@anim/slide_to_left"
@@ -43,7 +43,7 @@
             android:name="assistanceId"
             app:argType="integer" />
         <argument
-            android:name="distributionName"
+            android:name="assistanceName"
             app:argType="string" />
         <argument
             android:name="projectName"
@@ -75,7 +75,7 @@
                 android:name="beneficiaryId"
                 app:argType="integer" />
         <argument
-                android:name="distributionName"
+                android:name="assistanceName"
                 app:argType="string" />
         <argument
                 android:name="projectName"

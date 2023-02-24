@@ -21,7 +21,7 @@ interface ProjectsDao {
     @Query("DELETE FROM projects")
     suspend fun deleteAll()
 
-    @Query("SELECT projects.name FROM projects INNER JOIN distributions ON projects.id = distributions.projectId WHERE distributions.id = :assistanceId LIMIT 1")
+    @Query("SELECT projects.name FROM projects INNER JOIN assistances ON projects.id = assistances.projectId WHERE assistances.id = :assistanceId LIMIT 1")
     suspend fun getNameByAssistanceId(assistanceId: Int): String?
 
     @Transaction

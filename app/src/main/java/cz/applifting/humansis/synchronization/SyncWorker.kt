@@ -24,7 +24,7 @@ import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.model.db.SyncErrorActionEnum
 import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.LogsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -53,7 +53,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     lateinit var projectsRepository: ProjectsRepository
 
     @Inject
-    lateinit var distributionsRepository: DistributionsRepository
+    lateinit var assistancesRepository: AssistancesRepository
 
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
@@ -128,13 +128,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     Log.d(TAG, "Failed uploading [$action]: ${it.id}: $errBody")
 
                     // Mark conflicts in DB
-                    val distributionName = distributionsRepository.getNameById(it.assistanceId)
+                    val assistanceName = assistancesRepository.getNameById(it.assistanceId)
                     val projectName = projectsRepository.getNameByAssistanceId(it.assistanceId)
                     val beneficiaryName = "${it.givenName} ${it.familyName}"
 
                     val syncError = SyncError(
                         id = it.id,
-                        location = "[$action] $projectName → $distributionName → $beneficiaryName",
+                        location = "[$action] $projectName → $assistanceName → $beneficiaryName",
                         params = "Humansis ID: ${it.beneficiaryId}\n${it.nationalIds}",
                         code = e.code(),
                         errorMessage = "${e.code()}: $errBody",
@@ -160,18 +160,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 SyncErrorActionEnum.AFTER_INITIALIZATION
             )
 
-            // Upload distributions of beneficiaries
+            // Upload assistances to beneficiaries
             assignedBeneficiaries
                 .forEach {
                     try {
                         beneficiariesRepository.distribute(it)
                         syncStats.countUploadSuccess()
                     } catch (e: HttpException) {
-                        logUploadError(e, it, SyncErrorActionEnum.DISTRIBUTION)
+                        logUploadError(e, it, SyncErrorActionEnum.ASSISTANCE)
                     }
                     if (isStopped) return@supervisorScope stopWork(
                         "Uploading ${it.beneficiaryId}",
-                        SyncErrorActionEnum.DISTRIBUTION
+                        SyncErrorActionEnum.ASSISTANCE
                     )
                 }
             // Upload changes of referral
@@ -209,9 +209,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     SyncErrorActionEnum.PROJECTS_DOWNLOAD
                 )
 
-                val distributions = try {
+                val assistances = try {
                     projects.map {
-                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                        async { assistancesRepository.getAssistancesOnline(it.id) }
                     }.flatMap {
                         it.await().toList()
                     }
@@ -219,20 +219,20 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                     syncErrors.add(
                         getDownloadError(
                             e,
-                            applicationContext.getString(R.string.distribution),
-                            SyncErrorActionEnum.DISTRIBUTIONS_DOWNLOAD
+                            applicationContext.getString(R.string.assistance),
+                            SyncErrorActionEnum.ASSISTANCES_DOWNLOAD
                         )
                     )
                     emptyList()
                 }
 
                 if (isStopped) return@supervisorScope stopWork(
-                    "Downloading distributions",
-                    SyncErrorActionEnum.DISTRIBUTIONS_DOWNLOAD
+                    "Downloading assistances",
+                    SyncErrorActionEnum.ASSISTANCES_DOWNLOAD
                 )
 
                 try {
-                    distributions.map {
+                    assistances.map {
                         async { beneficiariesRepository.getBeneficiariesOnline(it.id) }
                     }.map {
                         it.await()

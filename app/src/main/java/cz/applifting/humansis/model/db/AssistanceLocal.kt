@@ -11,7 +11,7 @@ import cz.applifting.humansis.model.Target
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Entity(
-    tableName = "distributions",
+    tableName = "assistances",
     foreignKeys = [ForeignKey(
         entity = ProjectLocal::class,
         parentColumns = arrayOf("id"),
@@ -19,7 +19,7 @@ import cz.applifting.humansis.model.Target
         onDelete = CASCADE
     )]
 )
-data class DistributionLocal(
+data class AssistanceLocal(
     @PrimaryKey val id: Int,
     val name: String,
     val numberOfBeneficiaries: Int,

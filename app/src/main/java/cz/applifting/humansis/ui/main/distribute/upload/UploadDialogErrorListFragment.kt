@@ -60,18 +60,18 @@ class UploadDialogErrorListFragment : BaseFragment() {
     private fun openBeneficiaryDialog(beneficiaryId: Int) {
         isOpeningBeneficiary = true
         launch {
-            val (projectName, distribution, beneficiary) = uploadDialogViewModel.getRelatedEntities(beneficiaryId)
-            if (projectName == null || distribution == null || beneficiary == null) {
+            val (projectName, assistance, beneficiary) = uploadDialogViewModel.getRelatedEntities(beneficiaryId)
+            if (projectName == null || assistance == null || beneficiary == null) {
                 return@launch
             }
             tryNavigate(
                 R.id.uploadDialog,
                 UploadDialogDirections.actionUploadDialogToBeneficiaryDialog(
                     beneficiaryId = beneficiary.id,
-                    distributionName = distribution.name,
+                    assistanceName = assistance.name,
                     projectName = projectName,
-                    isQRVoucher = distribution.isQRVoucherDistribution,
-                    isSmartcard = distribution.isSmartcardDistribution
+                    isQRVoucher = assistance.isQRVoucherDistribution,
+                    isSmartcard = assistance.isSmartcardDistribution
                 )
             )
         }.invokeOnCompletion {
