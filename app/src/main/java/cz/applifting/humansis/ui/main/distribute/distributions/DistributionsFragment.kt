@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import kotlinx.android.synthetic.main.fragment_distributions.*
+import kotlinx.android.synthetic.main.fragment_distributions.cmp_search_assistance
+import kotlinx.android.synthetic.main.fragment_distributions.lc_distributions
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -26,6 +27,11 @@ class DistributionsFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_distributions, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        cmp_search_assistance.clearSearch()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -53,7 +59,25 @@ class DistributionsFragment : BaseFragment() {
             viewAdapter.updateDistributions(it)
         }
 
-        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
+        viewModel.listStateLD.observe(viewLifecycleOwner) {
+            lc_distributions.setState(it)
+            cmp_search_assistance.visible(!it.isRetrieving)
+        }
+
+        viewModel.searchResultsLD.observe(viewLifecycleOwner) { assistances ->
+            viewAdapter.updateDistributions(assistances)
+        }
+
+        cmp_search_assistance.onTextChanged(viewModel::search)
+        cmp_search_assistance.onSort {
+            viewModel.changeSort()
+            lc_distributions.scrollToTop()
+        }
+
+        viewModel.currentSort.observe(viewLifecycleOwner) {
+            viewModel.setSortedDistributions(viewModel.searchResultsLD.value)
+            cmp_search_assistance.changeSortIcon(it)
+        }
 
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)

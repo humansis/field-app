@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.App
-import cz.applifting.humansis.ui.components.listComponent.ListComponentState
+import cz.applifting.humansis.ui.components.Sort
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -21,14 +21,7 @@ class BeneficiariesViewModel @Inject constructor(
     app: App
 ) : BaseListViewModel(app) {
 
-    enum class Sort {
-        DEFAULT,
-        AZ,
-        ZA
-    }
-
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
-    internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
     internal val statsLD: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
     internal val searchResultsLD = MediatorLiveData<List<BeneficiaryLocal>>()
     internal val currentSort = MutableLiveData<Sort>()

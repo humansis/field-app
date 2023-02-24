@@ -14,7 +14,7 @@
     <string name="beneficiaries_title">ተጠቃሚዎች</string>
     <string name="national_id">ብሔራዊ መታወቂያ</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">%1$d ከ%2$d ተጠቃሚዎች ደርሷል</string>
-    <string name="search_beneficiary_hint">ስሞችን ይፈልጉ</string>
+    <string name="search_hint">ስሞችን ይፈልጉ</string>
     <string name="distributions">ስርጭቶች</string>
     <string name="unknown">ያልታወቀ</string>
     <string name="status"> ሁኔታ</string>

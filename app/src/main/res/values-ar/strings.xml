@@ -14,7 +14,7 @@
     <string name="beneficiaries_title">المستفيدين</string>
     <string name="national_id">رقم الهوية الشخصية</string>
     <string name="beneficiaries_reached" tools:ignore="PluralsCandidate">تم الوصول إلى %1$d من %2$d من المستفيدين</string>
-    <string name="search_beneficiary_hint">ابحث في الأسماء</string>
+    <string name="search_hint">ابحث في الأسماء</string>
     <string name="distributions">التوزيعات</string>
     <string name="unknown">غير معروف</string>
     <string name="status">الحالة</string>

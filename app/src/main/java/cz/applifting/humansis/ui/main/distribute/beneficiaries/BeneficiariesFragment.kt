@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
@@ -15,7 +14,7 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import kotlinx.android.synthetic.main.component_search_beneficiary.et_search
+import kotlinx.android.synthetic.main.component_search.et_search
 import kotlinx.android.synthetic.main.fragment_beneficiaries.cmp_reached_beneficiaries
 import kotlinx.android.synthetic.main.fragment_beneficiaries.cmp_search_beneficiary
 import kotlinx.android.synthetic.main.fragment_beneficiaries.layout_duplicate_names_warning
@@ -62,11 +61,6 @@ class BeneficiariesFragment : BaseFragment() {
             viewAdapter.update(beneficiaries)
         }
 
-        viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner) {
-            lc_beneficiaries.setState(it)
-            showControls(!it.isRetrieving)
-        }
-
         viewModel.statsLD.observe(viewLifecycleOwner) {
             val (reachedBeneficiaries, totalBeneficiaries) = it
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
@@ -82,7 +76,10 @@ class BeneficiariesFragment : BaseFragment() {
             cmp_search_beneficiary.clearSearch()
         }
 
-        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
+        viewModel.listStateLD.observe(viewLifecycleOwner) {
+            lc_beneficiaries.setState(it)
+            showControls(!it.isRetrieving)
+        }
 
         viewModel.currentSort.observe(viewLifecycleOwner) {
             viewModel.setSortedBeneficiaries(viewModel.searchResultsLD.value)
