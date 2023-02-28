@@ -2,7 +2,7 @@ package cz.applifting.humansis.repositories
 
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
-import cz.applifting.humansis.misc.ApiUtilities.isPositiveResponseHttpCode
+import cz.applifting.humansis.misc.isPositiveResponseHttpCode
 import kotlinx.coroutines.delay
 import okhttp3.MediaType
 import okhttp3.MultipartBody

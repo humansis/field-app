@@ -7,7 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
-import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.misc.SP_DB_PASS_KEY
+import cz.applifting.humansis.model.api.LoginResponse
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.runBlocking
@@ -49,16 +50,15 @@ class LoginManagerTest {
 
     @Test
     fun login() {
-        val loginReqRes = LoginReqRes(
-            changePassword = false,
-            email = "email",
+        val loginReqRes = LoginResponse(
             id = 42,
-//            language = null,
-            password = "hashedPassword",
-//            roles = emptyList(),
-            username = "username"
-//            vendor = null,
-//            projects = emptyList()
+            username = "username",
+            token = "auth token",
+            refreshToken = "refresh token",
+            refreshTokenExpiration = "123456789",
+            email = "email",
+            changePassword = false,
+            availableCountries = listOf()
         )
         coEvery { db.userDao().getUser() } returns null
         coEvery { db.userDao().insert(any()) } returns Unit

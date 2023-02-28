@@ -25,10 +25,6 @@
     <string name="confirm_distribution">Подтвердить</string>
     <string name="rescan_qr">Rescan QR</string>
     <string name="booklet_id">Номер  буклета</string>
-    <string name="camera_permission_dialog_title">Разрешить доступ к камере.</string>
-    <string name="camera_permission_dialog_message">Для сканирования QR кода нужно разрешить доступ к камере.</string>
-    <string name="camera_permission_dialog_positive_btn_label">OK</string>
-    <string name="camera_permission_dialog_negative_btn_label">Не сейчас</string>
     <string name="scan_qr_code">Отсканировать QR-код</string>
     <string name="search">Поиск</string>
     <string name="offline">Оффлайн</string>
@@ -60,8 +56,6 @@
     <string name="logout_alert_title">Выйти</string>
     <string name="logout_alert_pending_changes_title">Ожидание изменений!</string>
     <string name="logout_alert_pending_changes_text">Вы уверены, что хотите выйти? Все данные приложений будут удалены. Прежде чем выйти, нужно синхронизировать ожидаемые изменения, иначе все изменения будут потеряны.</string>
-    <string name="show_developer_logs">Показать журналы разработчиков</string>
-    <string name="copy">Скопировать</string>
     <string name="close">Закрыть</string>
     <string name="error_server">Ошибка сервера</string>
     <string name="error_bad_request">Плохой запрос</string>
@@ -72,13 +66,9 @@
     <string name="error_too_many_requests">Слишком много запросов.</string>
     <string name="error_server_failure">Сбой сервера</string>
     <string name="error_other">Непредвиденная ошибка</string>
-
-
-
     <string name="show_error_detail">Показать детали ошибки</string>
     <string name="errors_list_label">Имели место следующие ошибки:</string>
     <string name="detail">Детали</string>
-
     <string name="KHM">KHM</string>
     <string name="SYR">SYR</string>
     <string name="UKR">UKR</string>
@@ -90,7 +80,6 @@
     <string name="dont_save">Не сохранять</string>
     <string name="confirm_scan_question">Хотите сохранить отсканированный код?</string>
     <string name="confirm_scan_title">Подтвердить выдачу буклета</string>
-
     <string name="referral_type_none">Нет</string>
     <string name="referral_type_health">Здоровье</string>
     <string name="referral_type_protection">Защита</string>
@@ -108,26 +97,12 @@
     <string name="add_referral">добавить перенаправление</string>
     <string name="edit_referral">Редактировать информацию о перенаправлении.</string>
     <string name="confirm_distribution_message">Подтвердить назначение этого товара бенефициару.</string>
-
-    <string name="acra_notif_channel">Отправить отчет о сбое.</string>
-    <string name="acra_notif_title">Сбой системы Humansis</string>
-    <string name="acra_notif_text">Извините, в приложении произошел сбой. Пожалуйста, сообщите разработчикам.</string>
-    <string name="acra_notif_send_button">Отправить</string>
-    <string name="acra_email_subject">Отчет о сбое Android</string>
     <string name="scan_card">Сканировать карту</string>
     <string name="smartcard_id">Отсканированный Smartcard ID</string>
     <string name="you_need_to_enable_nfc">Для сканирования карт нужно активировать ближнюю бесконтактную связь</string>
     <string name="no_nfc_available">Нет доступной ББС</string>
-    <string name="pin">ПИН-код карты</string>
-    <string name="please_enter_pin">Пожалуйста, введите ПИН-код</string>
-    <string name="error_card_mismatch">Ошибка: карты не совпадают</string>
-    <string name="card_mismatch_message">Аактивная карта, закрепленная за этим бенефициаром, не совпадает с отсканированной картой. Если продолжить, старая карта будет заблокирована. Вы уверены, что хотите продолжать?</string>
-    <string name="remove_card">Удалить</string>
-    <string name="card_mismatch">Ошибка. Пожалуйста, отсканируйте ту же старую карту.</string>
     <string name="smartcard_id_old">Собственная смарт-карта</string>
     <string name="none">нет</string>
-    <string name="old_card">старая карта</string>
-    <string name="new_card">новая карта</string>
     <string name="ok">ок</string>
     <string name="card_locked">Эта карта заблокирована и больше не может использоваться.</string>
     <string name="incorrect_pin">Недействительный ПИН-код</string>
@@ -135,22 +110,15 @@
     <string name="invalid_version">Недействительная версия</string>
     <string name="currency_mismatch">Вы пытаетесь добавить деньги на карту с другой валютой. Выберите опцию \"новая карта\", чтобы стереть прежние средства и создать новую карту с новой валютой.</string>
     <string name="card_error">Ошибка при сканировании карты. Пожалуйста, попробуйте снова.</string>
-    <string name="delete_card_first">Невозможно отменить задачу. Сначала нужно удалить закрепленную карту.</string>
     <string name="scan_the_card">Отсканировать карту</string>
     <string name="tag_lost_card_error">Сканирование прервано. Пожалуйста, отсканируйте заново.</string>
     <string name="different_user_card_error">Эта карта уже закреплена за другим пользователем.</string>
     <string name="success">Операция успешна!</string>
-    <string name="navigation_drawer_open">Откройте панель навигации.</string>
-    <string name="navigation_drawer_close">Закройте панель навигации.</string>
-    <string name="unnamed_project">Проекты без названия</string>
     <string name="ETH">ETH</string>
     <string name="scanning_card_pin">пин-код : %1$s</string>
     <string name="change_pin">изменить пин-код</string>
     <string name="changing_pin_result">новый пин-код: %1$s</string>
     <string name="card_updated">карта обновлена</string>
-    <string name="menu">меню</string>
-    <string name="synchronize">синхронизировать</string>
-    <string name="loading">загрузка</string>
     <string name="export_logs">послать журналы учета</string>
     <string name="logs_dialog_title">Поделиться журналами учета</string>
     <string name="logs_dialog_message">Вы хотите поделиться журналами учета?</string>

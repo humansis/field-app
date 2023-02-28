@@ -8,18 +8,18 @@ import cz.applifting.humansis.api.interceptor.HostUrlInterceptor
 import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.ApiEnvironment
-import cz.applifting.humansis.misc.ApiUtilities
 import cz.applifting.humansis.misc.HumansisError
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_NAME
+import cz.applifting.humansis.misc.SP_ENVIRONMENT_URL
+import cz.applifting.humansis.misc.getDefaultEnvironment
 import cz.applifting.humansis.model.User
 import cz.applifting.humansis.model.api.LoginRequest
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import quanti.com.kotlinlog.Log
 import retrofit2.HttpException
-import javax.inject.Inject
-
-const val SP_ENVIRONMENT = "pin_offline_app_api_url"
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
@@ -45,15 +45,16 @@ class LoginViewModel @Inject constructor(
 
     fun changeHostUrl(host: ApiEnvironment) {
         hostUrlInterceptor.setHost(host)
-        sp.edit().putString(SP_ENVIRONMENT, host.title).apply()
+        sp.edit().putString(SP_ENVIRONMENT_NAME, host.title).apply()
+        sp.edit().putString(SP_ENVIRONMENT_URL, host.url).apply()
     }
 
     fun loadHostFromSaved(): ApiEnvironment {
-        return try {
-            sp.getString(SP_ENVIRONMENT, null)?.let { ApiEnvironment.find(it) }
-        } catch (e: Exception) {
-            null
-        } ?: ApiUtilities.getDefaultEnvironment()
+        return sp.getString(SP_ENVIRONMENT_NAME, null)?.let { name ->
+            sp.getString(SP_ENVIRONMENT_URL, null)?.let { url ->
+                ApiEnvironment.find(name, url)
+            }
+        } ?: getDefaultEnvironment()
     }
 
     fun login(username: String, password: String, loginFinishCallback: LoginFinishCallback) {

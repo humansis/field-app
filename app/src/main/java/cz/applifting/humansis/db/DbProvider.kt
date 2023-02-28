@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.commonsware.cwac.saferoom.BuildConfig
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import cz.applifting.humansis.db.migrations.Migration20to21
+import cz.applifting.humansis.db.migrations.Migration23to24
+import cz.applifting.humansis.db.migrations.Migration25to26
+import cz.applifting.humansis.db.migrations.Migration27to28
+import cz.applifting.humansis.db.migrations.Migration29to30
 import javax.inject.Singleton
 
 /**
@@ -17,7 +22,7 @@ class DbProvider(val context: Context) {
     lateinit var db: HumansisDB
 
     fun init(password: ByteArray, oldPass: ByteArray? = null) {
-        if (!::db.isInitialized) {
+        if (!isInitialized()) {
             db = Room.databaseBuilder(
                 context,
                 HumansisDB::class.java, DB_NAME
@@ -36,10 +41,11 @@ class DbProvider(val context: Context) {
                     }
                 }
                 .addMigrations(
-                    HumansisDB.MIGRATION_20_21,
-                    HumansisDB.MIGRATION_23_24,
-                    HumansisDB.MIGRATION_25_26,
-                    HumansisDB.MIGRATION_27_28
+                    Migration20to21,
+                    Migration23to24,
+                    Migration25to26,
+                    Migration27to28,
+                    Migration29to30
                 )
                 .fallbackToDestructiveMigration()
                 .build()

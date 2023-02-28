@@ -7,7 +7,9 @@ data class User(
     val id: Long,
     val username: String,
     val token: JWToken?,
+    val refreshToken: String?,
+    val refreshTokenExpiration: String?,
     val email: String,
-    val invalidPassword: Boolean = false,
+    val shouldReauthenticate: Boolean = false,
     val countries: List<String> = listOf()
 )

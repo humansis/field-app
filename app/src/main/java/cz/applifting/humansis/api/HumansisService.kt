@@ -33,7 +33,7 @@ interface HumansisService {
     suspend fun assignBooklet(
         @Path("beneficiaryId") beneficiaryId: Int,
         @Path("assistanceId") assistanceId: Int,
-        @Body assingBookletRequest: AssignBookletRequest
+        @Body assignBookletRequest: AssignBookletRequest
     )
 
     @POST("v1/beneficiaries/{beneficiaryId}")
@@ -44,19 +44,6 @@ interface HumansisService {
 
     @POST("v1/smartcards")
     suspend fun assignSmartcard(@Body assignSmartcardRequest: AssignSmartcardRequest)
-
-    @PATCH("v1/smartcards/{serialNumber}")
-    suspend fun deactivateSmartcard(
-        @Path("serialNumber") serialNumber: String,
-        @Body deactivateSmartcardRequest: DeactivateSmartcardRequest
-    )
-
-    // Can be removed after v3.7.0 release
-    @POST("v4/smartcards/{serialNumber}/deposit")
-    suspend fun legacyDistributeSmartcard(
-        @Path("serialNumber") serialNumber: String,
-        @Body distributeSmartcardRequest: LegacyDistributeSmartcardRequest
-    )
 
     @POST("v5/smartcards/{serialNumber}/deposit")
     suspend fun distributeSmartcard(

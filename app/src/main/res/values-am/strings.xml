@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="navigation_drawer_open">የአሰሳ መሳቢያ ይክፈቱ</string>
-    <string name="navigation_drawer_close">የአሰሳ መሳቢያ ይዝጉ</string>
     <string name="nav_header_desc">የአሰሳ ራስጌ</string>
     <string name="action_settings">ቅንብሮች</string>
     <string name="menu_home">ፕሮጀክቶች</string>
@@ -9,7 +7,6 @@
     <string name="login">ግባ</string>
     <string name="log_out">ውጣ</string>
     <string name="projects">ፕሮጀክቶች</string>
-    <string name="unnamed_project">ያልተሰየመ ፕሮጀክት</string>
     <string name="date_of_distribution">ጀምር %1$s</string>
     <string name="beneficiaries">ተጠቃሚዎች-%1$d</string>
     <string name="commodities">ሸቀጦች</string>
@@ -29,10 +26,6 @@
     <string name="confirm_distribution">አረጋግጥ</string>
     <string name="rescan_qr">ዳግም መመርመር QR</string>
     <string name="booklet_id">በራሪ ወረቀት መታወቂያ</string>
-    <string name="camera_permission_dialog_title">የካሜራ ፈቃድ</string>
-    <string name="camera_permission_dialog_message">የ QR ኮድ ለመቃኘት ከፈለጉ ለካሜራ ፈቃድ መስጠት ያስፈልግዎታል</string>
-    <string name="camera_permission_dialog_positive_btn_label">እሺ</string>
-    <string name="camera_permission_dialog_negative_btn_label">አሁን አይሆንም</string>
     <string name="scan_qr_code">የ QR ኮድ ይቃኙ</string>
     <string name="search">ፈልግ</string>
     <string name="offline">ከመስመር ውጭ</string>
@@ -66,8 +59,6 @@
     <string name="logout_alert_title">ውጣ</string>
     <string name="logout_alert_pending_changes_title">በመጠባበቅ ላይ ያሉ ለውጦች!</string>
     <string name="logout_alert_pending_changes_text">እርግጠኛ ነዎት ዘግተው መውጣት ይፈልጋሉ? ሁሉም የትግበራ መረጃዎች ይሰረዛሉ። በመጠባበቅ ላይ ያሉ ለውጦች ከመለያ ከመውጣታቸው በፊት መመሳሰል አለባቸው ወይም ለውጦቹ ይጠፋሉ </string>
-    <string name="show_developer_logs">የገንቢ ምዝግብ ማስታወሻዎችን አሳይ</string>
-    <string name="copy">ገልብጥ</string>
     <string name="close">ዝጋ</string>
     <string name="error_server">አገልጋዩ በስህተት ምላሽ ሰጠ</string>
     <string name="error_bad_request">መጥፎ ጥያቄ</string>
@@ -110,25 +101,12 @@
     <string name="add_referral">ማጣቀሻ (ማመሳከሪያ) አክል</string>
     <string name="edit_referral">የማጣቀሻ መረጃን ያርትዑ</string>
     <string name="confirm_distribution_message">ይህንን ንጥል ለተጠቃሚው ለመመደብ ያረጋግጡ</string>
-    <string name="acra_notif_channel">የብልሽት ሪፖርት ያስገቡ</string>
-    <string name="acra_notif_title">የሰው ልጅ ተሰናክሏል</string>
-    <string name="acra_notif_text">ይቅርታ ፣ መተግበሪያው ተሰናክሏል። እባክዎን ሪፖርት ለገንቢዎች ይላኩ</string>
-    <string name="acra_notif_send_button">ላክ</string>
-    <string name="acra_email_subject">የ Android ብልሽት ሪፖርት</string>
     <string name="scan_card">ካርድ ይቃኙ</string>
     <string name="smartcard_id">የተቃኘ የስማርትካርድ መታወቂያ</string>
     <string name="you_need_to_enable_nfc">ካርዶችን ለመቃኘት NFC ን ማንቃት ያስፈልግዎታል</string>
     <string name="no_nfc_available">NFC የለም</string>
-    <string name="pin">የካርድ ፒን</string>
-    <string name="please_enter_pin">እባክዎ ፒን ያስገቡ</string>
-    <string name="error_card_mismatch"> ስህተት: የካርድ አለመዛመድ</string>
-    <string name="card_mismatch_message">ይህ ተጠቃሚ ቀድሞ የተመደበ ካርድ ያለው ሲሆን ከተመረጠው ካርድ ጋር አይዛመድም። በመቀጠል የድሮው ካርድ ይታገዳል ፡፡ እርግጠኛ ነዎት ለመቀጠል ይፈልጋሉ?</string>
-    <string name="remove_card">አስወግድ</string>
-    <string name="card_mismatch">ስህተት እባክዎ ተመሳሳይውን አሮጌ ካርድ ይቃኙ</string>
     <string name="smartcard_id_old">ባለቤትነት ያለው ስማርት ካርድ</string>
     <string name="none">የለም</string>
-    <string name="old_card">የድሮ ካርድ</string>
-    <string name="new_card"> አዲስ ካርድ</string>
     <string name="ok">እሺ</string>
     <string name="card_locked">ይህ ካርድ ተቆል andል እና ከዚያ በኋላ ጥቅም ላይ ሊውል አይችልም</string>
     <string name="incorrect_pin">ልክ ያልሆነ ፒን</string>
@@ -136,7 +114,6 @@
     <string name="invalid_version">ልክ ያልሆነ ስሪት</string>
     <string name="currency_mismatch">የተለያዩ ምንዛሬ ባለው ካርድ ላይ ገንዘብ ለማከል እየሞከሩ ነው። የድሮ ገንዘብን ለመሰረዝ እና አዲስን በአዲስ ምንዛሬ ከመፍጠር ይልቅ “አዲስ ካርድ” አማራጭን ይጠቀሙ</string>
     <string name="card_error">በካርድ ፍተሻ ወቅት ስህተት። እባክዎ ዳግም ይሞክሩ</string>
-    <string name="delete_card_first">ምደባን መቀልበስ አልተቻለም ፡፡ እባክዎን በመጀመሪያ የተሰጠውን ካርድ ያስወግዱ</string>
     <string name="scan_the_card">ካርዱን ይቃኙ</string>
     <string name="tag_lost_card_error">መቃኘት ተቋርጧል። እባክዎ ካርዱን እንደገና ይቃኙ</string>
     <string name="different_user_card_error">ይህ ካርድ ቀድሞ ለተለየ ተጠቃሚ ተመድቧል</string>

@@ -24,11 +24,11 @@ abstract class BaseListViewModel(
         _listStateLD.value = ListComponentState()
     }
 
-    fun showRefreshing(show: Boolean, hasData: Boolean = true, isFirstDownload: Boolean = false) {
-        _listStateLD.value = if (isFirstDownload || (show && !hasData)) {
-            _listStateLD.value?.copy(isRefreshing = show, text = (getApplication() as Context).getString(R.string.downloading))
+    fun showRefreshing(isRefreshing: Boolean, hasData: Boolean = true, isFirstDownload: Boolean = false) {
+        _listStateLD.value = if (isFirstDownload || (isRefreshing && !hasData)) {
+            _listStateLD.value?.copy(isRefreshing = isRefreshing, text = (getApplication() as Context).getString(R.string.downloading))
         } else {
-            _listStateLD.value?.copy(isRefreshing = show, text = getText(hasData))
+            _listStateLD.value?.copy(isRefreshing = isRefreshing, text = getText(hasData))
         }
     }
 

@@ -1,0 +1,15 @@
+package cz.applifting.humansis.misc
+
+const val SP_DB_PASS_KEY = "humansis-db"
+const val SP_SALT_KEY = "humansis-db-pass-salt"
+const val SP_LAST_VERSION = "last-version-key"
+const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
+const val SP_SYNC_SUMMARY = "sync-summary"
+const val SP_LAST_DOWNLOAD = "lastDownloadKey"
+const val SP_LAST_SYNC_FAILED = "lastSyncFailedKey"
+const val SP_LAST_SYNC_FAILED_ID = "lastSyncFailedIdKey"
+const val SP_COUNTRY = "country"
+const val SP_USERNAME = "username"
+const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
+const val SP_ENVIRONMENT_NAME = "pin_field_app_env_name"
+const val SP_ENVIRONMENT_URL = "pin_field_app_env_url"
