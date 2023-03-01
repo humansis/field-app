@@ -98,7 +98,7 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
                 top = 0
                 left = margin
                 right = margin
-                bottom = margin
+                bottom = margin / 2
             }
         }
     }

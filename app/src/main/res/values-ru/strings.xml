@@ -13,7 +13,7 @@
     <string name="households">Домохозяйства: %1$d</string>
     <string name="beneficiaries_title">Бенефициары</string>
     <string name="beneficiaries_reached">%1$d из %2$d бенефициаров достигнуто</string>
-    <string name="search_beneficiary_hint">Поиск по имени.</string>
+    <string name="search_hint">Поиск по имени.</string>
     <string name="distributions">Выдачи</string>
     <string name="unknown">Неизвестно</string>
     <string name="status">Статус</string>
@@ -50,7 +50,7 @@
     <string name="last_update_failed">Не удалось установить последнее обновление. </string>
     <string name="assign">Закрепить</string>
     <string name="sort_default">объединенный</string>
-    <string name="sort_az">︎А &#10132; Я</string>
+    <string name="sort_az">А &#10132; Я</string>
     <string name="sort_za">Я &#10132; А</string>
     <string name="error_service_unavailable">Сервис недоступен.</string>
     <string name="logout_alert_title">Выйти</string>

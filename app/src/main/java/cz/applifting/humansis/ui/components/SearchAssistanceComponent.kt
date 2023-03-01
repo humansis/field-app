@@ -14,7 +14,7 @@ import cz.applifting.humansis.extensions.hideSoftKeyboard
 import kotlinx.android.synthetic.main.component_search.view.*
 import quanti.com.kotlinlog.Log
 
-class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+class SearchAssistanceComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.component_search, this, true)
@@ -55,7 +55,7 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
 
     internal fun changeSortIcon(sort: Sort) {
         val textResId = when (sort) {
-            Sort.DEFAULT -> R.string.sort_default
+            Sort.DEFAULT -> R.string.sort_newest
             Sort.AZ -> R.string.sort_az
             Sort.ZA -> R.string.sort_za
         }
@@ -68,6 +68,6 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
     }
 
     companion object {
-        private val TAG = SearchBeneficiaryComponent::class.java.simpleName
+        private val TAG = SearchAssistanceComponent::class.java.simpleName
     }
 }

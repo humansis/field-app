@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
+import cz.applifting.humansis.model.db.ProjectLocal
+import cz.applifting.humansis.synchronization.SyncWorkerState
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_projects.*
@@ -45,13 +48,25 @@ class ProjectsFragment : BaseFragment() {
             lc_projects::setState
         ))
 
-        sharedViewModel.syncState.observe(viewLifecycleOwner) {
-            viewModel.showRefreshing(
-                it.isLoading,
-                !viewModel.projectsLD.value.isNullOrEmpty(), // TODO pockat nez to nebude null?
-                isFirstDownload = it.isFirstCountryDownload && !it.logsUploadFailedOnly
-            )
-            viewModel.showError(it.lastSyncFail != null && it.isFirstCountryDownload && !it.logsUploadFailedOnly)
+        MediatorLiveData<Unit>().apply {
+            addSource(sharedViewModel.syncState) {
+                setState(it, viewModel.projectsLD.value)
+            }
+
+            addSource(viewModel.projectsLD) { projects ->
+                sharedViewModel.syncState.value?.let {
+                    setState(it, projects)
+                }
+            }
         }
+    }
+
+    private fun setState(syncState: SyncWorkerState, projects: List<ProjectLocal>?) {
+        viewModel.showRefreshing(
+            syncState.isLoading,
+            !projects.isNullOrEmpty(),
+            isFirstDownload = syncState.isFirstCountryDownload && !syncState.logsUploadFailedOnly
+        )
+        viewModel.showError(syncState.lastSyncFail != null && syncState.isFirstCountryDownload && !syncState.logsUploadFailedOnly)
     }
 }

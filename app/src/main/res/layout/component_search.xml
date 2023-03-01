@@ -32,7 +32,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:hint="@string/search_beneficiary_hint"
+            android:hint="@string/search_hint"
             android:inputType="text"
             android:textColor="@color/black"
             android:textColorHint="@color/black"

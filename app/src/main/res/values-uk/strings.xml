@@ -14,7 +14,7 @@
     <string name="beneficiaries_title">Отримувачі</string>
     <string name="national_id">Ідентифікаційний номер</string>
     <string name="beneficiaries_reached">%1$d з %2$d досягнуто отримувачів</string>
-    <string name="search_beneficiary_hint">Пошук по назві</string>
+    <string name="search_hint">Пошук по назві</string>
     <string name="rescan_qr">Пересканувати QR</string>
     <string name="booklet_id">Номер буклету</string>
     <string name="beneficiary">Отримувач</string>
@@ -51,7 +51,7 @@
     <string name="already_assigned">Код вже використаний</string>
     <string name="last_update_failed">Не вдалося встановити останнє оновлення</string>
     <string name="assign">Закріпити</string>
-    <string name="sort_az">︎А &#10132; Я</string>
+    <string name="sort_az">А &#10132; Я</string>
     <string name="sort_za">Я &#10132; А</string>
     <string name="sort_default">Згруповані</string>
     <string name="error_service_unavailable">Сервіс недоступний</string>
