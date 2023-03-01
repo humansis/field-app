@@ -14,13 +14,13 @@
     <string name="beneficiaries_title">Бенефициары</string>
     <string name="beneficiaries_reached">%1$d из %2$d бенефициаров достигнуто</string>
     <string name="search_hint">Поиск по имени.</string>
-    <string name="distributions">Выдачи</string>
+    <string name="assistances">Выдачи</string>
     <string name="unknown">Неизвестно</string>
     <string name="status">Статус</string>
     <string name="distributed">Выдано</string>
     <string name="not_distributed">Не выдано</string>
     <string name="beneficiary">Бенефициар</string>
-    <string name="distribution">Выдача</string>
+    <string name="assistance">Выдача</string>
     <string name="project">Проект</string>
     <string name="confirm_distribution">Подтвердить</string>
     <string name="rescan_qr">Rescan QR</string>

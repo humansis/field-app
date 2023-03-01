@@ -16,14 +16,14 @@ import cz.applifting.humansis.model.api.NationalCardId
 @Entity(
     tableName = "beneficiaries",
     foreignKeys = [ForeignKey(
-        entity = DistributionLocal::class,
+        entity = AssistanceLocal::class,
         parentColumns = ["id"],
         childColumns = ["assistanceId"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 // this is flattened object from API, original: {id, assistanceId, {beneficiaryId, givenName, ...}}
-// each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple distributions
+// each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple assistances
 data class BeneficiaryLocal(
     @PrimaryKey val id: Int, // unique combination of beneficiaryId and assistanceId
     val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)

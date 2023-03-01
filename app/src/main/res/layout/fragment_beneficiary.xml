@@ -386,7 +386,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/tv_beneficiary" />
 
                 <cz.applifting.humansis.ui.components.TitledTextView
-                    android:id="@+id/tv_distribution"
+                    android:id="@+id/tv_assistance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -395,7 +395,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_beneficiary"
-                    app:titled_text_view_title="@string/distribution" />
+                    app:titled_text_view_title="@string/assistance" />
 
                 <cz.applifting.humansis.ui.components.TitledTextView
                     android:id="@+id/tv_project"
@@ -407,7 +407,7 @@
                     app:layout_constraintBottom_toTopOf="@id/tv_amount"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_distribution"
+                    app:layout_constraintTop_toBottomOf="@id/tv_assistance"
                     app:layout_goneMarginBottom="24dp"
                     app:titled_text_view_title="@string/project" />
 

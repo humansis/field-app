@@ -19,10 +19,10 @@ interface BeneficiaryDao {
     suspend fun getAssignedBeneficiariesSuspend(): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where assistanceId = :assistanceId")
-    fun getByDistribution(assistanceId: Int): Flow<List<BeneficiaryLocal>>
+    fun getByAssistance(assistanceId: Int): Flow<List<BeneficiaryLocal>>
 
     @Query("SELECT * FROM beneficiaries where assistanceId = :assistanceId")
-    suspend fun getByDistributionSuspend(assistanceId: Int): List<BeneficiaryLocal>
+    suspend fun getByAssistanceSuspend(assistanceId: Int): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
     suspend fun findById(beneficiaryId: Int): BeneficiaryLocal?
@@ -37,7 +37,7 @@ interface BeneficiaryDao {
     suspend fun update(beneficiaryLocal: BeneficiaryLocal)
 
     @Query("DELETE FROM beneficiaries WHERE assistanceId = :assistanceId")
-    suspend fun deleteByDistribution(assistanceId: Int)
+    suspend fun deleteByAssistance(assistanceId: Int)
 
     @Query("DELETE FROM beneficiaries")
     suspend fun deleteAll()

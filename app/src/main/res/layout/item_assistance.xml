@@ -36,7 +36,7 @@
                 app:layout_constraintEnd_toStartOf="@id/iv_target"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="I am a cool distribution" />
+                tools:text="I am a cool assistance" />
 
         <TextView
                 android:id="@+id/tv_date"

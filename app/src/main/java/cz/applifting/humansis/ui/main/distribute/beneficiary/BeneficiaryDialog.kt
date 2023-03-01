@@ -69,7 +69,7 @@ import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_beneficiary
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_birth_certificate
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_booklet
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_camp_id
-import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_distribution
+import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_assistance
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_drivers_license
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_family_registration
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.tv_humansis_id
@@ -229,7 +229,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                 tv_beneficiary.setValue("${beneficiary.givenName} ${beneficiary.familyName}")
                 iv_duplicate_name_beneficiary.visible(beneficiary.hasDuplicateName)
-                tv_distribution.setValue(args.distributionName)
+                tv_assistance.setValue(args.assistanceName)
                 tv_project.setValue(args.projectName)
                 tv_amount.setOptionalValue(
                     beneficiary.commodities.constructCommoditiesText()
@@ -289,7 +289,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_action.setOnClickListener {
                         Log.d(TAG, "Action button clicked")
                         if (beneficiary.edited) {
-                            if (viewModel.isAssignedInOtherDistribution) {
+                            if (viewModel.isAssignedInOtherAssistance) {
                                 showConfirmBeneficiaryDialog(beneficiary)
                             } else {
                                 viewModel.revertBeneficiary()

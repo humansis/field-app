@@ -11,7 +11,7 @@ import cz.applifting.humansis.model.api.BeneficiaryForReferralUpdate
 import cz.applifting.humansis.model.api.Booklet
 import cz.applifting.humansis.model.api.DistributeSmartcardRequest
 import cz.applifting.humansis.model.api.DistributedReliefPackages
-import cz.applifting.humansis.model.api.DistributionBeneficiary
+import cz.applifting.humansis.model.api.AssistanceBeneficiary
 import cz.applifting.humansis.model.api.ReliefPackage
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -33,44 +33,44 @@ class BeneficiariesRepository @Inject constructor(
 
     suspend fun getBeneficiariesOnline(assistanceId: Int): List<BeneficiaryLocal> {
 
-        val distribution = dbProvider.get().distributionsDao().getById(assistanceId)
+        val assistance = dbProvider.get().assistancesDao().getById(assistanceId)
 
-        val data = service.getDistributionBeneficiaries(assistanceId).data
+        val data = service.getAssistanceBeneficiaries(assistanceId).data
 
         val duplicateBeneficiaryNames = findAllDuplicateNames(data)
 
-        val result = data.map { distributionBeneficiary ->
+        val result = data.map { assistanceBeneficiary ->
             BeneficiaryLocal(
-                id = distributionBeneficiary.id,
-                beneficiaryId = distributionBeneficiary.beneficiary.id,
-                givenName = distributionBeneficiary.beneficiary.localGivenName,
-                familyName = distributionBeneficiary.beneficiary.localFamilyName,
+                id = assistanceBeneficiary.id,
+                beneficiaryId = assistanceBeneficiary.beneficiary.id,
+                givenName = assistanceBeneficiary.beneficiary.localGivenName,
+                familyName = assistanceBeneficiary.beneficiary.localFamilyName,
                 assistanceId = assistanceId,
-                distributed = areReliefPackagesDistributed(distributionBeneficiary.reliefPackages) || areBookletsDistributed(
-                    distributionBeneficiary.booklets
-                ) || distributionBeneficiary.distributedAt != null,
-                distributedAt = distributionBeneficiary.distributedAt,
-                reliefIDs = parseGeneralReliefPackages(distributionBeneficiary.reliefPackages),
-                qrBooklets = parseQRBooklets(distributionBeneficiary.booklets),
-                smartcard = distributionBeneficiary.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
+                distributed = areReliefPackagesDistributed(assistanceBeneficiary.reliefPackages) || areBookletsDistributed(
+                    assistanceBeneficiary.booklets
+                ) || assistanceBeneficiary.distributedAt != null,
+                distributedAt = assistanceBeneficiary.distributedAt,
+                reliefIDs = parseGeneralReliefPackages(assistanceBeneficiary.reliefPackages),
+                qrBooklets = parseQRBooklets(assistanceBeneficiary.booklets),
+                smartcard = assistanceBeneficiary.currentSmartcardSerialNumber?.toUpperCase(Locale.US),
                 newSmartcard = null,
                 edited = false,
-                commodities = parseCommodities(distributionBeneficiary.booklets, distributionBeneficiary.reliefPackages),
-                remote = distribution?.remote ?: false,
-                dateExpiration = distribution?.dateOfExpiration,
-                foodLimit = distribution?.foodLimit,
-                nonfoodLimit = distribution?.nonfoodLimit,
-                cashbackLimit = distribution?.cashbackLimit,
-                nationalIds = distributionBeneficiary.beneficiary.nationalCardIds,
-                originalReferralType = distributionBeneficiary.beneficiary.referralType,
-                originalReferralNote = distributionBeneficiary.beneficiary.referralComment,
-                referralType = distributionBeneficiary.beneficiary.referralType,
-                referralNote = distributionBeneficiary.beneficiary.referralComment,
-                hasDuplicateName = isDuplicateName(duplicateBeneficiaryNames, distributionBeneficiary)
+                commodities = parseCommodities(assistanceBeneficiary.booklets, assistanceBeneficiary.reliefPackages),
+                remote = assistance?.remote ?: false,
+                dateExpiration = assistance?.dateOfExpiration,
+                foodLimit = assistance?.foodLimit,
+                nonfoodLimit = assistance?.nonfoodLimit,
+                cashbackLimit = assistance?.cashbackLimit,
+                nationalIds = assistanceBeneficiary.beneficiary.nationalCardIds,
+                originalReferralType = assistanceBeneficiary.beneficiary.referralType,
+                originalReferralNote = assistanceBeneficiary.beneficiary.referralComment,
+                referralType = assistanceBeneficiary.beneficiary.referralType,
+                referralNote = assistanceBeneficiary.beneficiary.referralComment,
+                hasDuplicateName = isDuplicateName(duplicateBeneficiaryNames, assistanceBeneficiary)
             )
         }
 
-        dbProvider.get().beneficiariesDao().deleteByDistribution(assistanceId)
+        dbProvider.get().beneficiariesDao().deleteByAssistance(assistanceId)
         dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
@@ -93,16 +93,8 @@ class BeneficiariesRepository @Inject constructor(
         return dbProvider.get().beneficiariesDao().arePendingChanges()
     }
 
-    fun getAllBeneficiariesOffline(): Flow<List<BeneficiaryLocal>> {
-        return dbProvider.get().beneficiariesDao().getAllBeneficiaries()
-    }
-
     fun getBeneficiariesOffline(assistanceId: Int): Flow<List<BeneficiaryLocal>> {
-        return dbProvider.get().beneficiariesDao().getByDistribution(assistanceId)
-    }
-
-    suspend fun getBeneficiariesOfflineSuspend(assistanceId: Int): List<BeneficiaryLocal> {
-        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(assistanceId)
+        return dbProvider.get().beneficiariesDao().getByAssistance(assistanceId)
     }
 
     suspend fun getAssignedBeneficiariesOfflineSuspend(): List<BeneficiaryLocal> {
@@ -129,7 +121,7 @@ class BeneficiariesRepository @Inject constructor(
         )
     }
 
-    suspend fun isAssignedInOtherDistribution(beneficiary: BeneficiaryLocal): Boolean {
+    suspend fun isAssignedInOtherAssistance(beneficiary: BeneficiaryLocal): Boolean {
         return dbProvider.get().beneficiariesDao()
             .countDuplicateAssignedBeneficiaries(beneficiary.beneficiaryId) > 1
     }
@@ -291,7 +283,7 @@ class BeneficiariesRepository @Inject constructor(
         return this.filterNot { nonGeneralTypes.contains(it.modalityType) }
     }
 
-    private fun findAllDuplicateNames(list: List<DistributionBeneficiary>): List<FullName> {
+    private fun findAllDuplicateNames(list: List<AssistanceBeneficiary>): List<FullName> {
         val seenNames = mutableSetOf<FullName>()
         return list.asSequence()
             .map { FullName(it.beneficiary.localGivenName ?: "", it.beneficiary.localFamilyName ?: "") }
@@ -302,12 +294,12 @@ class BeneficiariesRepository @Inject constructor(
 
     private fun isDuplicateName(
         duplicateBeneficiaryNames: List<FullName>,
-        distributionBeneficiary: DistributionBeneficiary
+        assistanceBeneficiary: AssistanceBeneficiary
     ): Boolean {
         return duplicateBeneficiaryNames.find {
             it == FullName(
-                distributionBeneficiary.beneficiary.localGivenName,
-                distributionBeneficiary.beneficiary.localFamilyName
+                assistanceBeneficiary.beneficiary.localGivenName,
+                assistanceBeneficiary.beneficiary.localFamilyName
             )
         } != null
     }

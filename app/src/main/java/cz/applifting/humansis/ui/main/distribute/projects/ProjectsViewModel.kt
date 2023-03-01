@@ -2,7 +2,7 @@ package cz.applifting.humansis.ui.main.distribute.projects
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.ProjectLocal
-import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.AssistancesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.BaseListViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 class ProjectsViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
-    private val distributionsRepository: DistributionsRepository,
+    private val assistancesRepository: AssistancesRepository,
     app: App
 ) : BaseListViewModel(app) {
 
@@ -29,18 +29,18 @@ class ProjectsViewModel @Inject constructor(
         launch {
             showRetrieving(true)
 
-            distributionsRepository
-                .getAllDistributions()
-                .flatMapMerge { distributions ->
+            assistancesRepository
+                .getAllAssistances()
+                .flatMapMerge { assistances ->
                     projectsRepository
                         .getProjectsOffline()
                         .map {
-                            Pair(distributions, it)
+                            Pair(assistances, it)
                         }
                 }
-                .map { (distributions, projects) ->
+                .map { (assistances, projects) ->
                     projects.filter { project ->
-                        distributions.any { it.projectId == project.id && !it.completed }
+                        assistances.any { it.projectId == project.id && !it.completed }
                     }
                 }
                 .collect {

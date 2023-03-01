@@ -6,7 +6,7 @@ import cz.applifting.humansis.model.Target
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
-data class Distribution(
+data class Assistance(
     val id: Int,
     val name: String,
     @SerializedName("date_distribution")val dateDistribution: String?, // TODO zmenit na non nullable

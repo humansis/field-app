@@ -9,7 +9,7 @@ import cz.applifting.humansis.ui.main.SharedViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.ConfirmBeneficiaryViewModel
-import cz.applifting.humansis.ui.main.distribute.distributions.DistributionsViewModel
+import cz.applifting.humansis.ui.main.distribute.assistances.AssistancesViewModel
 import cz.applifting.humansis.ui.main.distribute.projects.ProjectsViewModel
 import cz.applifting.humansis.ui.main.distribute.upload.UploadDialogViewModel
 import cz.applifting.humansis.ui.main.settings.SettingsViewModel
@@ -37,8 +37,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(DistributionsViewModel::class)
-    internal abstract fun bindDistributionsViewModel(viewModel: DistributionsViewModel): ViewModel
+    @ViewModelKey(AssistancesViewModel::class)
+    internal abstract fun bindAssistancesViewModel(viewModel: AssistancesViewModel): ViewModel
 
     @Binds
     @IntoMap
