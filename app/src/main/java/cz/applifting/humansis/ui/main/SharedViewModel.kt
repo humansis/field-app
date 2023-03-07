@@ -147,7 +147,7 @@ class SharedViewModel @Inject constructor(
 
     fun forceSynchronize() {
         launch {
-            if (workInfos.value?.first()?.state == WorkInfo.State.ENQUEUED) {
+            if (workInfos.value?.firstOrNull()?.state == WorkInfo.State.ENQUEUED) {
                 // cancel previous work which may be stuck in the queue
                 workManager.cancelUniqueWork(SYNC_WORKER)
             }
