@@ -44,22 +44,22 @@ sealed class ApiEnvironment(
         url = BuildConfig.DEV1_API_URL
     )
 
-    object Dev2 : ApiEnvironment(
-        id = 5,
-        title = DEV2_API_TITLE,
-        url = BuildConfig.DEV2_API_URL
-    )
-
-    object Dev3 : ApiEnvironment(
-        id = 6,
-        title = DEV3_API_TITLE,
-        url = BuildConfig.DEV3_API_URL
-    )
-
     object Test : ApiEnvironment(
-        id = 7,
+        id = 5,
         title = TEST_API_TITLE,
         url = BuildConfig.TEST_API_URL
+    )
+
+    object Test2 : ApiEnvironment(
+        id = 6,
+        title = TEST2_API_TITLE,
+        url = BuildConfig.TEST2_API_URL
+    )
+
+    object Test3 : ApiEnvironment(
+        id = 7,
+        title = TEST3_API_TITLE,
+        url = BuildConfig.TEST3_API_URL
     )
 
     object Local : ApiEnvironment(
@@ -85,9 +85,9 @@ sealed class ApiEnvironment(
         const val STAGE_API_TITLE = "STAGE"
         const val STAGE2_API_TITLE = "STAGE2"
         const val DEV1_API_TITLE = "DEV1"
-        const val DEV2_API_TITLE = "DEV2"
-        const val DEV3_API_TITLE = "DEV3"
         const val TEST_API_TITLE = "TEST"
+        const val TEST2_API_TITLE = "TEST2"
+        const val TEST3_API_TITLE = "TEST3"
         const val LOCAL_API_TITLE = "LOCAL"
         const val CUSTOM_API_TITLE = "CUSTOM"
 
@@ -98,9 +98,9 @@ sealed class ApiEnvironment(
                 Stage,
                 Stage2,
                 Dev1,
-                Dev2,
-                Dev3,
                 Test,
+                Test2,
+                Test3,
                 Local
             ).apply {
                 try {
@@ -133,9 +133,9 @@ sealed class ApiEnvironment(
                 STAGE_API_TITLE -> Stage
                 STAGE2_API_TITLE -> Stage2
                 DEV1_API_TITLE -> Dev1
-                DEV2_API_TITLE -> Dev2
-                DEV3_API_TITLE -> Dev3
                 TEST_API_TITLE -> Test
+                TEST2_API_TITLE -> Test2
+                TEST3_API_TITLE -> Test3
                 LOCAL_API_TITLE -> Local
                 CUSTOM_API_TITLE -> Custom(hostUrl)
                 else -> null
