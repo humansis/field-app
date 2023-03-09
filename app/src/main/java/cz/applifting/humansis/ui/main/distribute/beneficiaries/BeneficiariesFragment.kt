@@ -82,7 +82,7 @@ class BeneficiariesFragment : BaseFragment() {
             cmp_search_beneficiary.changeSortIcon(it)
         }
 
-        viewModel.getBeneficiaries(args.assistanceId)
+        viewModel.loadBeneficiaries(args.assistanceId)
 
         sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner) {
             cmp_search_beneficiary.clearSearch()
@@ -91,7 +91,7 @@ class BeneficiariesFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
             if (!it.isLoading) {
-                viewModel.getBeneficiaries(args.assistanceId)
+                viewModel.loadBeneficiaries(args.assistanceId)
             }
         }
 

@@ -80,11 +80,11 @@ class AssistancesFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
             if (!it.isLoading) {
-                viewModel.getAssistances(args.projectId)
+                viewModel.loadAssistances(args.projectId)
             }
         }
 
-        viewModel.getAssistances(args.projectId)
+        viewModel.loadAssistances(args.projectId)
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }

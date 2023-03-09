@@ -34,7 +34,7 @@ class BeneficiariesViewModel @Inject constructor(
         }
     }
 
-    fun getBeneficiaries(assistanceId: Int) {
+    fun loadBeneficiaries(assistanceId: Int) {
         launch {
             showRetrieving(true)
 

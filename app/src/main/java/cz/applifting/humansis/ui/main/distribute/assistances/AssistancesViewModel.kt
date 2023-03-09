@@ -36,7 +36,7 @@ class AssistancesViewModel @Inject constructor(
         }
     }
 
-    fun getAssistances(projectId: Int) {
+    fun loadAssistances(projectId: Int) {
         launch {
             showRetrieving(true)
 
