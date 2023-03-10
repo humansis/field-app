@@ -143,10 +143,14 @@ class HumansisActivity : BaseActivity(), NfcAdapter.ReaderCallback, NavigationVi
     }
 
     private fun checkAppVersion() {
-        val lastVersion = sp.getString(SP_LAST_VERSION, "unknown")
+        val lastVersion = sp.getString(SP_LAST_VERSION, null)
         val currentVersion = BuildConfig.VERSION_NAME
         if (currentVersion != lastVersion) {
-            Log.d(TAG, "App updated from $lastVersion to $currentVersion")
+            if (lastVersion == null) {
+                Log.d(TAG, "App was first started after clean install or data wipe.")
+            } else {
+                Log.d(TAG, "App updated from $lastVersion to $currentVersion")
+            }
             sp.edit().putString(SP_LAST_VERSION, currentVersion).apply()
 
             if (currentVersion == VERSION_NAME_3_9_0) {
