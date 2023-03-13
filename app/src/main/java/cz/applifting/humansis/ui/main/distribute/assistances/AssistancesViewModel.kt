@@ -24,23 +24,19 @@ class AssistancesViewModel @Inject constructor(
     app: App
 ) : BaseListViewModel(app) {
 
-    val assistancesLD: MutableLiveData<List<AssistanceItemWrapper>> = MutableLiveData()
+    private val assistancesLD: MutableLiveData<List<AssistanceItemWrapper>> = MutableLiveData()
     internal val searchResultsLD = MediatorLiveData<List<AssistanceItemWrapper>>()
     internal val currentSort = MutableLiveData<Sort>()
     private var searchText: String? = null
 
-    private var projectId: Int? = null
-
-    fun init(projectId: Int) {
-        if (this.projectId != null) {
-            return
+    init {
+        currentSort.value = Sort.DEFAULT
+        searchResultsLD.addSource(assistancesLD) { list ->
+            setSortedAssistances(list)
         }
-        this.projectId = projectId
-
-        getAssistances(projectId)
     }
 
-    fun getAssistances(projectId: Int) {
+    fun loadAssistances(projectId: Int) {
         launch {
             showRetrieving(true)
 

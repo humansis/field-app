@@ -8,9 +8,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import kotlinx.android.synthetic.main.component_search.et_search
 import kotlinx.android.synthetic.main.fragment_assistances.cmp_search_assistance
 import kotlinx.android.synthetic.main.fragment_assistances.lc_assistances
 
@@ -60,10 +62,6 @@ class AssistancesFragment : BaseFragment() {
             cmp_search_assistance.visible(!it.isRetrieving)
         }
 
-        viewModel.assistancesLD.observe(viewLifecycleOwner) {
-            viewAdapter.update(it)
-        }
-
         viewModel.searchResultsLD.observe(viewLifecycleOwner) {
             viewAdapter.update(it)
         }
@@ -82,10 +80,12 @@ class AssistancesFragment : BaseFragment() {
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
             if (!it.isLoading) {
-                viewModel.getAssistances(args.projectId)
+                viewModel.loadAssistances(args.projectId)
             }
         }
 
-        viewModel.init(args.projectId)
+        viewModel.loadAssistances(args.projectId)
+
+        findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }
 }

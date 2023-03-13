@@ -56,14 +56,19 @@ class BeneficiariesFragment : BaseFragment() {
 
         lc_beneficiaries.init(viewAdapter)
 
-        viewModel.searchResultsLD.observe(viewLifecycleOwner) { beneficiaries ->
-            layout_duplicate_names_warning.visible(beneficiaries.find { it.hasDuplicateName } != null)
-            viewAdapter.update(beneficiaries)
-        }
-
         viewModel.statsLD.observe(viewLifecycleOwner) {
             val (reachedBeneficiaries, totalBeneficiaries) = it
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
+        }
+
+        viewModel.listStateLD.observe(viewLifecycleOwner) {
+            lc_beneficiaries.setState(it)
+            showControls(!it.isRetrieving)
+        }
+
+        viewModel.searchResultsLD.observe(viewLifecycleOwner) { beneficiaries ->
+            layout_duplicate_names_warning.visible(beneficiaries.find { it.hasDuplicateName } != null)
+            viewAdapter.update(beneficiaries)
         }
 
         cmp_search_beneficiary.onTextChanged(viewModel::search)
@@ -72,24 +77,22 @@ class BeneficiariesFragment : BaseFragment() {
             lc_beneficiaries.scrollToTop()
         }
 
-        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner) {
-            cmp_search_beneficiary.clearSearch()
-        }
-
-        viewModel.listStateLD.observe(viewLifecycleOwner) {
-            lc_beneficiaries.setState(it)
-            showControls(!it.isRetrieving)
-        }
-
         viewModel.currentSort.observe(viewLifecycleOwner) {
             viewModel.setSortedBeneficiaries(viewModel.searchResultsLD.value)
             cmp_search_beneficiary.changeSortIcon(it)
         }
 
-        viewModel.init(args.assistanceId)
+        viewModel.loadBeneficiaries(args.assistanceId)
+
+        sharedViewModel.beneficiaryDialogDissmissedOnSuccess.observe(viewLifecycleOwner) {
+            cmp_search_beneficiary.clearSearch()
+        }
 
         sharedViewModel.syncState.observe(viewLifecycleOwner) {
             viewModel.showRefreshing(it.isLoading)
+            if (!it.isLoading) {
+                viewModel.loadBeneficiaries(args.assistanceId)
+            }
         }
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
