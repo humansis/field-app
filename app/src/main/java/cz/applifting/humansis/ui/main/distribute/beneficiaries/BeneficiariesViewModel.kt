@@ -62,21 +62,22 @@ class BeneficiariesViewModel @Inject constructor(
         searchText = input
         val query = input.normalize()
 
-        if (query.isEmpty()) {
-            searchResultsLD.value = it.defaultSort()
-            return@let
-        }
+        setSortedBeneficiaries(
+            if (query.isEmpty()) {
+                it
+            } else {
+                it.filter { beneficiary ->
+                    val familyName = beneficiary.familyName?.normalize() ?: ""
+                    val givenName = beneficiary.givenName?.normalize() ?: ""
+                    val beneficiaryId = beneficiary.beneficiaryId.toString()
+                    val nationalIdNumbers = beneficiary.nationalIds.map { id -> id.number }
 
-        setSortedBeneficiaries(it.filter { beneficiary ->
-            val familyName = beneficiary.familyName?.normalize() ?: ""
-            val givenName = beneficiary.givenName?.normalize() ?: ""
-            val beneficiaryId = beneficiary.beneficiaryId.toString()
-            val nationalIdNumbers = beneficiary.nationalIds.map { id -> id.number }
-
-            val fullName = "$givenName $familyName"
-            val fullNameReversed = "$familyName $givenName"
-            fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalIdNumbers.any { number -> number.startsWith(query) }
-        })
+                    val fullName = "$givenName $familyName"
+                    val fullNameReversed = "$familyName $givenName"
+                    fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalIdNumbers.any { number -> number.startsWith(query) }
+                }
+            }
+        )
     }
 
     fun changeSort() {
@@ -98,14 +99,25 @@ class BeneficiariesViewModel @Inject constructor(
      * Sorts currently displayed beneficiaries by family name, undistributed puts first.
      */
     private fun List<BeneficiaryLocal>.defaultSort(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy({ it.distributed }, { it.givenName }, { it.familyName }))
+        return this.sortedWith(
+            compareBy(
+                { it.distributed },
+                { it.givenName },
+                { it.familyName }
+            )
+        )
     }
 
     /**
      * Sorts currently displayed beneficiaries by family name A to Z
      */
     private fun List<BeneficiaryLocal>.sortAZ(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy({ it.givenName }, { it.familyName }))
+        return this.sortedWith(
+            compareBy(
+                { it.givenName },
+                { it.familyName }
+            )
+        )
     }
 
     /**

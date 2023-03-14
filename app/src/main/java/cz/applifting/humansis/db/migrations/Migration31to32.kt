@@ -1,9 +1,9 @@
 package cz.applifting.humansis.db.migrations
 
-import android.util.Log
 import androidx.room.RenameTable
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
+import quanti.com.kotlinlog.Log
 
 @RenameTable(
     fromTableName = "distributions",

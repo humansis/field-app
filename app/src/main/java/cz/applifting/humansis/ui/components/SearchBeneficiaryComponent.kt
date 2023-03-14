@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.hideSoftKeyboard
+import cz.applifting.humansis.extensions.visible
 import kotlinx.android.synthetic.main.component_search.view.*
 import quanti.com.kotlinlog.Log
 
@@ -30,6 +31,10 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
                 return false
             }
         })
+        showClearButton(!et_search.text.isNullOrBlank())
+        iv_clear.setOnClickListener {
+            clearSearch()
+        }
     }
 
     internal fun onTextChanged(search: (String) -> Unit?) {
@@ -42,6 +47,7 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 search(s.toString())
+                showClearButton(!s.isNullOrBlank())
             }
         })
     }
@@ -61,6 +67,10 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
         }
 
         btn_sort.text = context.getString(textResId)
+    }
+
+    private fun showClearButton(show: Boolean) {
+        iv_clear.visible(show)
     }
 
     internal fun clearSearch() {
