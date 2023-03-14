@@ -1,9 +1,9 @@
 package cz.applifting.humansis.db.migrations
 
-import android.util.Log
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
+import quanti.com.kotlinlog.Log
 
 @RenameColumn(
     tableName = "User",

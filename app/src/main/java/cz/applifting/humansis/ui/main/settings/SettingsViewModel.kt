@@ -14,6 +14,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -39,10 +40,12 @@ class SettingsViewModel @Inject constructor(
     fun updateCountrySettings(country: String) {
         val oldCountry = sp.getString(SP_COUNTRY, null)
         if (oldCountry == country) {
+            Log.d(TAG, "Same country was selected")
             return
         }
 
         launch {
+            Log.d(TAG, "Different country was selected. Saving it to shared prefs and deleting old projects from db.")
             with(sp.edit()) {
                 putString(SP_COUNTRY, country)
                 putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, true)
@@ -82,5 +85,9 @@ class SettingsViewModel @Inject constructor(
                 iso3
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }

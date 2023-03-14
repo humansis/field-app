@@ -52,7 +52,14 @@ class AssistancesViewModel @Inject constructor(
                     }
                 }
                 .collect { list ->
-                    assistancesLD.value = list.defaultSort()
+                    assistancesLD.value = list
+
+                    searchText?.let {
+                        if (it.isNotEmpty()) {
+                            search(it)
+                        }
+                    }
+
                     showRetrieving(false)
                 }
         }
@@ -65,17 +72,18 @@ class AssistancesViewModel @Inject constructor(
         searchText = input
         val query = input.normalize()
 
-        if (query.isEmpty()) {
-            searchResultsLD.value = it.defaultSort()
-            return@let
-        }
+        setSortedAssistances(
+            if (query.isEmpty()) {
+                it
+            } else {
+                it.filter { wrapper ->
+                    val assistanceName = wrapper.assistance.name.normalize()
+                    val assistanceId = wrapper.assistance.id.toString()
 
-        setSortedAssistances(it.filter { wrapper ->
-            val assistanceName = wrapper.assistance.name.normalize()
-            val assistanceId = wrapper.assistance.id.toString()
-
-            assistanceName.contains(query) || assistanceId.startsWith(query)
-        })
+                    assistanceName.contains(query) || assistanceId.startsWith(query)
+                }
+            }
+        )
     }
 
     fun changeSort() {
@@ -97,8 +105,12 @@ class AssistancesViewModel @Inject constructor(
      * Sorts currently displayed assistances by date, completed are put last.
      */
     private fun List<AssistanceItemWrapper>.defaultSort(): List<AssistanceItemWrapper> {
-        return this.sortedWith(compareBy<AssistanceItemWrapper> { it.assistance.completed }
-                .thenByDescending { it.assistance.dateOfDistribution?.toDate() }
+        return this.sortedWith(
+            compareBy(
+                { it.assistance.completed },
+                { it.assistance.dateOfDistribution?.toDate() },
+                { it.assistance.name }
+            )
         )
     }
 

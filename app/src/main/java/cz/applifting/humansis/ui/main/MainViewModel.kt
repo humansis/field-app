@@ -1,7 +1,6 @@
 package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
@@ -27,6 +26,7 @@ import java.util.Date
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import quanti.com.kotlinlog.Log
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019

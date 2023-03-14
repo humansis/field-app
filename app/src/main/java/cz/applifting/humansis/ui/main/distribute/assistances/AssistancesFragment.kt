@@ -31,11 +31,6 @@ class AssistancesFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_assistances, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        cmp_search_assistance.clearSearch()
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as HumansisActivity).supportActionBar?.title = args.projectName
