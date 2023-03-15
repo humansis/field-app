@@ -108,7 +108,7 @@ class AssistancesViewModel @Inject constructor(
         return this.sortedWith(
             compareBy<AssistanceItemWrapper> { it.assistance.completed }
                 .thenByDescending { it.assistance.dateOfDistribution?.toDate() }
-                .thenBy { it.assistance.name }
+                .thenBy(String.CASE_INSENSITIVE_ORDER) { it.assistance.name }
         )
     }
 
@@ -116,7 +116,9 @@ class AssistancesViewModel @Inject constructor(
      * Sorts currently displayed assistances by name A to Z
      */
     private fun List<AssistanceItemWrapper>.sortAZ(): List<AssistanceItemWrapper> {
-        return this.sortedBy { it.assistance.name }
+        return this.sortedWith(
+            compareBy(String.CASE_INSENSITIVE_ORDER) { it.assistance.name }
+        )
     }
 
     /**
