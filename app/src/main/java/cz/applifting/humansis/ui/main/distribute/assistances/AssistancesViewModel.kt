@@ -106,11 +106,9 @@ class AssistancesViewModel @Inject constructor(
      */
     private fun List<AssistanceItemWrapper>.defaultSort(): List<AssistanceItemWrapper> {
         return this.sortedWith(
-            compareBy(
-                { it.assistance.completed },
-                { it.assistance.dateOfDistribution?.toDate() },
-                { it.assistance.name }
-            )
+            compareBy<AssistanceItemWrapper> { it.assistance.completed }
+                .thenByDescending { it.assistance.dateOfDistribution?.toDate() }
+                .thenBy { it.assistance.name }
         )
     }
 
