@@ -82,7 +82,7 @@ class AssistancesAdapter(
 
             // Set text fields
             tvName.text = if (remote) { context.getString(R.string.remote, name) } else { name }
-            tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution ?: context.getString(R.string.unknown))
+            tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution)
             tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llCommoditiesHolder.removeAllViews()
 

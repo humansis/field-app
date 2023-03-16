@@ -24,7 +24,7 @@ data class AssistanceLocal(
     val name: String,
     val numberOfBeneficiaries: Int,
     val commodityTypes: List<CommodityType>,
-    val dateOfDistribution: String?,
+    val dateOfDistribution: String,
     val dateOfExpiration: String?,
     val projectId: Int,
     val target: Target,
