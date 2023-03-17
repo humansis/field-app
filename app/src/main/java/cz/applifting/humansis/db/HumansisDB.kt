@@ -25,7 +25,6 @@ import cz.applifting.humansis.db.migrations.Migration26to27
 import cz.applifting.humansis.db.migrations.Migration28to29
 import cz.applifting.humansis.db.migrations.Migration30to31
 import cz.applifting.humansis.db.migrations.Migration31to32
-import cz.applifting.humansis.db.migrations.Migration32to33
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.AssistanceLocal
 import cz.applifting.humansis.model.db.ProjectLocal
@@ -43,7 +42,7 @@ import cz.applifting.humansis.model.db.UserDbEntity
         AssistanceLocal::class,
         SyncError::class
     ],
-    version = 33,
+    version = 32,
     exportSchema = true,
 
     // When writing new AutoMigrations, pay attention to app/schemas/currentVersion.json that it has
@@ -85,11 +84,6 @@ import cz.applifting.humansis.model.db.UserDbEntity
             from = 31,
             to = 32,
             spec = Migration31to32::class
-        ),
-        AutoMigration(
-            from = 32,
-            to = 33,
-            spec = Migration32to33::class
         )
     ]
 )

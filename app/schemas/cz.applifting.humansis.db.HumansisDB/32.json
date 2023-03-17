@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 32,
-    "identityHash": "877e9268f81d6518b1c2a3a8b5c806fb",
+    "identityHash": "d8f24fa00ebdecd69a83092aac25a7d6",
     "entities": [
       {
         "tableName": "User",
@@ -282,7 +282,7 @@
       },
       {
         "tableName": "assistances",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `numberOfBeneficiaries` INTEGER NOT NULL, `commodityTypes` TEXT NOT NULL, `dateOfDistribution` TEXT, `dateOfExpiration` TEXT, `projectId` INTEGER NOT NULL, `target` TEXT NOT NULL, `completed` INTEGER NOT NULL, `remote` INTEGER NOT NULL, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, PRIMARY KEY(`id`), FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `numberOfBeneficiaries` INTEGER NOT NULL, `commodityTypes` TEXT NOT NULL, `dateOfDistribution` TEXT NOT NULL, `dateOfExpiration` TEXT, `projectId` INTEGER NOT NULL, `target` TEXT NOT NULL, `completed` INTEGER NOT NULL, `remote` INTEGER NOT NULL, `foodLimit` REAL, `nonfoodLimit` REAL, `cashbackLimit` REAL, PRIMARY KEY(`id`), FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -312,7 +312,7 @@
             "fieldPath": "dateOfDistribution",
             "columnName": "dateOfDistribution",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "dateOfExpiration",
@@ -456,7 +456,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '877e9268f81d6518b1c2a3a8b5c806fb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd8f24fa00ebdecd69a83092aac25a7d6')"
     ]
   }
 }
